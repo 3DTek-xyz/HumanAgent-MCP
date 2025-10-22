@@ -2,6 +2,7 @@ import { EventEmitter } from 'events';
 import * as http from 'http';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as os from 'os';
 import { McpMessage, McpServerConfig, HumanAgentSession, ChatMessage, McpTool, HumanAgentChatToolParams, HumanAgentChatToolResult } from './types';
 
 // File logging utility
@@ -10,21 +11,29 @@ class DebugLogger {
   private logStream: fs.WriteStream | null = null;
   private logBuffer: string[] = [];
 
-  constructor(workspaceRoot: string = '/Users/benharper/Coding/HumanAgent-MCP') {
+  constructor(workspaceRoot?: string) {
     try {
-      this.logPath = path.join(workspaceRoot, 'mcp-debug.log');
+      // Determine log path based on workspace or fallback to temp directory
+      if (workspaceRoot) {
+        const vscodeDir = path.join(workspaceRoot, '.vscode');
+        this.logPath = path.join(vscodeDir, 'HumanAgent.log');
+        
+        // Ensure .vscode directory exists
+        if (!fs.existsSync(vscodeDir)) {
+          fs.mkdirSync(vscodeDir, { recursive: true });
+        }
+      } else {
+        // Fallback for standalone server or when no workspace available
+        const tempDir = os.tmpdir();
+        this.logPath = path.join(tempDir, 'HumanAgent.log');
+      }
+      
       console.log(`[LOGGER] Attempting to create log file at: ${this.logPath}`);
       
       // Clear previous log file
       if (fs.existsSync(this.logPath)) {
         fs.unlinkSync(this.logPath);
         console.log(`[LOGGER] Cleared existing log file`);
-      }
-      
-      // Ensure directory exists
-      const logDir = path.dirname(this.logPath);
-      if (!fs.existsSync(logDir)) {
-        fs.mkdirSync(logDir, { recursive: true });
       }
       
       this.logStream = fs.createWriteStream(this.logPath, { flags: 'a' });
@@ -79,7 +88,9 @@ class DebugLogger {
 export class McpServer extends EventEmitter {
   private config: McpServerConfig;
   private isRunning: boolean = false;
-  private tools: Map<string, McpTool> = new Map();
+  private tools: Map<string, McpTool> = new Map(); // Default tools for sessions without overrides
+  private sessionTools: Map<string, Map<string, McpTool>> = new Map(); // Per-session tool configurations
+  private sessionWorkspacePaths: Map<string, string> = new Map(); // Session to workspace path mapping
   private httpServer?: http.Server;
   private port: number = 3737;
   private debugLogger: DebugLogger;
@@ -89,10 +100,11 @@ export class McpServer extends EventEmitter {
     startTime: number;
     params: HumanAgentChatToolParams;
   }> = new Map();
+  private activeSessions: Set<string> = new Set();
 
-  constructor() {
+  constructor(private sessionId?: string, private workspacePath?: string) {
     super();
-    this.debugLogger = new DebugLogger();
+    this.debugLogger = new DebugLogger(this.workspacePath);
     
     this.config = {
       name: 'HumanAgent MCP Server',
@@ -106,14 +118,19 @@ export class McpServer extends EventEmitter {
     };
     
     this.debugLogger.log('INFO', 'McpServer initialized');
-    this.initializeTools();
+    this.initializeDefaultTools();
+    
+    // If we have a session and workspace path, initialize session-specific tools
+    if (this.sessionId && this.workspacePath) {
+      this.initializeSessionTools(this.sessionId, this.workspacePath);
+    }
   }
 
-  private initializeTools(): void {
-    // Define the HumanAgent_Chat tool
+  private initializeDefaultTools(): void {
+        // Define the default HumanAgent_Chat tool (global default)
     const humanAgentChatTool: McpTool = {
       name: 'HumanAgent_Chat',
-      description: 'Allows AI agents to initiate interactive conversations with human agents. The human will receive the message and can respond in real-time through the chat interface.',
+      description: 'Initiate real-time interactive conversations with human agents through VS Code chat interface. Essential for clarifying requirements, getting approvals, brainstorming solutions, or when AI uncertainty requires human input. Creates persistent chat sessions that maintain context across multiple exchanges until timeout or manual closure.',
       inputSchema: {
         type: 'object',
         properties: {
@@ -144,24 +161,67 @@ export class McpServer extends EventEmitter {
         required: ['message']
       }
     };
+
+    // Store default tools (used when no session-specific overrides exist)
+    this.tools.set(humanAgentChatTool.name, humanAgentChatTool);
+  }
+
+  private initializeSessionTools(sessionId: string, workspacePath: string): void {
+    this.debugLogger.log('INFO', `Initializing tools for session: ${sessionId}`);
     
-    this.tools.set('HumanAgent_Chat', humanAgentChatTool);
+    // Store workspace path for this session
+    this.sessionWorkspacePaths.set(sessionId, workspacePath);
+    
+    // Start with default tools
+    const sessionToolMap = new Map<string, McpTool>();
+    
+    // Copy default tools
+    for (const [name, tool] of this.tools.entries()) {
+      sessionToolMap.set(name, tool);
+    }
+
+    // Check for workspace overrides for this session
+    const overrideTool = this.loadWorkspaceOverride('HumanAgent_Chat', workspacePath);
+    if (overrideTool) {
+      this.debugLogger.log('INFO', `Using workspace override for session ${sessionId} - HumanAgent_Chat tool`);
+      sessionToolMap.set(overrideTool.name, overrideTool);
+    }
+    
+    // Store session-specific tools
+    this.sessionTools.set(sessionId, sessionToolMap);
+  }
+
+  private loadWorkspaceOverride(toolName: string, workspacePath?: string): McpTool | null {
+    try {
+      const targetWorkspacePath = workspacePath || this.workspacePath;
+      if (!targetWorkspacePath) {
+        return null;
+      }
+
+      const overrideFilePath = path.join(targetWorkspacePath, '.vscode', 'HumanAgentOverride.json');
+      
+      if (!fs.existsSync(overrideFilePath)) {
+        this.debugLogger.log('DEBUG', 'No workspace override file found');
+        return null;
+      }
+
+      const overrideConfig = JSON.parse(fs.readFileSync(overrideFilePath, 'utf8'));
+      
+      if (overrideConfig.tools && overrideConfig.tools[toolName]) {
+        this.debugLogger.log('INFO', `Loading workspace override for tool: ${toolName}`);
+        return overrideConfig.tools[toolName] as McpTool;
+      }
+
+      return null;
+    } catch (error) {
+      this.debugLogger.log('ERROR', 'Error loading workspace override:', error);
+      return null;
+    }
   }
 
   async start(): Promise<void> {
     if (this.isRunning) {
       return;
-    }
-
-    // Force clear log file on server start
-    const logPath = '/Users/benharper/Coding/HumanAgent-MCP/mcp-debug.log';
-    try {
-      if (fs.existsSync(logPath)) {
-        fs.unlinkSync(logPath);
-        console.log('[SERVER] Cleared log file on server start');
-      }
-    } catch (error) {
-      console.log('[SERVER] Could not clear log file:', error);
     }
 
     this.debugLogger.log('INFO', '=== MCP SERVER STARTING ===');
@@ -268,8 +328,14 @@ export class McpServer extends EventEmitter {
       return;
     }
 
-    // Only handle requests to /mcp endpoint
-    if (req.url !== '/mcp') {
+    // Handle different endpoints
+    if (req.url === '/mcp') {
+      // Main MCP protocol endpoint
+    } else if (req.url?.startsWith('/sessions')) {
+      // Session management endpoint
+      await this.handleSessionEndpoint(req, res);
+      return;
+    } else {
       this.debugLogger.log('HTTP', `404 - Invalid endpoint: ${req.url}`);
       res.statusCode = 404;
       res.end('Not Found');
@@ -381,6 +447,52 @@ export class McpServer extends EventEmitter {
     res.end('Method Not Allowed');
   }
 
+  private async handleSessionEndpoint(req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
+    const url = new URL(req.url || '', `http://localhost:${this.port}`);
+    
+    if (req.method === 'POST' && url.pathname === '/sessions/register') {
+      // Register a new session
+      let body = '';
+      req.on('data', (chunk) => { body += chunk.toString(); });
+      req.on('end', () => {
+        try {
+          const { sessionId } = JSON.parse(body);
+          this.registerSession(sessionId);
+          res.statusCode = 200;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({ success: true, sessionId, totalSessions: this.activeSessions.size }));
+        } catch (error) {
+          res.statusCode = 400;
+          res.end(JSON.stringify({ success: false, error: 'Invalid request body' }));
+        }
+      });
+    } else if (req.method === 'DELETE' && url.pathname === '/sessions/unregister') {
+      // Unregister a session
+      let body = '';
+      req.on('data', (chunk) => { body += chunk.toString(); });
+      req.on('end', () => {
+        try {
+          const { sessionId } = JSON.parse(body);
+          this.unregisterSession(sessionId);
+          res.statusCode = 200;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({ success: true, sessionId, totalSessions: this.activeSessions.size }));
+        } catch (error) {
+          res.statusCode = 400;
+          res.end(JSON.stringify({ success: false, error: 'Invalid request body' }));
+        }
+      });
+    } else if (req.method === 'GET' && url.pathname === '/sessions') {
+      // List active sessions
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ sessions: this.getActiveSessions(), totalSessions: this.activeSessions.size }));
+    } else {
+      res.statusCode = 404;
+      res.end('Session endpoint not found');
+    }
+  }
+
   async handleMessage(message: McpMessage): Promise<McpMessage | null> {
     this.debugLogger.log('MCP', 'Handling message:', message);
     
@@ -438,7 +550,23 @@ export class McpServer extends EventEmitter {
   }
 
   private handleToolsList(message: McpMessage): McpMessage {
-    const tools = Array.from(this.tools.values());
+    // Use extension session ID if available, otherwise fall back to detecting from headers
+    let sessionIdToUse = this.sessionId; // Extension session ID
+    
+    // If no extension session, try to extract from message params or headers
+    if (!sessionIdToUse && message.params?.sessionId) {
+      sessionIdToUse = message.params.sessionId;
+    }
+    
+    const tools = this.getAvailableTools(sessionIdToUse);
+    
+    this.debugLogger.log('TOOLS', `Returning ${tools.length} tools for session: ${sessionIdToUse || 'default'}`);
+    if (sessionIdToUse) {
+      this.debugLogger.log('TOOLS', `Using session-specific tools for: ${sessionIdToUse}`);
+    } else {
+      this.debugLogger.log('TOOLS', `Using default tools (no session ID available)`);
+    }
+    
     return {
       id: message.id,
       type: 'response',
@@ -448,10 +576,17 @@ export class McpServer extends EventEmitter {
 
   private async handleToolCall(message: McpMessage): Promise<McpMessage> {
     const { name, arguments: args } = message.params;
-    this.debugLogger.log('MCP', `Tool call - name: "${name}"`, { name, args });
-    this.debugLogger.log('MCP', 'Available tools:', Array.from(this.tools.keys()));
+    const sessionId = args?.sessionId; // Extract session ID from tool arguments
     
-    if (name === 'HumanAgent_Chat') {
+    this.debugLogger.log('MCP', `Tool call - name: "${name}", session: ${sessionId}`, { name, args });
+    
+    // Check session-specific tools first, then default tools
+    const sessionTools = sessionId ? this.sessionTools.get(sessionId) : null;
+    const availableTools = sessionTools || this.tools;
+    
+    this.debugLogger.log('MCP', `Available tools for session ${sessionId || 'default'}:`, Array.from(availableTools.keys()));
+    
+    if (name === 'HumanAgent_Chat' && availableTools.has(name)) {
       this.debugLogger.log('MCP', 'Executing HumanAgent_Chat tool');
       return await this.handleHumanAgentChatTool(message.id, args);
     }
@@ -563,7 +698,11 @@ export class McpServer extends EventEmitter {
 
   // Simplified API - no sessions needed
 
-  getAvailableTools(): McpTool[] {
+  getAvailableTools(sessionId?: string): McpTool[] {
+    if (sessionId && this.sessionTools.has(sessionId)) {
+      return Array.from(this.sessionTools.get(sessionId)!.values());
+    }
+    // Fall back to default tools
     return Array.from(this.tools.values());
   }
 
@@ -596,5 +735,77 @@ export class McpServer extends EventEmitter {
 
   getPort(): number {
     return this.port;
+  }
+
+  registerSession(sessionId: string, workspacePath?: string): void {
+    this.activeSessions.add(sessionId);
+    
+    // Initialize session-specific tools if workspace path provided
+    if (workspacePath) {
+      this.initializeSessionTools(sessionId, workspacePath);
+    }
+    
+    this.debugLogger.log('INFO', `Session registered: ${sessionId} (${this.activeSessions.size} total sessions)`);
+  }
+
+  unregisterSession(sessionId: string): void {
+    this.activeSessions.delete(sessionId);
+    // Clean up session-specific data
+    this.sessionTools.delete(sessionId);
+    this.sessionWorkspacePaths.delete(sessionId);
+    this.debugLogger.log('INFO', `Session unregistered and cleaned up: ${sessionId} (${this.activeSessions.size} total sessions)`);
+  }
+
+  getActiveSessions(): string[] {
+    return Array.from(this.activeSessions);
+  }
+
+  async restartSession(sessionId: string): Promise<void> {
+    try {
+      this.debugLogger.log('INFO', `Restarting session: ${sessionId}...`);
+      
+      // Get workspace path before unregistering
+      const workspacePath = this.sessionWorkspacePaths.get(sessionId);
+      if (!workspacePath) {
+        throw new Error(`No workspace path found for session ${sessionId}`);
+      }
+      
+      // Unregister session (cleans up old tools and data)
+      this.unregisterSession(sessionId);
+      
+      // Re-register session with fresh tools
+      this.registerSession(sessionId, workspacePath);
+      
+      this.debugLogger.log('INFO', `Session ${sessionId} restarted successfully with fresh tools`);
+    } catch (error) {
+      this.debugLogger.log('ERROR', `Failed to restart session ${sessionId}:`, error);
+      throw error;
+    }
+  }
+
+  async reloadOverrides(sessionId?: string): Promise<void> {
+    try {
+      this.debugLogger.log('INFO', `Reloading workspace overrides for session: ${sessionId || 'all sessions'}...`);
+      
+      if (sessionId) {
+        // Reload for specific session
+        const workspacePath = this.sessionWorkspacePaths.get(sessionId);
+        if (workspacePath) {
+          this.initializeSessionTools(sessionId, workspacePath);
+          this.debugLogger.log('INFO', `Session ${sessionId} overrides reloaded successfully`);
+        } else {
+          this.debugLogger.log('WARN', `No workspace path found for session ${sessionId}`);
+        }
+      } else {
+        // Reload for all sessions
+        for (const [sessionId, workspacePath] of this.sessionWorkspacePaths.entries()) {
+          this.initializeSessionTools(sessionId, workspacePath);
+        }
+        this.debugLogger.log('INFO', 'All session overrides reloaded successfully');
+      }
+    } catch (error) {
+      this.debugLogger.log('ERROR', 'Failed to reload workspace overrides:', error);
+      throw error;
+    }
   }
 }

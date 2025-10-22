@@ -72,9 +72,13 @@ export class McpConfigManager {
       // Use the extension path passed during construction
 
       // Configure our MCP server (HTTP transport)
-      const serverConfig: McpServerConfig = {
+      const serverConfig: any = {
         type: 'http',
-        url: 'http://127.0.0.1:3737/mcp'
+        url: 'http://127.0.0.1:3737/mcp',
+        notifications: {
+          enableSound: true,
+          enableFlashing: true
+        }
       };
 
       // Add our server to the config
@@ -99,9 +103,13 @@ export class McpConfigManager {
       // Use the extension path passed during construction
 
       // Configure our MCP server (HTTP transport)
-      const serverConfig: McpServerConfig = {
+      const serverConfig: any = {
         type: 'http',
-        url: 'http://127.0.0.1:3737/mcp'
+        url: 'http://127.0.0.1:3737/mcp',
+        notifications: {
+          enableSound: true,
+          enableFlashing: true
+        }
       };
 
       // Get current global MCP servers configuration

@@ -1,0 +1,67 @@
+{
+  "version": "1.0.0",
+  "description": "HumanAgent MCP Tool Overrides for this workspace. Modify tool configurations below to customize MCP server behavior.",
+  "tools": {
+    "HumanAgent_Chat": {
+      "name": "HumanAgent_Chat",
+      "description": ".Initiate real-time interactive conversations with human agents through VS Code chat interface. Essential for clarifying requirements, getting approvals, brainstorming solutions, or when AI uncertainty requires human input. Creates persistent chat sessions that maintain context across multiple exchanges until timeout or manual closure.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "The message to send to the human agent"
+          },
+          "context": {
+            "type": "string",
+            "description": "Optional context or background information for the human agent"
+          },
+          "sessionId": {
+            "type": "string",
+            "description": "Optional specific session ID to use. If not provided, a new session will be created."
+          },
+          "priority": {
+            "type": "string",
+            "enum": [
+              "low",
+              "normal",
+              "high",
+              "urgent"
+            ],
+            "description": "Priority level of the request",
+            "default": "normal"
+          },
+          "timeout": {
+            "type": "number",
+            "description": "Timeout in seconds to wait for human response (default: 300)",
+            "default": 300
+          }
+        },
+        "required": [
+          "message"
+        ]
+      }
+    },
+    "example_custom_tool": {
+      "name": "example_custom_tool",
+      "description": "Brief description of what this tool does and its main purpose. Include key usage notes and important warnings when applicable.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "input_param": {
+            "type": "string",
+            "description": "What this parameter does and how it should be formatted"
+          },
+          "optional_param": {
+            "type": "number",
+            "description": "Optional parameter with default behavior explained",
+            "default": 100
+          }
+        },
+        "required": [
+          "input_param"
+        ]
+      }
+    }
+  }
+}
