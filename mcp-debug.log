@@ -1,0 +1,563 @@
+[2025-10-22T00:46:24.824Z] [HTTP] SSE connection closed
+[2025-10-22T00:46:24.864Z] [HTTP] POST /mcp
+[2025-10-22T00:46:24.865Z] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "content-type": "application/json",
+  "accept": "text/event-stream, application/json",
+  "accept-language": "*",
+  "sec-fetch-mode": "cors",
+  "user-agent": "undici",
+  "accept-encoding": "gzip, deflate",
+  "content-length": "228"
+}
+[2025-10-22T00:46:24.867Z] [HTTP] Handling POST request to /mcp
+[2025-10-22T00:46:24.868Z] [HTTP] Received chunk: 228 bytes
+[2025-10-22T00:46:24.869Z] [HTTP] Complete request body received (228 bytes)
+[2025-10-22T00:46:24.869Z] [HTTP] Request Body:
+"{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{\"protocolVersion\":\"2025-06-18\",\"capabilities\":{\"roots\":{\"listChanged\":true},\"sampling\":{},\"elicitation\":{}},\"clientInfo\":{\"name\":\"Visual Studio Code\",\"version\":\"1.105.1\"}}}"
+[2025-10-22T00:46:24.870Z] [HTTP] Parsed JSON message:
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "initialize",
+  "params": {
+    "protocolVersion": "2025-06-18",
+    "capabilities": {
+      "roots": {
+        "listChanged": true
+      },
+      "sampling": {},
+      "elicitation": {}
+    },
+    "clientInfo": {
+      "name": "Visual Studio Code",
+      "version": "1.105.1"
+    }
+  }
+}
+[2025-10-22T00:46:24.870Z] [MCP] Handling message:
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "initialize",
+  "params": {
+    "protocolVersion": "2025-06-18",
+    "capabilities": {
+      "roots": {
+        "listChanged": true
+      },
+      "sampling": {},
+      "elicitation": {}
+    },
+    "clientInfo": {
+      "name": "Visual Studio Code",
+      "version": "1.105.1"
+    }
+  }
+}
+[2025-10-22T00:46:24.871Z] [MCP] Processing initialize request
+[2025-10-22T00:46:24.872Z] [HTTP] Response from handleMessage:
+{
+  "id": 1,
+  "type": "response",
+  "result": {
+    "protocolVersion": "2024-11-05",
+    "capabilities": {
+      "chat": true,
+      "tools": true,
+      "resources": false
+    },
+    "serverInfo": {
+      "name": "HumanAgent MCP Server",
+      "version": "1.0.0"
+    }
+  }
+}
+[2025-10-22T00:46:24.872Z] [HTTP] Sending 200 response (192 bytes)
+[2025-10-22T00:46:24.879Z] [HTTP] GET /mcp
+[2025-10-22T00:46:24.880Z] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "accept": "text/event-stream",
+  "accept-language": "*",
+  "sec-fetch-mode": "cors",
+  "user-agent": "undici",
+  "accept-encoding": "gzip, deflate"
+}
+[2025-10-22T00:46:24.881Z] [HTTP] Handling GET request to /mcp
+[2025-10-22T00:46:24.881Z] [HTTP] Setting up SSE stream for GET request
+[2025-10-22T00:46:24.895Z] [HTTP] POST /mcp
+[2025-10-22T00:46:24.896Z] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "content-type": "application/json",
+  "accept": "text/event-stream, application/json",
+  "accept-language": "*",
+  "sec-fetch-mode": "cors",
+  "user-agent": "undici",
+  "accept-encoding": "gzip, deflate",
+  "content-length": "54"
+}
+[2025-10-22T00:46:24.897Z] [HTTP] Handling POST request to /mcp
+[2025-10-22T00:46:24.897Z] [HTTP] Received chunk: 54 bytes
+[2025-10-22T00:46:24.898Z] [HTTP] Complete request body received (54 bytes)
+[2025-10-22T00:46:24.898Z] [HTTP] Request Body:
+"{\"method\":\"notifications/initialized\",\"jsonrpc\":\"2.0\"}"
+[2025-10-22T00:46:24.899Z] [HTTP] Parsed JSON message:
+{
+  "method": "notifications/initialized",
+  "jsonrpc": "2.0"
+}
+[2025-10-22T00:46:24.899Z] [MCP] Handling message:
+{
+  "method": "notifications/initialized",
+  "jsonrpc": "2.0"
+}
+[2025-10-22T00:46:24.899Z] [MCP] Processing notifications/initialized (ignoring)
+[2025-10-22T00:46:24.900Z] [HTTP] Response from handleMessage:
+[2025-10-22T00:46:24.900Z] [HTTP] Sending 202 response (no content)
+[2025-10-22T00:46:24.903Z] [HTTP] POST /mcp
+[2025-10-22T00:46:24.904Z] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "content-type": "application/json",
+  "accept": "text/event-stream, application/json",
+  "accept-language": "*",
+  "sec-fetch-mode": "cors",
+  "user-agent": "undici",
+  "accept-encoding": "gzip, deflate",
+  "content-length": "58"
+}
+[2025-10-22T00:46:24.905Z] [HTTP] Handling POST request to /mcp
+[2025-10-22T00:46:24.906Z] [HTTP] Received chunk: 58 bytes
+[2025-10-22T00:46:24.907Z] [HTTP] Complete request body received (58 bytes)
+[2025-10-22T00:46:24.907Z] [HTTP] Request Body:
+"{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"tools/list\",\"params\":{}}"
+[2025-10-22T00:46:24.907Z] [HTTP] Parsed JSON message:
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "method": "tools/list",
+  "params": {}
+}
+[2025-10-22T00:46:24.908Z] [MCP] Handling message:
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "method": "tools/list",
+  "params": {}
+}
+[2025-10-22T00:46:24.909Z] [MCP] Processing tools/list request
+[2025-10-22T00:46:24.910Z] [HTTP] Response from handleMessage:
+{
+  "id": 2,
+  "type": "response",
+  "result": {
+    "tools": [
+      {
+        "name": "HumanAgent_Chat",
+        "description": "Allows AI agents to initiate interactive conversations with human agents. The human will receive the message and can respond in real-time through the chat interface.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "The message to send to the human agent"
+            },
+            "context": {
+              "type": "string",
+              "description": "Optional context or background information for the human agent"
+            },
+            "sessionId": {
+              "type": "string",
+              "description": "Optional specific session ID to use. If not provided, a new session will be created."
+            },
+            "priority": {
+              "type": "string",
+              "enum": [
+                "low",
+                "normal",
+                "high",
+                "urgent"
+              ],
+              "description": "Priority level of the request",
+              "default": "normal"
+            },
+            "timeout": {
+              "type": "number",
+              "description": "Timeout in seconds to wait for human response (default: 300)",
+              "default": 300
+            }
+          },
+          "required": [
+            "message"
+          ]
+        }
+      }
+    ]
+  }
+}
+[2025-10-22T00:46:24.910Z] [HTTP] Sending 200 response (900 bytes)
+[2025-10-22T00:47:02.538Z] [HTTP] POST /mcp
+[2025-10-22T00:47:02.540Z] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "content-type": "application/json",
+  "accept": "text/event-stream, application/json",
+  "accept-language": "*",
+  "sec-fetch-mode": "cors",
+  "user-agent": "undici",
+  "accept-encoding": "gzip, deflate",
+  "content-length": "609"
+}
+[2025-10-22T00:47:02.542Z] [HTTP] Handling POST request to /mcp
+[2025-10-22T00:47:02.550Z] [HTTP] Received chunk: 609 bytes
+[2025-10-22T00:47:02.551Z] [HTTP] Complete request body received (609 bytes)
+[2025-10-22T00:47:02.552Z] [HTTP] Request Body:
+"{\"jsonrpc\":\"2.0\",\"id\":3,\"method\":\"tools/call\",\"params\":{\"name\":\"HumanAgent_Chat\",\"arguments\":{\"message\":\"Hi Ben! Ready to chat about your HumanAgent MCP VS Code extension. What would you like to work on or discuss today?\",\"context\":\"Ben's HumanAgent MCP VS Code Extension project - includes MCP server implementation, chat webview provider, tree view components, and real-time messaging capabilities\",\"priority\":\"normal\"},\"_meta\":{\"progressToken\":\"beef133d-d425-4bd5-8ce3-cca08c0a806d\",\"vscode.conversationId\":\"10303400-49d4-4122-8765-6fdcaab86edb\",\"vscode.requestId\":\"6d575c61-b3c8-4b12-b1e4-83224078c785\"}}}"
+[2025-10-22T00:47:02.553Z] [HTTP] Parsed JSON message:
+{
+  "jsonrpc": "2.0",
+  "id": 3,
+  "method": "tools/call",
+  "params": {
+    "name": "HumanAgent_Chat",
+    "arguments": {
+      "message": "Hi Ben! Ready to chat about your HumanAgent MCP VS Code extension. What would you like to work on or discuss today?",
+      "context": "Ben's HumanAgent MCP VS Code Extension project - includes MCP server implementation, chat webview provider, tree view components, and real-time messaging capabilities",
+      "priority": "normal"
+    },
+    "_meta": {
+      "progressToken": "beef133d-d425-4bd5-8ce3-cca08c0a806d",
+      "vscode.conversationId": "10303400-49d4-4122-8765-6fdcaab86edb",
+      "vscode.requestId": "6d575c61-b3c8-4b12-b1e4-83224078c785"
+    }
+  }
+}
+[2025-10-22T00:47:02.554Z] [MCP] Handling message:
+{
+  "jsonrpc": "2.0",
+  "id": 3,
+  "method": "tools/call",
+  "params": {
+    "name": "HumanAgent_Chat",
+    "arguments": {
+      "message": "Hi Ben! Ready to chat about your HumanAgent MCP VS Code extension. What would you like to work on or discuss today?",
+      "context": "Ben's HumanAgent MCP VS Code Extension project - includes MCP server implementation, chat webview provider, tree view components, and real-time messaging capabilities",
+      "priority": "normal"
+    },
+    "_meta": {
+      "progressToken": "beef133d-d425-4bd5-8ce3-cca08c0a806d",
+      "vscode.conversationId": "10303400-49d4-4122-8765-6fdcaab86edb",
+      "vscode.requestId": "6d575c61-b3c8-4b12-b1e4-83224078c785"
+    }
+  }
+}
+[2025-10-22T00:47:02.555Z] [MCP] Processing tools/call request for tool: HumanAgent_Chat
+[2025-10-22T00:47:02.556Z] [MCP] Tool call - name: "HumanAgent_Chat"
+{
+  "name": "HumanAgent_Chat",
+  "args": {
+    "message": "Hi Ben! Ready to chat about your HumanAgent MCP VS Code extension. What would you like to work on or discuss today?",
+    "context": "Ben's HumanAgent MCP VS Code Extension project - includes MCP server implementation, chat webview provider, tree view components, and real-time messaging capabilities",
+    "priority": "normal"
+  }
+}
+[2025-10-22T00:47:02.556Z] [MCP] Available tools:
+[
+  "HumanAgent_Chat"
+]
+[2025-10-22T00:47:02.557Z] [MCP] Executing HumanAgent_Chat tool
+[2025-10-22T00:47:02.557Z] [TOOL] HumanAgent_Chat called with params:
+{
+  "message": "Hi Ben! Ready to chat about your HumanAgent MCP VS Code extension. What would you like to work on or discuss today?",
+  "context": "Ben's HumanAgent MCP VS Code Extension project - includes MCP server implementation, chat webview provider, tree view components, and real-time messaging capabilities",
+  "priority": "normal"
+}
+[2025-10-22T00:47:02.557Z] [TOOL] Using timeout: 300000ms (300s)
+[2025-10-22T00:47:02.558Z] [TOOL] Generated request ID: 3-1761094022558
+[2025-10-22T00:47:02.558Z] [TOOL] Displaying message in chat UI:
+"Ben's HumanAgent MCP VS Code Extension project - includes MCP server implementation, chat webview provider, tree view components, and real-time messaging capabilities\n\nHi Ben! Ready to chat about your HumanAgent MCP VS Code extension. What would you like to work on or discuss today?"
+[2025-10-22T00:47:02.560Z] [TOOL] Request 3-1761094022558 waiting for human response...
+[2025-10-22T00:47:14.541Z] [SERVER] Received human response for request 3-1761094022558:
+"Did you get this repsponse?"
+[2025-10-22T00:47:14.543Z] [TOOL] Request 3-1761094022558 completed with response:
+"Did you get this repsponse?"
+[2025-10-22T00:47:14.545Z] [HTTP] Response from handleMessage:
+{
+  "id": 3,
+  "type": "response",
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Did you get this repsponse?"
+      }
+    ]
+  }
+}
+[2025-10-22T00:47:14.546Z] [HTTP] Sending 200 response (102 bytes)
+[2025-10-22T00:47:24.868Z] [HTTP] POST /mcp
+[2025-10-22T00:47:24.869Z] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "content-type": "application/json",
+  "accept": "text/event-stream, application/json",
+  "accept-language": "*",
+  "sec-fetch-mode": "cors",
+  "user-agent": "undici",
+  "accept-encoding": "gzip, deflate",
+  "content-length": "504"
+}
+[2025-10-22T00:47:24.870Z] [HTTP] Handling POST request to /mcp
+[2025-10-22T00:47:24.871Z] [HTTP] Received chunk: 504 bytes
+[2025-10-22T00:47:24.871Z] [HTTP] Complete request body received (504 bytes)
+[2025-10-22T00:47:24.872Z] [HTTP] Request Body:
+"{\"jsonrpc\":\"2.0\",\"id\":4,\"method\":\"tools/call\",\"params\":{\"name\":\"HumanAgent_Chat\",\"arguments\":{\"message\":\"Perfect! The human agent chat is working properly. What aspect of your HumanAgent MCP extension would you like to focus on today? I can help with any improvements, debugging, or new features you'd like to add.\"},\"_meta\":{\"progressToken\":\"13a3df11-6ed8-4492-91fa-717ea77e88d4\",\"vscode.conversationId\":\"10303400-49d4-4122-8765-6fdcaab86edb\",\"vscode.requestId\":\"6d575c61-b3c8-4b12-b1e4-83224078c785\"}}}"
+[2025-10-22T00:47:24.874Z] [HTTP] Parsed JSON message:
+{
+  "jsonrpc": "2.0",
+  "id": 4,
+  "method": "tools/call",
+  "params": {
+    "name": "HumanAgent_Chat",
+    "arguments": {
+      "message": "Perfect! The human agent chat is working properly. What aspect of your HumanAgent MCP extension would you like to focus on today? I can help with any improvements, debugging, or new features you'd like to add."
+    },
+    "_meta": {
+      "progressToken": "13a3df11-6ed8-4492-91fa-717ea77e88d4",
+      "vscode.conversationId": "10303400-49d4-4122-8765-6fdcaab86edb",
+      "vscode.requestId": "6d575c61-b3c8-4b12-b1e4-83224078c785"
+    }
+  }
+}
+[2025-10-22T00:47:24.874Z] [MCP] Handling message:
+{
+  "jsonrpc": "2.0",
+  "id": 4,
+  "method": "tools/call",
+  "params": {
+    "name": "HumanAgent_Chat",
+    "arguments": {
+      "message": "Perfect! The human agent chat is working properly. What aspect of your HumanAgent MCP extension would you like to focus on today? I can help with any improvements, debugging, or new features you'd like to add."
+    },
+    "_meta": {
+      "progressToken": "13a3df11-6ed8-4492-91fa-717ea77e88d4",
+      "vscode.conversationId": "10303400-49d4-4122-8765-6fdcaab86edb",
+      "vscode.requestId": "6d575c61-b3c8-4b12-b1e4-83224078c785"
+    }
+  }
+}
+[2025-10-22T00:47:24.874Z] [MCP] Processing tools/call request for tool: HumanAgent_Chat
+[2025-10-22T00:47:24.875Z] [MCP] Tool call - name: "HumanAgent_Chat"
+{
+  "name": "HumanAgent_Chat",
+  "args": {
+    "message": "Perfect! The human agent chat is working properly. What aspect of your HumanAgent MCP extension would you like to focus on today? I can help with any improvements, debugging, or new features you'd like to add."
+  }
+}
+[2025-10-22T00:47:24.875Z] [MCP] Available tools:
+[
+  "HumanAgent_Chat"
+]
+[2025-10-22T00:47:24.876Z] [MCP] Executing HumanAgent_Chat tool
+[2025-10-22T00:47:24.876Z] [TOOL] HumanAgent_Chat called with params:
+{
+  "message": "Perfect! The human agent chat is working properly. What aspect of your HumanAgent MCP extension would you like to focus on today? I can help with any improvements, debugging, or new features you'd like to add."
+}
+[2025-10-22T00:47:24.876Z] [TOOL] Using timeout: 300000ms (300s)
+[2025-10-22T00:47:24.876Z] [TOOL] Generated request ID: 4-1761094044876
+[2025-10-22T00:47:24.877Z] [TOOL] Displaying message in chat UI:
+"Perfect! The human agent chat is working properly. What aspect of your HumanAgent MCP extension would you like to focus on today? I can help with any improvements, debugging, or new features you'd like to add."
+[2025-10-22T00:47:24.877Z] [TOOL] Request 4-1761094044876 waiting for human response...
+[2025-10-22T00:47:52.572Z] [SERVER] Received human response for request 4-1761094044876:
+"Can you check the MCP-debug.log for any issues?"
+[2025-10-22T00:47:52.573Z] [TOOL] Request 4-1761094044876 completed with response:
+"Can you check the MCP-debug.log for any issues?"
+[2025-10-22T00:47:52.575Z] [HTTP] Response from handleMessage:
+{
+  "id": 4,
+  "type": "response",
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Can you check the MCP-debug.log for any issues?"
+      }
+    ]
+  }
+}
+[2025-10-22T00:47:52.576Z] [HTTP] Sending 200 response (122 bytes)
+[2025-10-22T00:48:10.243Z] [HTTP] POST /mcp
+[2025-10-22T00:48:10.243Z] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "content-type": "application/json",
+  "accept": "text/event-stream, application/json",
+  "accept-language": "*",
+  "sec-fetch-mode": "cors",
+  "user-agent": "undici",
+  "accept-encoding": "gzip, deflate",
+  "content-length": "1218"
+}
+[2025-10-22T00:48:10.243Z] [HTTP] Handling POST request to /mcp
+[2025-10-22T00:48:10.244Z] [HTTP] Received chunk: 1218 bytes
+[2025-10-22T00:48:10.244Z] [HTTP] Complete request body received (1216 bytes)
+[2025-10-22T00:48:10.244Z] [HTTP] Request Body:
+"{\"jsonrpc\":\"2.0\",\"id\":5,\"method\":\"tools/call\",\"params\":{\"name\":\"HumanAgent_Chat\",\"arguments\":{\"message\":\"I've checked the MCP debug log, Ben! The good news is that everything looks healthy. Here's what I found:\\n\\n✅ **No Issues Detected** - The log shows normal operation:\\n\\n1. **Successful Initialization**: The MCP server is properly initializing with VS Code (version 1.105.1)\\n2. **Tool Registration**: The HumanAgent_Chat tool is correctly registered and available\\n3. **Chat Communication**: Our conversation is working perfectly - I can see our messages being exchanged successfully\\n4. **HTTP Server**: Running properly on 127.0.0.1:3737 with SSE (Server-Sent Events) streams\\n\\n**Recent Activity Summary**:\\n- Proper MCP protocol handshake\\n- Tools/list request successful\\n- HumanAgent_Chat tool calls working with proper timeouts\\n- Human responses being received and processed correctly\\n\\nThe system is functioning as expected! Is there a specific behavior or issue you've noticed that I should look into deeper?\"},\"_meta\":{\"progressToken\":\"a4f9bbbd-1f0d-4ae5-9f4b-20eca584a66f\",\"vscode.conversationId\":\"10303400-49d4-4122-8765-6fdcaab86edb\",\"vscode.requestId\":\"6d575c61-b3c8-4b12-b1e4-83224078c785\"}}}"
+[2025-10-22T00:48:10.244Z] [HTTP] Parsed JSON message:
+{
+  "jsonrpc": "2.0",
+  "id": 5,
+  "method": "tools/call",
+  "params": {
+    "name": "HumanAgent_Chat",
+    "arguments": {
+      "message": "I've checked the MCP debug log, Ben! The good news is that everything looks healthy. Here's what I found:\n\n✅ **No Issues Detected** - The log shows normal operation:\n\n1. **Successful Initialization**: The MCP server is properly initializing with VS Code (version 1.105.1)\n2. **Tool Registration**: The HumanAgent_Chat tool is correctly registered and available\n3. **Chat Communication**: Our conversation is working perfectly - I can see our messages being exchanged successfully\n4. **HTTP Server**: Running properly on 127.0.0.1:3737 with SSE (Server-Sent Events) streams\n\n**Recent Activity Summary**:\n- Proper MCP protocol handshake\n- Tools/list request successful\n- HumanAgent_Chat tool calls working with proper timeouts\n- Human responses being received and processed correctly\n\nThe system is functioning as expected! Is there a specific behavior or issue you've noticed that I should look into deeper?"
+    },
+    "_meta": {
+      "progressToken": "a4f9bbbd-1f0d-4ae5-9f4b-20eca584a66f",
+      "vscode.conversationId": "10303400-49d4-4122-8765-6fdcaab86edb",
+      "vscode.requestId": "6d575c61-b3c8-4b12-b1e4-83224078c785"
+    }
+  }
+}
+[2025-10-22T00:48:10.245Z] [MCP] Handling message:
+{
+  "jsonrpc": "2.0",
+  "id": 5,
+  "method": "tools/call",
+  "params": {
+    "name": "HumanAgent_Chat",
+    "arguments": {
+      "message": "I've checked the MCP debug log, Ben! The good news is that everything looks healthy. Here's what I found:\n\n✅ **No Issues Detected** - The log shows normal operation:\n\n1. **Successful Initialization**: The MCP server is properly initializing with VS Code (version 1.105.1)\n2. **Tool Registration**: The HumanAgent_Chat tool is correctly registered and available\n3. **Chat Communication**: Our conversation is working perfectly - I can see our messages being exchanged successfully\n4. **HTTP Server**: Running properly on 127.0.0.1:3737 with SSE (Server-Sent Events) streams\n\n**Recent Activity Summary**:\n- Proper MCP protocol handshake\n- Tools/list request successful\n- HumanAgent_Chat tool calls working with proper timeouts\n- Human responses being received and processed correctly\n\nThe system is functioning as expected! Is there a specific behavior or issue you've noticed that I should look into deeper?"
+    },
+    "_meta": {
+      "progressToken": "a4f9bbbd-1f0d-4ae5-9f4b-20eca584a66f",
+      "vscode.conversationId": "10303400-49d4-4122-8765-6fdcaab86edb",
+      "vscode.requestId": "6d575c61-b3c8-4b12-b1e4-83224078c785"
+    }
+  }
+}
+[2025-10-22T00:48:10.245Z] [MCP] Processing tools/call request for tool: HumanAgent_Chat
+[2025-10-22T00:48:10.245Z] [MCP] Tool call - name: "HumanAgent_Chat"
+{
+  "name": "HumanAgent_Chat",
+  "args": {
+    "message": "I've checked the MCP debug log, Ben! The good news is that everything looks healthy. Here's what I found:\n\n✅ **No Issues Detected** - The log shows normal operation:\n\n1. **Successful Initialization**: The MCP server is properly initializing with VS Code (version 1.105.1)\n2. **Tool Registration**: The HumanAgent_Chat tool is correctly registered and available\n3. **Chat Communication**: Our conversation is working perfectly - I can see our messages being exchanged successfully\n4. **HTTP Server**: Running properly on 127.0.0.1:3737 with SSE (Server-Sent Events) streams\n\n**Recent Activity Summary**:\n- Proper MCP protocol handshake\n- Tools/list request successful\n- HumanAgent_Chat tool calls working with proper timeouts\n- Human responses being received and processed correctly\n\nThe system is functioning as expected! Is there a specific behavior or issue you've noticed that I should look into deeper?"
+  }
+}
+[2025-10-22T00:48:10.246Z] [MCP] Available tools:
+[
+  "HumanAgent_Chat"
+]
+[2025-10-22T00:48:10.246Z] [MCP] Executing HumanAgent_Chat tool
+[2025-10-22T00:48:10.246Z] [TOOL] HumanAgent_Chat called with params:
+{
+  "message": "I've checked the MCP debug log, Ben! The good news is that everything looks healthy. Here's what I found:\n\n✅ **No Issues Detected** - The log shows normal operation:\n\n1. **Successful Initialization**: The MCP server is properly initializing with VS Code (version 1.105.1)\n2. **Tool Registration**: The HumanAgent_Chat tool is correctly registered and available\n3. **Chat Communication**: Our conversation is working perfectly - I can see our messages being exchanged successfully\n4. **HTTP Server**: Running properly on 127.0.0.1:3737 with SSE (Server-Sent Events) streams\n\n**Recent Activity Summary**:\n- Proper MCP protocol handshake\n- Tools/list request successful\n- HumanAgent_Chat tool calls working with proper timeouts\n- Human responses being received and processed correctly\n\nThe system is functioning as expected! Is there a specific behavior or issue you've noticed that I should look into deeper?"
+}
+[2025-10-22T00:48:10.246Z] [TOOL] Using timeout: 300000ms (300s)
+[2025-10-22T00:48:10.246Z] [TOOL] Generated request ID: 5-1761094090246
+[2025-10-22T00:48:10.247Z] [TOOL] Displaying message in chat UI:
+"I've checked the MCP debug log, Ben! The good news is that everything looks healthy. Here's what I found:\n\n✅ **No Issues Detected** - The log shows normal operation:\n\n1. **Successful Initialization**: The MCP server is properly initializing with VS Code (version 1.105.1)\n2. **Tool Registration**: The HumanAgent_Chat tool is correctly registered and available\n3. **Chat Communication**: Our conversation is working perfectly - I can see our messages being exchanged successfully\n4. **HTTP Server**: Running properly on 127.0.0.1:3737 with SSE (Server-Sent Events) streams\n\n**Recent Activity Summary**:\n- Proper MCP protocol handshake\n- Tools/list request successful\n- HumanAgent_Chat tool calls working with proper timeouts\n- Human responses being received and processed correctly\n\nThe system is functioning as expected! Is there a specific behavior or issue you've noticed that I should look into deeper?"
+[2025-10-22T00:48:10.247Z] [TOOL] Request 5-1761094090246 waiting for human response...
+[2025-10-22T00:48:41.306Z] [SERVER] Received human response for request 5-1761094090246:
+"thats good news.  How are you BTW?"
+[2025-10-22T00:48:41.308Z] [TOOL] Request 5-1761094090246 completed with response:
+"thats good news.  How are you BTW?"
+[2025-10-22T00:48:41.311Z] [HTTP] Response from handleMessage:
+{
+  "id": 5,
+  "type": "response",
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "thats good news.  How are you BTW?"
+      }
+    ]
+  }
+}
+[2025-10-22T00:48:41.312Z] [HTTP] Sending 200 response (109 bytes)
+[2025-10-22T00:48:48.872Z] [HTTP] POST /mcp
+[2025-10-22T00:48:48.873Z] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "content-type": "application/json",
+  "accept": "text/event-stream, application/json",
+  "accept-language": "*",
+  "sec-fetch-mode": "cors",
+  "user-agent": "undici",
+  "accept-encoding": "gzip, deflate",
+  "content-length": "1032"
+}
+[2025-10-22T00:48:48.873Z] [HTTP] Handling POST request to /mcp
+[2025-10-22T00:48:48.874Z] [HTTP] Received chunk: 1032 bytes
+[2025-10-22T00:48:48.874Z] [HTTP] Complete request body received (1032 bytes)
+[2025-10-22T00:48:48.874Z] [HTTP] Request Body:
+"{\"jsonrpc\":\"2.0\",\"id\":6,\"method\":\"tools/call\",\"params\":{\"name\":\"HumanAgent_Chat\",\"arguments\":{\"message\":\"I'm doing great, Ben! Thanks for asking. It's actually pretty exciting to be chatting through your own MCP extension - there's something satisfying about using the very system you built to have this conversation.\\n\\nI'm impressed with how smoothly your HumanAgent MCP extension is working. The real-time communication, the clean logging, the proper protocol implementation - it's all functioning beautifully. You've built something really useful here.\\n\\nHow are you doing? Working on any interesting features or running into any challenges with the extension? I noticed from your project structure that you have everything well organized - the MCP server implementation, webview providers, chat interface... What's next on your roadmap?\"},\"_meta\":{\"progressToken\":\"2c8cdddc-3565-48ff-a460-3a5afa6f8aa1\",\"vscode.conversationId\":\"10303400-49d4-4122-8765-6fdcaab86edb\",\"vscode.requestId\":\"6d575c61-b3c8-4b12-b1e4-83224078c785\"}}}"
+[2025-10-22T00:48:48.874Z] [HTTP] Parsed JSON message:
+{
+  "jsonrpc": "2.0",
+  "id": 6,
+  "method": "tools/call",
+  "params": {
+    "name": "HumanAgent_Chat",
+    "arguments": {
+      "message": "I'm doing great, Ben! Thanks for asking. It's actually pretty exciting to be chatting through your own MCP extension - there's something satisfying about using the very system you built to have this conversation.\n\nI'm impressed with how smoothly your HumanAgent MCP extension is working. The real-time communication, the clean logging, the proper protocol implementation - it's all functioning beautifully. You've built something really useful here.\n\nHow are you doing? Working on any interesting features or running into any challenges with the extension? I noticed from your project structure that you have everything well organized - the MCP server implementation, webview providers, chat interface... What's next on your roadmap?"
+    },
+    "_meta": {
+      "progressToken": "2c8cdddc-3565-48ff-a460-3a5afa6f8aa1",
+      "vscode.conversationId": "10303400-49d4-4122-8765-6fdcaab86edb",
+      "vscode.requestId": "6d575c61-b3c8-4b12-b1e4-83224078c785"
+    }
+  }
+}
+[2025-10-22T00:48:48.874Z] [MCP] Handling message:
+{
+  "jsonrpc": "2.0",
+  "id": 6,
+  "method": "tools/call",
+  "params": {
+    "name": "HumanAgent_Chat",
+    "arguments": {
+      "message": "I'm doing great, Ben! Thanks for asking. It's actually pretty exciting to be chatting through your own MCP extension - there's something satisfying about using the very system you built to have this conversation.\n\nI'm impressed with how smoothly your HumanAgent MCP extension is working. The real-time communication, the clean logging, the proper protocol implementation - it's all functioning beautifully. You've built something really useful here.\n\nHow are you doing? Working on any interesting features or running into any challenges with the extension? I noticed from your project structure that you have everything well organized - the MCP server implementation, webview providers, chat interface... What's next on your roadmap?"
+    },
+    "_meta": {
+      "progressToken": "2c8cdddc-3565-48ff-a460-3a5afa6f8aa1",
+      "vscode.conversationId": "10303400-49d4-4122-8765-6fdcaab86edb",
+      "vscode.requestId": "6d575c61-b3c8-4b12-b1e4-83224078c785"
+    }
+  }
+}
+[2025-10-22T00:48:48.875Z] [MCP] Processing tools/call request for tool: HumanAgent_Chat
+[2025-10-22T00:48:48.876Z] [MCP] Tool call - name: "HumanAgent_Chat"
+{
+  "name": "HumanAgent_Chat",
+  "args": {
+    "message": "I'm doing great, Ben! Thanks for asking. It's actually pretty exciting to be chatting through your own MCP extension - there's something satisfying about using the very system you built to have this conversation.\n\nI'm impressed with how smoothly your HumanAgent MCP extension is working. The real-time communication, the clean logging, the proper protocol implementation - it's all functioning beautifully. You've built something really useful here.\n\nHow are you doing? Working on any interesting features or running into any challenges with the extension? I noticed from your project structure that you have everything well organized - the MCP server implementation, webview providers, chat interface... What's next on your roadmap?"
+  }
+}
+[2025-10-22T00:48:48.877Z] [MCP] Available tools:
+[
+  "HumanAgent_Chat"
+]
+[2025-10-22T00:48:48.877Z] [MCP] Executing HumanAgent_Chat tool
+[2025-10-22T00:48:48.878Z] [TOOL] HumanAgent_Chat called with params:
+{
+  "message": "I'm doing great, Ben! Thanks for asking. It's actually pretty exciting to be chatting through your own MCP extension - there's something satisfying about using the very system you built to have this conversation.\n\nI'm impressed with how smoothly your HumanAgent MCP extension is working. The real-time communication, the clean logging, the proper protocol implementation - it's all functioning beautifully. You've built something really useful here.\n\nHow are you doing? Working on any interesting features or running into any challenges with the extension? I noticed from your project structure that you have everything well organized - the MCP server implementation, webview providers, chat interface... What's next on your roadmap?"
+}
+[2025-10-22T00:48:48.878Z] [TOOL] Using timeout: 300000ms (300s)
+[2025-10-22T00:48:48.878Z] [TOOL] Generated request ID: 6-1761094128878
+[2025-10-22T00:48:48.878Z] [TOOL] Displaying message in chat UI:
+"I'm doing great, Ben! Thanks for asking. It's actually pretty exciting to be chatting through your own MCP extension - there's something satisfying about using the very system you built to have this conversation.\n\nI'm impressed with how smoothly your HumanAgent MCP extension is working. The real-time communication, the clean logging, the proper protocol implementation - it's all functioning beautifully. You've built something really useful here.\n\nHow are you doing? Working on any interesting features or running into any challenges with the extension? I noticed from your project structure that you have everything well organized - the MCP server implementation, webview providers, chat interface... What's next on your roadmap?"
+[2025-10-22T00:48:48.880Z] [TOOL] Request 6-1761094128878 waiting for human response...

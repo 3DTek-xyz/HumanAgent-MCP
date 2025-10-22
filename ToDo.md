@@ -1,0 +1,1 @@
+[ ] Set logging path and details correctly for release & dev.

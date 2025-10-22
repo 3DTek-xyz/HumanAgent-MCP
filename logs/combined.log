@@ -1,0 +1,228 @@
+{"level":"info","message":"Loaded temporary agents configuration","timestamp":"2025-10-21T01:14:32.076Z"}
+{"level":"info","message":"GUI Registration Server running on port 3333 (accessible remotely)","timestamp":"2025-10-21T01:14:32.081Z"}
+{"level":"warn","message":"Project Manager instructions file not found, using defaults","timestamp":"2025-10-21T01:14:32.083Z"}
+{"level":"info","message":"Project Manager agent initialized successfully","timestamp":"2025-10-21T01:14:32.083Z"}
+{"level":"info","message":"Agent registered: project-manager","timestamp":"2025-10-21T01:14:32.083Z"}
+{"error":{"code":"ENOENT","errno":-2,"path":"/Users/benharper/Coding/HumanAgent-MCP/copilot-instructions.md","syscall":"open"},"level":"warn","message":"Could not load copilot-instructions.md","timestamp":"2025-10-21T01:14:32.084Z"}
+{"error":{"code":"ENOENT","errno":-2,"path":"/Users/benharper/Coding/HumanAgent-MCP/project-scope.md","syscall":"open"},"level":"warn","message":"Could not load project-scope.md","timestamp":"2025-10-21T01:14:32.084Z"}
+{"level":"info","message":"Narky agent initialized successfully","timestamp":"2025-10-21T01:14:32.084Z"}
+{"level":"info","message":"Agent registered: narky","timestamp":"2025-10-21T01:14:32.084Z"}
+{"level":"info","message":"Penny agent initialized successfully","timestamp":"2025-10-21T01:14:32.084Z"}
+{"level":"info","message":"Agent registered: penny","timestamp":"2025-10-21T01:14:32.084Z"}
+{"level":"info","message":"TestyMCTester agent initialized successfully","timestamp":"2025-10-21T01:14:32.084Z"}
+{"level":"info","message":"Agent registered: testy","timestamp":"2025-10-21T01:14:32.085Z"}
+{"level":"info","message":"Built-in agents initialized successfully","timestamp":"2025-10-21T01:14:32.085Z"}
+{"level":"info","message":"AgentChatCoordinator initialized","timestamp":"2025-10-21T01:14:32.085Z"}
+{"level":"info","message":"Agent chat coordinator initialized","timestamp":"2025-10-21T01:14:32.085Z"}
+{"level":"info","message":"Tool registered: agentic-planning","timestamp":"2025-10-21T01:14:32.085Z"}
+{"level":"info","message":"Tool registered: agentic-completion","timestamp":"2025-10-21T01:14:32.085Z"}
+{"level":"info","message":"Tool registered: agentic-security","timestamp":"2025-10-21T01:14:32.085Z"}
+{"level":"info","message":"Tool registered: agentic-testing","timestamp":"2025-10-21T01:14:32.085Z"}
+{"level":"info","message":"Tool registered: human-interaction","timestamp":"2025-10-21T01:14:32.085Z"}
+{"level":"info","message":"Tool registered: start_penny_chat","timestamp":"2025-10-21T01:14:32.085Z"}
+{"level":"info","message":"Tool registered: start_testy_chat","timestamp":"2025-10-21T01:14:32.085Z"}
+{"level":"info","message":"Tool registered: start_narky_chat","timestamp":"2025-10-21T01:14:32.085Z"}
+{"level":"info","message":"Tool registered: list_agent_sessions","timestamp":"2025-10-21T01:14:32.085Z"}
+{"level":"info","message":"Tool registered: maintain_chat_sessions","timestamp":"2025-10-21T01:14:32.085Z"}
+{"level":"info","message":"Tool registered: show_session_summary","timestamp":"2025-10-21T01:14:32.085Z"}
+{"level":"info","message":"Tool registered: manage_session_context","timestamp":"2025-10-21T01:14:32.085Z"}
+{"level":"info","message":"Built-in tools initialized successfully (including chat session tools)","timestamp":"2025-10-21T01:14:32.085Z"}
+{"level":"info","message":"MCP components initialized successfully","timestamp":"2025-10-21T01:14:32.085Z"}
+{"level":"warn","message":"Project Manager instructions file not found, using defaults","timestamp":"2025-10-21T01:14:32.129Z"}
+{"level":"info","message":"Project Manager agent initialized successfully","timestamp":"2025-10-21T01:14:32.130Z"}
+{"level":"info","message":"Agent registered: project-manager","timestamp":"2025-10-21T01:14:32.131Z"}
+{"error":{"code":"ENOENT","errno":-2,"path":"/Users/benharper/Coding/HumanAgent-MCP/copilot-instructions.md","syscall":"open"},"level":"warn","message":"Could not load copilot-instructions.md","timestamp":"2025-10-21T01:14:32.131Z"}
+{"error":{"code":"ENOENT","errno":-2,"path":"/Users/benharper/Coding/HumanAgent-MCP/project-scope.md","syscall":"open"},"level":"warn","message":"Could not load project-scope.md","timestamp":"2025-10-21T01:14:32.132Z"}
+{"level":"info","message":"Narky agent initialized successfully","timestamp":"2025-10-21T01:14:32.132Z"}
+{"level":"info","message":"Agent registered: narky","timestamp":"2025-10-21T01:14:32.132Z"}
+{"level":"info","message":"Penny agent initialized successfully","timestamp":"2025-10-21T01:14:32.132Z"}
+{"level":"info","message":"Agent registered: penny","timestamp":"2025-10-21T01:14:32.132Z"}
+{"level":"info","message":"TestyMCTester agent initialized successfully","timestamp":"2025-10-21T01:14:32.132Z"}
+{"level":"info","message":"Agent registered: testy","timestamp":"2025-10-21T01:14:32.132Z"}
+{"level":"info","message":"Built-in agents initialized successfully","timestamp":"2025-10-21T01:14:32.132Z"}
+{"level":"info","message":"AgentChatCoordinator initialized","timestamp":"2025-10-21T01:14:32.132Z"}
+{"level":"info","message":"Agent chat coordinator initialized","timestamp":"2025-10-21T01:14:32.132Z"}
+{"level":"info","message":"Tool registered: agentic-planning","timestamp":"2025-10-21T01:14:32.132Z"}
+{"level":"info","message":"Tool registered: agentic-completion","timestamp":"2025-10-21T01:14:32.132Z"}
+{"level":"info","message":"Tool registered: agentic-security","timestamp":"2025-10-21T01:14:32.132Z"}
+{"level":"info","message":"Tool registered: agentic-testing","timestamp":"2025-10-21T01:14:32.132Z"}
+{"level":"info","message":"Tool registered: human-interaction","timestamp":"2025-10-21T01:14:32.133Z"}
+{"level":"info","message":"Tool registered: start_penny_chat","timestamp":"2025-10-21T01:14:32.133Z"}
+{"level":"info","message":"Tool registered: start_testy_chat","timestamp":"2025-10-21T01:14:32.133Z"}
+{"level":"info","message":"Tool registered: start_narky_chat","timestamp":"2025-10-21T01:14:32.133Z"}
+{"level":"info","message":"Tool registered: list_agent_sessions","timestamp":"2025-10-21T01:14:32.133Z"}
+{"level":"info","message":"Tool registered: maintain_chat_sessions","timestamp":"2025-10-21T01:14:32.133Z"}
+{"level":"info","message":"Tool registered: show_session_summary","timestamp":"2025-10-21T01:14:32.133Z"}
+{"level":"info","message":"Tool registered: manage_session_context","timestamp":"2025-10-21T01:14:32.133Z"}
+{"level":"info","message":"Built-in tools initialized successfully (including chat session tools)","timestamp":"2025-10-21T01:14:32.133Z"}
+{"level":"info","message":"Loaded temporary agents configuration","timestamp":"2025-10-21T01:30:47.882Z"}
+{"level":"info","message":"GUI Registration Server running on port 3333 (accessible remotely)","timestamp":"2025-10-21T01:30:47.887Z"}
+{"level":"warn","message":"Project Manager instructions file not found, using defaults","timestamp":"2025-10-21T01:30:47.890Z"}
+{"level":"info","message":"Project Manager agent initialized successfully","timestamp":"2025-10-21T01:30:47.890Z"}
+{"level":"info","message":"Agent registered: project-manager","timestamp":"2025-10-21T01:30:47.890Z"}
+{"error":{"code":"ENOENT","errno":-2,"path":"/Users/benharper/Coding/HumanAgent-MCP/copilot-instructions.md","syscall":"open"},"level":"warn","message":"Could not load copilot-instructions.md","timestamp":"2025-10-21T01:30:47.891Z"}
+{"error":{"code":"ENOENT","errno":-2,"path":"/Users/benharper/Coding/HumanAgent-MCP/project-scope.md","syscall":"open"},"level":"warn","message":"Could not load project-scope.md","timestamp":"2025-10-21T01:30:47.891Z"}
+{"level":"info","message":"Narky agent initialized successfully","timestamp":"2025-10-21T01:30:47.891Z"}
+{"level":"info","message":"Agent registered: narky","timestamp":"2025-10-21T01:30:47.892Z"}
+{"level":"info","message":"Penny agent initialized successfully","timestamp":"2025-10-21T01:30:47.892Z"}
+{"level":"info","message":"Agent registered: penny","timestamp":"2025-10-21T01:30:47.892Z"}
+{"level":"info","message":"TestyMCTester agent initialized successfully","timestamp":"2025-10-21T01:30:47.892Z"}
+{"level":"info","message":"Agent registered: testy","timestamp":"2025-10-21T01:30:47.892Z"}
+{"level":"info","message":"Built-in agents initialized successfully","timestamp":"2025-10-21T01:30:47.892Z"}
+{"level":"info","message":"AgentChatCoordinator initialized","timestamp":"2025-10-21T01:30:47.892Z"}
+{"level":"info","message":"Agent chat coordinator initialized","timestamp":"2025-10-21T01:30:47.892Z"}
+{"level":"info","message":"Tool registered: agentic-planning","timestamp":"2025-10-21T01:30:47.892Z"}
+{"level":"info","message":"Tool registered: agentic-completion","timestamp":"2025-10-21T01:30:47.892Z"}
+{"level":"info","message":"Tool registered: agentic-security","timestamp":"2025-10-21T01:30:47.892Z"}
+{"level":"info","message":"Tool registered: agentic-testing","timestamp":"2025-10-21T01:30:47.892Z"}
+{"level":"info","message":"Tool registered: human-interaction","timestamp":"2025-10-21T01:30:47.892Z"}
+{"level":"info","message":"Tool registered: start_penny_chat","timestamp":"2025-10-21T01:30:47.892Z"}
+{"level":"info","message":"Tool registered: start_testy_chat","timestamp":"2025-10-21T01:30:47.892Z"}
+{"level":"info","message":"Tool registered: start_narky_chat","timestamp":"2025-10-21T01:30:47.892Z"}
+{"level":"info","message":"Tool registered: list_agent_sessions","timestamp":"2025-10-21T01:30:47.892Z"}
+{"level":"info","message":"Tool registered: maintain_chat_sessions","timestamp":"2025-10-21T01:30:47.892Z"}
+{"level":"info","message":"Tool registered: show_session_summary","timestamp":"2025-10-21T01:30:47.892Z"}
+{"level":"info","message":"Tool registered: manage_session_context","timestamp":"2025-10-21T01:30:47.892Z"}
+{"level":"info","message":"Built-in tools initialized successfully (including chat session tools)","timestamp":"2025-10-21T01:30:47.892Z"}
+{"level":"info","message":"MCP components initialized successfully","timestamp":"2025-10-21T01:30:47.892Z"}
+{"level":"warn","message":"Project Manager instructions file not found, using defaults","timestamp":"2025-10-21T01:30:47.937Z"}
+{"level":"info","message":"Project Manager agent initialized successfully","timestamp":"2025-10-21T01:30:47.938Z"}
+{"level":"info","message":"Agent registered: project-manager","timestamp":"2025-10-21T01:30:47.938Z"}
+{"error":{"code":"ENOENT","errno":-2,"path":"/Users/benharper/Coding/HumanAgent-MCP/copilot-instructions.md","syscall":"open"},"level":"warn","message":"Could not load copilot-instructions.md","timestamp":"2025-10-21T01:30:47.939Z"}
+{"error":{"code":"ENOENT","errno":-2,"path":"/Users/benharper/Coding/HumanAgent-MCP/project-scope.md","syscall":"open"},"level":"warn","message":"Could not load project-scope.md","timestamp":"2025-10-21T01:30:47.939Z"}
+{"level":"info","message":"Narky agent initialized successfully","timestamp":"2025-10-21T01:30:47.939Z"}
+{"level":"info","message":"Agent registered: narky","timestamp":"2025-10-21T01:30:47.939Z"}
+{"level":"info","message":"Penny agent initialized successfully","timestamp":"2025-10-21T01:30:47.940Z"}
+{"level":"info","message":"Agent registered: penny","timestamp":"2025-10-21T01:30:47.940Z"}
+{"level":"info","message":"TestyMCTester agent initialized successfully","timestamp":"2025-10-21T01:30:47.940Z"}
+{"level":"info","message":"Agent registered: testy","timestamp":"2025-10-21T01:30:47.940Z"}
+{"level":"info","message":"Built-in agents initialized successfully","timestamp":"2025-10-21T01:30:47.940Z"}
+{"level":"info","message":"AgentChatCoordinator initialized","timestamp":"2025-10-21T01:30:47.940Z"}
+{"level":"info","message":"Agent chat coordinator initialized","timestamp":"2025-10-21T01:30:47.940Z"}
+{"level":"info","message":"Tool registered: agentic-planning","timestamp":"2025-10-21T01:30:47.940Z"}
+{"level":"info","message":"Tool registered: agentic-completion","timestamp":"2025-10-21T01:30:47.940Z"}
+{"level":"info","message":"Tool registered: agentic-security","timestamp":"2025-10-21T01:30:47.940Z"}
+{"level":"info","message":"Tool registered: agentic-testing","timestamp":"2025-10-21T01:30:47.940Z"}
+{"level":"info","message":"Tool registered: human-interaction","timestamp":"2025-10-21T01:30:47.940Z"}
+{"level":"info","message":"Tool registered: start_penny_chat","timestamp":"2025-10-21T01:30:47.940Z"}
+{"level":"info","message":"Tool registered: start_testy_chat","timestamp":"2025-10-21T01:30:47.940Z"}
+{"level":"info","message":"Tool registered: start_narky_chat","timestamp":"2025-10-21T01:30:47.940Z"}
+{"level":"info","message":"Tool registered: list_agent_sessions","timestamp":"2025-10-21T01:30:47.940Z"}
+{"level":"info","message":"Tool registered: maintain_chat_sessions","timestamp":"2025-10-21T01:30:47.940Z"}
+{"level":"info","message":"Tool registered: show_session_summary","timestamp":"2025-10-21T01:30:47.940Z"}
+{"level":"info","message":"Tool registered: manage_session_context","timestamp":"2025-10-21T01:30:47.940Z"}
+{"level":"info","message":"Built-in tools initialized successfully (including chat session tools)","timestamp":"2025-10-21T01:30:47.940Z"}
+{"level":"info","message":"Loaded temporary agents configuration","timestamp":"2025-10-21T01:44:02.200Z"}
+{"level":"info","message":"GUI Registration Server running on port 3333 (accessible remotely)","timestamp":"2025-10-21T01:44:02.206Z"}
+{"level":"warn","message":"Project Manager instructions file not found, using defaults","timestamp":"2025-10-21T01:44:02.208Z"}
+{"level":"info","message":"Project Manager agent initialized successfully","timestamp":"2025-10-21T01:44:02.208Z"}
+{"level":"info","message":"Agent registered: project-manager","timestamp":"2025-10-21T01:44:02.208Z"}
+{"error":{"code":"ENOENT","errno":-2,"path":"/Users/benharper/Coding/HumanAgent-MCP/copilot-instructions.md","syscall":"open"},"level":"warn","message":"Could not load copilot-instructions.md","timestamp":"2025-10-21T01:44:02.209Z"}
+{"error":{"code":"ENOENT","errno":-2,"path":"/Users/benharper/Coding/HumanAgent-MCP/project-scope.md","syscall":"open"},"level":"warn","message":"Could not load project-scope.md","timestamp":"2025-10-21T01:44:02.209Z"}
+{"level":"info","message":"Narky agent initialized successfully","timestamp":"2025-10-21T01:44:02.209Z"}
+{"level":"info","message":"Agent registered: narky","timestamp":"2025-10-21T01:44:02.209Z"}
+{"level":"info","message":"Penny agent initialized successfully","timestamp":"2025-10-21T01:44:02.210Z"}
+{"level":"info","message":"Agent registered: penny","timestamp":"2025-10-21T01:44:02.210Z"}
+{"level":"info","message":"TestyMCTester agent initialized successfully","timestamp":"2025-10-21T01:44:02.210Z"}
+{"level":"info","message":"Agent registered: testy","timestamp":"2025-10-21T01:44:02.210Z"}
+{"level":"info","message":"Built-in agents initialized successfully","timestamp":"2025-10-21T01:44:02.210Z"}
+{"level":"info","message":"AgentChatCoordinator initialized","timestamp":"2025-10-21T01:44:02.210Z"}
+{"level":"info","message":"Agent chat coordinator initialized","timestamp":"2025-10-21T01:44:02.210Z"}
+{"level":"info","message":"Tool registered: agentic-planning","timestamp":"2025-10-21T01:44:02.210Z"}
+{"level":"info","message":"Tool registered: agentic-completion","timestamp":"2025-10-21T01:44:02.210Z"}
+{"level":"info","message":"Tool registered: agentic-security","timestamp":"2025-10-21T01:44:02.210Z"}
+{"level":"info","message":"Tool registered: agentic-testing","timestamp":"2025-10-21T01:44:02.210Z"}
+{"level":"info","message":"Tool registered: human-interaction","timestamp":"2025-10-21T01:44:02.210Z"}
+{"level":"info","message":"Tool registered: start_penny_chat","timestamp":"2025-10-21T01:44:02.210Z"}
+{"level":"info","message":"Tool registered: start_testy_chat","timestamp":"2025-10-21T01:44:02.210Z"}
+{"level":"info","message":"Tool registered: start_narky_chat","timestamp":"2025-10-21T01:44:02.210Z"}
+{"level":"info","message":"Tool registered: list_agent_sessions","timestamp":"2025-10-21T01:44:02.210Z"}
+{"level":"info","message":"Tool registered: maintain_chat_sessions","timestamp":"2025-10-21T01:44:02.210Z"}
+{"level":"info","message":"Tool registered: show_session_summary","timestamp":"2025-10-21T01:44:02.210Z"}
+{"level":"info","message":"Tool registered: manage_session_context","timestamp":"2025-10-21T01:44:02.210Z"}
+{"level":"info","message":"Built-in tools initialized successfully (including chat session tools)","timestamp":"2025-10-21T01:44:02.210Z"}
+{"level":"info","message":"MCP components initialized successfully","timestamp":"2025-10-21T01:44:02.210Z"}
+{"level":"warn","message":"Project Manager instructions file not found, using defaults","timestamp":"2025-10-21T01:44:02.255Z"}
+{"level":"info","message":"Project Manager agent initialized successfully","timestamp":"2025-10-21T01:44:02.257Z"}
+{"level":"info","message":"Agent registered: project-manager","timestamp":"2025-10-21T01:44:02.257Z"}
+{"error":{"code":"ENOENT","errno":-2,"path":"/Users/benharper/Coding/HumanAgent-MCP/copilot-instructions.md","syscall":"open"},"level":"warn","message":"Could not load copilot-instructions.md","timestamp":"2025-10-21T01:44:02.258Z"}
+{"error":{"code":"ENOENT","errno":-2,"path":"/Users/benharper/Coding/HumanAgent-MCP/project-scope.md","syscall":"open"},"level":"warn","message":"Could not load project-scope.md","timestamp":"2025-10-21T01:44:02.258Z"}
+{"level":"info","message":"Narky agent initialized successfully","timestamp":"2025-10-21T01:44:02.258Z"}
+{"level":"info","message":"Agent registered: narky","timestamp":"2025-10-21T01:44:02.258Z"}
+{"level":"info","message":"Penny agent initialized successfully","timestamp":"2025-10-21T01:44:02.258Z"}
+{"level":"info","message":"Agent registered: penny","timestamp":"2025-10-21T01:44:02.259Z"}
+{"level":"info","message":"TestyMCTester agent initialized successfully","timestamp":"2025-10-21T01:44:02.259Z"}
+{"level":"info","message":"Agent registered: testy","timestamp":"2025-10-21T01:44:02.259Z"}
+{"level":"info","message":"Built-in agents initialized successfully","timestamp":"2025-10-21T01:44:02.259Z"}
+{"level":"info","message":"AgentChatCoordinator initialized","timestamp":"2025-10-21T01:44:02.259Z"}
+{"level":"info","message":"Agent chat coordinator initialized","timestamp":"2025-10-21T01:44:02.259Z"}
+{"level":"info","message":"Tool registered: agentic-planning","timestamp":"2025-10-21T01:44:02.259Z"}
+{"level":"info","message":"Tool registered: agentic-completion","timestamp":"2025-10-21T01:44:02.259Z"}
+{"level":"info","message":"Tool registered: agentic-security","timestamp":"2025-10-21T01:44:02.259Z"}
+{"level":"info","message":"Tool registered: agentic-testing","timestamp":"2025-10-21T01:44:02.259Z"}
+{"level":"info","message":"Tool registered: human-interaction","timestamp":"2025-10-21T01:44:02.259Z"}
+{"level":"info","message":"Tool registered: start_penny_chat","timestamp":"2025-10-21T01:44:02.259Z"}
+{"level":"info","message":"Tool registered: start_testy_chat","timestamp":"2025-10-21T01:44:02.259Z"}
+{"level":"info","message":"Tool registered: start_narky_chat","timestamp":"2025-10-21T01:44:02.259Z"}
+{"level":"info","message":"Tool registered: list_agent_sessions","timestamp":"2025-10-21T01:44:02.259Z"}
+{"level":"info","message":"Tool registered: maintain_chat_sessions","timestamp":"2025-10-21T01:44:02.259Z"}
+{"level":"info","message":"Tool registered: show_session_summary","timestamp":"2025-10-21T01:44:02.259Z"}
+{"level":"info","message":"Tool registered: manage_session_context","timestamp":"2025-10-21T01:44:02.259Z"}
+{"level":"info","message":"Built-in tools initialized successfully (including chat session tools)","timestamp":"2025-10-21T01:44:02.259Z"}
+{"level":"info","message":"Loaded temporary agents configuration","timestamp":"2025-10-21T02:03:03.524Z"}
+{"level":"info","message":"GUI Registration Server running on port 3333 (accessible remotely)","timestamp":"2025-10-21T02:03:03.529Z"}
+{"level":"warn","message":"Project Manager instructions file not found, using defaults","timestamp":"2025-10-21T02:03:03.531Z"}
+{"level":"info","message":"Project Manager agent initialized successfully","timestamp":"2025-10-21T02:03:03.531Z"}
+{"level":"info","message":"Agent registered: project-manager","timestamp":"2025-10-21T02:03:03.531Z"}
+{"error":{"code":"ENOENT","errno":-2,"path":"/Users/benharper/Coding/HumanAgent-MCP/copilot-instructions.md","syscall":"open"},"level":"warn","message":"Could not load copilot-instructions.md","timestamp":"2025-10-21T02:03:03.532Z"}
+{"error":{"code":"ENOENT","errno":-2,"path":"/Users/benharper/Coding/HumanAgent-MCP/project-scope.md","syscall":"open"},"level":"warn","message":"Could not load project-scope.md","timestamp":"2025-10-21T02:03:03.532Z"}
+{"level":"info","message":"Narky agent initialized successfully","timestamp":"2025-10-21T02:03:03.532Z"}
+{"level":"info","message":"Agent registered: narky","timestamp":"2025-10-21T02:03:03.533Z"}
+{"level":"info","message":"Penny agent initialized successfully","timestamp":"2025-10-21T02:03:03.533Z"}
+{"level":"info","message":"Agent registered: penny","timestamp":"2025-10-21T02:03:03.533Z"}
+{"level":"info","message":"TestyMCTester agent initialized successfully","timestamp":"2025-10-21T02:03:03.533Z"}
+{"level":"info","message":"Agent registered: testy","timestamp":"2025-10-21T02:03:03.533Z"}
+{"level":"info","message":"Built-in agents initialized successfully","timestamp":"2025-10-21T02:03:03.533Z"}
+{"level":"info","message":"AgentChatCoordinator initialized","timestamp":"2025-10-21T02:03:03.533Z"}
+{"level":"info","message":"Agent chat coordinator initialized","timestamp":"2025-10-21T02:03:03.533Z"}
+{"level":"info","message":"Tool registered: agentic-planning","timestamp":"2025-10-21T02:03:03.533Z"}
+{"level":"info","message":"Tool registered: agentic-completion","timestamp":"2025-10-21T02:03:03.533Z"}
+{"level":"info","message":"Tool registered: agentic-security","timestamp":"2025-10-21T02:03:03.533Z"}
+{"level":"info","message":"Tool registered: agentic-testing","timestamp":"2025-10-21T02:03:03.533Z"}
+{"level":"info","message":"Tool registered: human-interaction","timestamp":"2025-10-21T02:03:03.533Z"}
+{"level":"info","message":"Tool registered: start_penny_chat","timestamp":"2025-10-21T02:03:03.533Z"}
+{"level":"info","message":"Tool registered: start_testy_chat","timestamp":"2025-10-21T02:03:03.533Z"}
+{"level":"info","message":"Tool registered: start_narky_chat","timestamp":"2025-10-21T02:03:03.533Z"}
+{"level":"info","message":"Tool registered: list_agent_sessions","timestamp":"2025-10-21T02:03:03.533Z"}
+{"level":"info","message":"Tool registered: maintain_chat_sessions","timestamp":"2025-10-21T02:03:03.533Z"}
+{"level":"info","message":"Tool registered: show_session_summary","timestamp":"2025-10-21T02:03:03.533Z"}
+{"level":"info","message":"Tool registered: manage_session_context","timestamp":"2025-10-21T02:03:03.533Z"}
+{"level":"info","message":"Built-in tools initialized successfully (including chat session tools)","timestamp":"2025-10-21T02:03:03.533Z"}
+{"level":"info","message":"MCP components initialized successfully","timestamp":"2025-10-21T02:03:03.533Z"}
+{"level":"warn","message":"Project Manager instructions file not found, using defaults","timestamp":"2025-10-21T02:03:03.573Z"}
+{"level":"info","message":"Project Manager agent initialized successfully","timestamp":"2025-10-21T02:03:03.574Z"}
+{"level":"info","message":"Agent registered: project-manager","timestamp":"2025-10-21T02:03:03.574Z"}
+{"error":{"code":"ENOENT","errno":-2,"path":"/Users/benharper/Coding/HumanAgent-MCP/copilot-instructions.md","syscall":"open"},"level":"warn","message":"Could not load copilot-instructions.md","timestamp":"2025-10-21T02:03:03.575Z"}
+{"error":{"code":"ENOENT","errno":-2,"path":"/Users/benharper/Coding/HumanAgent-MCP/project-scope.md","syscall":"open"},"level":"warn","message":"Could not load project-scope.md","timestamp":"2025-10-21T02:03:03.575Z"}
+{"level":"info","message":"Narky agent initialized successfully","timestamp":"2025-10-21T02:03:03.575Z"}
+{"level":"info","message":"Agent registered: narky","timestamp":"2025-10-21T02:03:03.576Z"}
+{"level":"info","message":"Penny agent initialized successfully","timestamp":"2025-10-21T02:03:03.576Z"}
+{"level":"info","message":"Agent registered: penny","timestamp":"2025-10-21T02:03:03.576Z"}
+{"level":"info","message":"TestyMCTester agent initialized successfully","timestamp":"2025-10-21T02:03:03.576Z"}
+{"level":"info","message":"Agent registered: testy","timestamp":"2025-10-21T02:03:03.576Z"}
+{"level":"info","message":"Built-in agents initialized successfully","timestamp":"2025-10-21T02:03:03.576Z"}
+{"level":"info","message":"AgentChatCoordinator initialized","timestamp":"2025-10-21T02:03:03.576Z"}
+{"level":"info","message":"Agent chat coordinator initialized","timestamp":"2025-10-21T02:03:03.576Z"}
+{"level":"info","message":"Tool registered: agentic-planning","timestamp":"2025-10-21T02:03:03.576Z"}
+{"level":"info","message":"Tool registered: agentic-completion","timestamp":"2025-10-21T02:03:03.576Z"}
+{"level":"info","message":"Tool registered: agentic-security","timestamp":"2025-10-21T02:03:03.576Z"}
+{"level":"info","message":"Tool registered: agentic-testing","timestamp":"2025-10-21T02:03:03.576Z"}
+{"level":"info","message":"Tool registered: human-interaction","timestamp":"2025-10-21T02:03:03.576Z"}
+{"level":"info","message":"Tool registered: start_penny_chat","timestamp":"2025-10-21T02:03:03.576Z"}
+{"level":"info","message":"Tool registered: start_testy_chat","timestamp":"2025-10-21T02:03:03.576Z"}
+{"level":"info","message":"Tool registered: start_narky_chat","timestamp":"2025-10-21T02:03:03.576Z"}
+{"level":"info","message":"Tool registered: list_agent_sessions","timestamp":"2025-10-21T02:03:03.576Z"}
+{"level":"info","message":"Tool registered: maintain_chat_sessions","timestamp":"2025-10-21T02:03:03.576Z"}
+{"level":"info","message":"Tool registered: show_session_summary","timestamp":"2025-10-21T02:03:03.576Z"}
+{"level":"info","message":"Tool registered: manage_session_context","timestamp":"2025-10-21T02:03:03.576Z"}
+{"level":"info","message":"Built-in tools initialized successfully (including chat session tools)","timestamp":"2025-10-21T02:03:03.576Z"}

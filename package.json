@@ -1,0 +1,122 @@
+{
+  "name": "humanagent-mcp",
+  "displayName": "HumanAgent MCP",
+  "description": "MCP server for chatting with a human agent",
+  "version": "0.0.1",
+  "publisher": "benharper",
+  "engines": {
+    "vscode": "^1.105.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "humanagent-mcp.createSession",
+        "title": "Create New Chat Session",
+        "icon": "$(add)"
+      },
+      {
+        "command": "humanagent-mcp.refreshSessions",
+        "title": "Refresh Sessions",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "humanagent-mcp.showStatus",
+        "title": "Show MCP Server Status"
+      },
+      {
+        "command": "humanagent-mcp.openChat",
+        "title": "Open Chat Session"
+      },
+      {
+        "command": "humanagent-mcp.configureMcp",
+        "title": "Configure MCP Server",
+        "icon": "$(settings-gear)"
+      }
+    ],
+    "viewsContainers": {
+      "panel": [
+        {
+          "id": "humanagent-mcp",
+          "title": "HumanAgent Chat",
+          "icon": "$(comment-discussion)"
+        }
+      ]
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "humanagent-mcp.chatSessions",
+          "name": "Chat Sessions",
+          "when": "true",
+          "icon": "$(comment-discussion)"
+        }
+      ],
+      "humanagent-mcp": [
+        {
+          "type": "webview",
+          "id": "humanagent-mcp.chatView",
+          "name": "Chat",
+          "when": "true",
+          "icon": "$(comment)"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "humanagent-mcp.chatSessions",
+        "contents": "No chat sessions found.\n[Create New Session](command:humanagent-mcp.createSession)\nTo learn more about how to use HumanAgent MCP [read our docs](https://github.com/your-username/humanagent-mcp)."
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "humanagent-mcp.createSession",
+          "when": "view == humanagent-mcp.chatSessions",
+          "group": "navigation"
+        },
+        {
+          "command": "humanagent-mcp.refreshSessions",
+          "when": "view == humanagent-mcp.chatSessions",
+          "group": "navigation"
+        },
+        {
+          "command": "humanagent-mcp.configureMcp",
+          "when": "view == humanagent-mcp.chatSessions",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.105.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "@typescript-eslint/eslint-plugin": "^8.45.0",
+    "@typescript-eslint/parser": "^8.45.0",
+    "eslint": "^9.36.0",
+    "typescript": "^5.9.3",
+    "ts-loader": "^9.5.4",
+    "webpack": "^5.102.0",
+    "webpack-cli": "^6.0.1",
+    "@vscode/test-cli": "^0.0.11",
+    "@vscode/test-electron": "^2.5.2"
+  }
+}
