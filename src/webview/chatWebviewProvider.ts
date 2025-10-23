@@ -395,6 +395,14 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
       // Write the file
       fs.writeFileSync(overrideFilePath, JSON.stringify(overrideConfig, null, 2));
       
+      // Update webview to reflect that override file now exists
+      if (this._view) {
+        this._view.webview.postMessage({
+          command: 'updateOverrideFileExists',
+          exists: true
+        });
+      }
+      
       vscode.window.showInformationMessage(
         `Override file created at ${overrideFilePath}. Modify the tool configuration as needed.`,
         'Open File'
@@ -908,7 +916,7 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
                 { text: '📦 Install Globally', action: 'register' },
                 { text: '📁 Install in Workspace', action: 'register' },
                 { text: '📊 Show Status', action: 'requestServerStatus' },
-                { text: '🛠️ Override Prompt', action: 'overridePrompt' }
+                { text: window.overrideFileExists ? '📁 Recreate Override File' : '📁 Create Override File', action: 'overridePrompt' }
               ];
               
               // Check for override file existence even when status unknown
@@ -934,7 +942,7 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
             }
             
             options.push({ text: '📊 Show Status', action: 'requestServerStatus' });
-            options.push({ text: '🛠️ Override Prompt', action: 'overridePrompt' });
+            options.push({ text: window.overrideFileExists ? '📁 Recreate Override File' : '📁 Create Override File', action: 'overridePrompt' });
             
             // Check for HumanAgentOverride.json file existence (passed from extension)
             if (window.overrideFileExists) {
@@ -992,6 +1000,10 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
               // Play notification sound
               console.log('Playing notification sound...');
               playNotificationBeep();
+            } else if (message.command === 'updateOverrideFileExists') {
+              // Update override file existence and refresh cog menu
+              window.overrideFileExists = message.exists;
+              console.log('Updated overrideFileExists to:', message.exists);
             }
           });
 
