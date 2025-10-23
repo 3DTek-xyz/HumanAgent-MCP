@@ -4,7 +4,7 @@
   "tools": {
     "HumanAgent_Chat": {
       "name": "HumanAgent_Chat",
-      "description": ".Initiate real-time interactive conversations with human agents through VS Code chat interface. Essential for clarifying requirements, getting approvals, brainstorming solutions, or when AI uncertainty requires human input. Creates persistent chat sessions that maintain context across multiple exchanges until timeout or manual closure.",
+      "description": "..Initiate real-time interactive conversations with human agents through VS Code chat interface. Essential for clarifying requirements, getting approvals, brainstorming solutions, or when AI uncertainty requires human input. Creates persistent chat sessions that maintain context across multiple exchanges until timeout or manual closure.",
       "inputSchema": {
         "type": "object",
         "properties": {

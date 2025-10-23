@@ -38,6 +38,21 @@
         "command": "humanagent-mcp.configureMcp",
         "title": "Configure MCP Server",
         "icon": "$(settings-gear)"
+      },
+      {
+        "command": "humanagent-mcp.startServer",
+        "title": "Start MCP Server",
+        "icon": "$(play)"
+      },
+      {
+        "command": "humanagent-mcp.stopServer",
+        "title": "Stop MCP Server",
+        "icon": "$(stop)"
+      },
+      {
+        "command": "humanagent-mcp.restartServer",
+        "title": "Restart MCP Server",
+        "icon": "$(debug-restart)"
       }
     ],
     "viewsContainers": {

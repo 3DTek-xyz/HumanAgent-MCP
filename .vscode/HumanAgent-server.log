@@ -1,0 +1,1445 @@
+[2025-10-23T02:09:15.305Z] Starting new server process: node /Users/benharper/Coding/HumanAgent-MCP/dist/mcpStandalone.js
+[2025-10-23T02:09:15.306Z] Started server with PID 15753
+[2025-10-23T02:09:15.306Z] Server process spawned successfully
+[2025-10-23T02:09:15.333Z] [STDOUT] [LOGGER] Attempting to create log file at: /var/folders/l9/1r1f80gj6jz4zslg_fns0tyw0000gn/T/HumanAgent.log
+[LOGGER] Cleared existing log file
+[2025-10-23T02:09:15.335Z] [STDOUT] [DEBUG] Debug logging started at 2025-10-23T02:09:15.333Z 
+[DEBUG] Current system time: Thu Oct 23 2025 13:09:15 GMT+1100 (Australian Eastern Daylight Time) 
+[DEBUG] Log file: /var/folders/l9/1r1f80gj6jz4zslg_fns0tyw0000gn/T/HumanAgent.log 
+[DEBUG] Working directory: /Users/benharper/Coding/HumanAgent-MCP/dist 
+[LOGGER] Debug logger initialized successfully
+[INFO] McpServer initialized
+[2025-10-23T02:09:15.335Z] [STDOUT] [INFO] === MCP SERVER STARTING === 
+[INFO] Starting HTTP server on port 3737...
+[2025-10-23T02:09:15.342Z] [STDOUT] [INFO] MCP HTTP server running on http://127.0.0.1:3737/mcp
+[2025-10-23T02:09:15.342Z] [STDOUT] {"type":"notification","method":"server/started","params":{"name":"HumanAgent MCP Server","version":"1.0.0","capabilities":{"chat":true,"tools":true,"resources":false}}}
+[2025-10-23T02:09:15.342Z] [STDERR] HumanAgent MCP Server started successfully
+[2025-10-23T02:09:18.310Z] Server started successfully and is responding
+[2025-10-23T02:09:18.934Z] [STDOUT] [HTTP] POST /mcp
+[2025-10-23T02:09:18.934Z] [STDOUT] [HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'content-type': 'application/json',
+  accept: 'text/event-stream, application/json',
+  'accept-language': '*',
+  'sec-fetch-mode': 'cors',
+  'user-agent': 'undici',
+  'accept-encoding': 'gzip, deflate',
+  'content-length': '228'
+}
+[2025-10-23T02:09:18.935Z] [STDOUT] [HTTP] Handling POST request to /mcp
+[2025-10-23T02:09:18.935Z] [STDOUT] [HTTP] Received chunk: 228 bytes
+[2025-10-23T02:09:18.935Z] [STDOUT] [HTTP] Complete request body received (228 bytes)
+[2025-10-23T02:09:18.935Z] [STDOUT] [HTTP] Request Body: {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{"roots":{"listChanged":true},"sampling":{},"elicitation":{}},"clientInfo":{"name":"Visual Studio Code","version":"1.105.1"}}}
+[2025-10-23T02:09:18.935Z] [STDOUT] [HTTP] Parsed JSON message: {
+  jsonrpc: '2.0',
+  id: 1,
+  method: 'initialize',
+  params: {
+    protocolVersion: '2025-06-18',
+    capabilities: { roots: [Object], sampling: {}, elicitation: {} },
+    clientInfo: { name: 'Visual Studio Code', version: '1.105.1' }
+  }
+}
+[2025-10-23T02:09:18.936Z] [STDOUT] [MCP] Handling message: {
+  jsonrpc: '2.0',
+  id: 1,
+  method: 'initialize',
+  params: {
+    protocolVersion: '2025-06-18',
+    capabilities: { roots: [Object], sampling: {}, elicitation: {} },
+    clientInfo: { name: 'Visual Studio Code', version: '1.105.1' }
+  }
+}
+[MCP] Processing initialize request
+[2025-10-23T02:09:18.936Z] [STDOUT] [HTTP] Response from handleMessage: {
+  id: 1,
+  type: 'response',
+  result: {
+    protocolVersion: '2024-11-05',
+    capabilities: { chat: true, tools: true, resources: false },
+    serverInfo: { name: 'HumanAgent MCP Server', version: '1.0.0' }
+  }
+}
+[2025-10-23T02:09:18.936Z] [STDOUT] [HTTP] Sending 200 response (192 bytes)
+[2025-10-23T02:09:18.945Z] [STDOUT] [HTTP] GET /mcp 
+[HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  accept: 'text/event-stream',
+  'accept-language': '*',
+  'sec-fetch-mode': 'cors',
+  'user-agent': 'undici',
+  'accept-encoding': 'gzip, deflate'
+}
+[HTTP] Handling GET request to /mcp 
+[HTTP] Setting up SSE stream for GET request 
+[HTTP] Added SSE connection. Total connections: 1
+[2025-10-23T02:09:18.946Z] [STDOUT] [HTTP] POST /mcp 
+[HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'content-type': 'application/json',
+  accept: 'text/event-stream, application/json',
+  'accept-language': '*',
+  'sec-fetch-mode': 'cors',
+  'user-agent': 'undici',
+  'accept-encoding': 'gzip, deflate',
+  'content-length': '54'
+}
+[HTTP] Handling POST request to /mcp 
+[HTTP] Received chunk: 54 bytes 
+[HTTP] Complete request body received (54 bytes) 
+[HTTP] Request Body: {"method":"notifications/initialized","jsonrpc":"2.0"}
+[2025-10-23T02:09:18.946Z] [STDOUT] [HTTP] Parsed JSON message: { method: 'notifications/initialized', jsonrpc: '2.0' }
+[2025-10-23T02:09:18.946Z] [STDOUT] [MCP] Handling message: { method: 'notifications/initialized', jsonrpc: '2.0' }
+[MCP] Processing notifications/initialized (ignoring) 
+[HTTP] Response from handleMessage: 
+[HTTP] Sending 202 response (no content)
+[2025-10-23T02:09:18.946Z] [STDOUT] [HTTP] POST /mcp 
+[HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'content-type': 'application/json',
+  accept: 'text/event-stream, application/json',
+  'accept-language': '*',
+  'sec-fetch-mode': 'cors',
+  'user-agent': 'undici',
+  'accept-encoding': 'gzip, deflate',
+  'content-length': '58'
+}
+[HTTP] Handling POST request to /mcp 
+[HTTP] Received chunk: 58 bytes 
+[HTTP] Complete request body received (58 bytes) 
+[HTTP] Request Body: {"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}
+[HTTP] Parsed JSON message: { jsonrpc: '2.0', id: 2, method: 'tools/list', params: {} }
+[MCP] Handling message: { jsonrpc: '2.0', id: 2, method: 'tools/list', params: {} }
+[MCP] Processing tools/list request 
+[TOOLS] tools/list request - Extension sessionId: undefined, Message params: {}
+[2025-10-23T02:09:18.946Z] [STDOUT] [TOOLS] Final sessionIdToUse: default
+[2025-10-23T02:09:18.947Z] [STDOUT] [TOOLS] Returning 1 tools for session: default 
+[TOOLS] Using default tools (no session ID available) 
+[HTTP] Response from handleMessage: { id: 2, type: 'response', result: { tools: [ [Object] ] } }
+[2025-10-23T02:09:18.947Z] [STDOUT] [HTTP] Sending 200 response (1071 bytes)
+[2025-10-23T02:09:20.320Z] [STDOUT] [HTTP] GET /sessions
+[2025-10-23T02:09:20.321Z] [STDOUT] [HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  accept: '*/*',
+  'accept-language': '*',
+  'sec-fetch-mode': 'cors',
+  'user-agent': 'node',
+  'accept-encoding': 'gzip, deflate'
+}
+[2025-10-23T02:09:20.326Z] [STDOUT] [HTTP] POST /mcp
+[2025-10-23T02:09:20.326Z] [STDOUT] [HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'content-type': 'application/json',
+  accept: '*/*',
+  'accept-language': '*',
+  'sec-fetch-mode': 'cors',
+  'user-agent': 'node',
+  'accept-encoding': 'gzip, deflate',
+  'content-length': '82'
+}
+[HTTP] Handling POST request to /mcp 
+[HTTP] Received chunk: 82 bytes
+[2025-10-23T02:09:20.326Z] [STDOUT] [HTTP] Complete request body received (82 bytes) 
+[HTTP] Request Body: {"sessionId":"session-a8f49eee-068c-42f1-b611-14651fa5ccc6","method":"tools/list"}
+[HTTP] Parsed JSON message: {
+  sessionId: 'session-a8f49eee-068c-42f1-b611-14651fa5ccc6',
+  method: 'tools/list'
+}
+[MCP] Handling message: {
+  sessionId: 'session-a8f49eee-068c-42f1-b611-14651fa5ccc6',
+  method: 'tools/list'
+}
+[MCP] Processing tools/list request 
+[TOOLS] tools/list request - Extension sessionId: undefined, Message params: undefined 
+[TOOLS] Final sessionIdToUse: default 
+[TOOLS] Returning 1 tools for session: default 
+[TOOLS] Using default tools (no session ID available)
+[2025-10-23T02:09:20.326Z] [STDOUT] [HTTP] Response from handleMessage: { id: undefined, type: 'response', result: { tools: [ [Object] ] } }
+[HTTP] Sending 200 response (1064 bytes)
+[2025-10-23T02:09:20.332Z] [STDOUT] [HTTP] POST /sessions/register 
+[HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'content-type': 'application/json',
+  accept: '*/*',
+  'accept-language': '*',
+  'sec-fetch-mode': 'cors',
+  'user-agent': 'node',
+  'accept-encoding': 'gzip, deflate',
+  'content-length': '1794'
+}
+[2025-10-23T02:09:20.333Z] [STDOUT] [INFO] Initializing tools for session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6 from override data 
+[INFO] Override data received: {"version":"1.0.0","description":"HumanAgent MCP Tool Overrides for this workspace. Modify tool configurations below to customize MCP server behavior.","tools":{"HumanAgent_Chat":{"name":"HumanAgent_Chat","description":".Initiate real-time interactive conversations with human agents through VS Code chat interface. Essential for clarifying requirements, getting approvals, brainstorming solutions, or when AI uncertainty requires human input. Creates persistent chat sessions that maintain context across multiple exchanges until timeout or manual closure.","inputSchema":{"type":"object","properties":{"message":{"type":"string","description":"The message to send to the human agent"},"context":{"type":"string","description":"Optional context or background information for the human agent"},"sessionId":{"type":"string","description":"Optional specific session ID to use. If not provided, a new session will be created."},"priority":{"type":"string","enum":["low","normal","high","urgent"],"description":"Priority level of the request","default":"normal"},"timeout":{"type":"number","description":"Timeout in seconds to wait for human response (default: 300)","default":300}},"required":["message"]}},"example_custom_tool":{"name":"example_custom_tool","description":"Brief description of what this tool does and its main purpose. Include key usage notes and important warnings when applicable.","inputSchema":{"type":"object","properties":{"input_param":{"type":"string","description":"What this parameter does and how it should be formatted"},"optional_param":{"type":"number","description":"Optional parameter with default behavior explained","default":100}},"required":["input_param"]}}}}
+[2025-10-23T02:09:20.336Z] [STDOUT] [INFO] Added default tool: HumanAgent_Chat 
+[INFO] Applying 2 tool overrides for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6 
+[INFO] Processing override for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6 - HumanAgent_Chat tool: {"name":"HumanAgent_Chat","description":".Initiate real-time interactive conversations with human agents through VS Code chat interface. Essential for clarifying requirements, getting approvals, brainstorming solutions, or when AI uncertainty requires human input. Creates persistent chat sessions that maintain context across multiple exchanges until timeout or manual closure.","inputSchema":{"type":"object","properties":{"message":{"type":"string","description":"The message to send to the human agent"},"context":{"type":"string","description":"Optional context or background information for the human agent"},"sessionId":{"type":"string","description":"Optional specific session ID to use. If not provided, a new session will be created."},"priority":{"type":"string","enum":["low","normal","high","urgent"],"description":"Priority level of the request","default":"normal"},"timeout":{"type":"number","description":"Timeout in seconds to wait for human response (default: 300)","default":300}},"required":["message"]}} 
+[INFO] Processing override for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6 - example_custom_tool tool: {"name":"example_custom_tool","description":"Brief description of what this tool does and its main purpose. Include key usage notes and important warnings when applicable.","inputSchema":{"type":"object","properties":{"input_param":{"type":"string","description":"What this parameter does and how it should be formatted"},"optional_param":{"type":"number","description":"Optional parameter with default behavior explained","default":100}},"required":["input_param"]}} 
+[INFO] Session session-a8f49eee-068c-42f1-b611-14651fa5ccc6 tools initialized with 2 tools 
+[INFO] Session registered: session-a8f49eee-068c-42f1-b611-14651fa5ccc6 (1 total sessions)
+[2025-10-23T02:09:20.420Z] [STDOUT] [HTTP] OPTIONS /mcp
+[2025-10-23T02:09:20.421Z] [STDOUT] [HTTP] Request Headers: {
+  host: 'localhost:3737',
+  connection: 'keep-alive',
+  accept: '*/*',
+  'access-control-request-method': 'GET',
+  'access-control-request-headers': 'cache-control',
+  origin: 'vscode-webview://06ntb21jilovkpqhp3n8qs6oen2rlig4drgi2amm3ehub2r9bg30',
+  'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.105.1 Chrome/138.0.7204.251 Electron/37.6.0 Safari/537.36',
+  'sec-fetch-mode': 'cors',
+  'sec-fetch-site': 'cross-site',
+  'sec-fetch-dest': 'empty',
+  'accept-encoding': 'gzip, deflate, br, zstd',
+  'accept-language': 'en-GB'
+}
+[2025-10-23T02:09:20.421Z] [STDOUT] [HTTP] Handling OPTIONS preflight request
+[2025-10-23T02:09:20.423Z] [STDOUT] [HTTP] GET /mcp
+[2025-10-23T02:09:20.423Z] [STDOUT] [HTTP] Request Headers: {
+  host: 'localhost:3737',
+  connection: 'keep-alive',
+  'sec-ch-ua-platform': '"macOS"',
+  'cache-control': 'no-cache',
+  'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.105.1 Chrome/138.0.7204.251 Electron/37.6.0 Safari/537.36',
+  accept: 'text/event-stream',
+  'sec-ch-ua': '"Not)A;Brand";v="8", "Chromium";v="138"',
+  'sec-ch-ua-mobile': '?0',
+  origin: 'vscode-webview://06ntb21jilovkpqhp3n8qs6oen2rlig4drgi2amm3ehub2r9bg30',
+  'sec-fetch-site': 'cross-site',
+  'sec-fetch-mode': 'cors',
+  'sec-fetch-dest': 'empty',
+  'accept-encoding': 'gzip, deflate, br, zstd',
+  'accept-language': 'en-GB'
+}
+[HTTP] Handling GET request to /mcp 
+[HTTP] Setting up SSE stream for GET request 
+[HTTP] Added SSE connection. Total connections: 2
+[2025-10-23T02:09:21.763Z] [STDOUT] [HTTP] SSE connection closed 
+[HTTP] Removed SSE connection. Total connections: 1 
+[HTTP] SSE connection closed 
+[HTTP] Removed SSE connection. Total connections: 1
+[2025-10-23T02:09:21.792Z] [STDOUT] [HTTP] POST /mcp 
+[HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'content-type': 'application/json',
+  accept: 'text/event-stream, application/json',
+  'accept-language': '*',
+  'sec-fetch-mode': 'cors',
+  'user-agent': 'undici',
+  'accept-encoding': 'gzip, deflate',
+  'content-length': '228'
+}
+[2025-10-23T02:09:21.793Z] [STDOUT] [HTTP] Handling POST request to /mcp 
+[HTTP] Received chunk: 228 bytes
+[2025-10-23T02:09:21.793Z] [STDOUT] [HTTP] Complete request body received (228 bytes) 
+[HTTP] Request Body: {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{"roots":{"listChanged":true},"sampling":{},"elicitation":{}},"clientInfo":{"name":"Visual Studio Code","version":"1.105.1"}}}
+[HTTP] Parsed JSON message: {
+  jsonrpc: '2.0',
+  id: 1,
+  method: 'initialize',
+  params: {
+    protocolVersion: '2025-06-18',
+    capabilities: { roots: [Object], sampling: {}, elicitation: {} },
+    clientInfo: { name: 'Visual Studio Code', version: '1.105.1' }
+  }
+}
+[2025-10-23T02:09:21.793Z] [STDOUT] [MCP] Handling message: {
+  jsonrpc: '2.0',
+  id: 1,
+  method: 'initialize',
+  params: {
+    protocolVersion: '2025-06-18',
+    capabilities: { roots: [Object], sampling: {}, elicitation: {} },
+    clientInfo: { name: 'Visual Studio Code', version: '1.105.1' }
+  }
+}
+[MCP] Processing initialize request
+[2025-10-23T02:09:21.793Z] [STDOUT] [HTTP] Response from handleMessage: {
+  id: 1,
+  type: 'response',
+  result: {
+    protocolVersion: '2024-11-05',
+    capabilities: { chat: true, tools: true, resources: false },
+    serverInfo: { name: 'HumanAgent MCP Server', version: '1.0.0' }
+  }
+}
+[2025-10-23T02:09:21.793Z] [STDOUT] [HTTP] Sending 200 response (192 bytes)
+[2025-10-23T02:09:21.796Z] [STDOUT] [HTTP] POST /mcp 
+[HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'content-type': 'application/json',
+  accept: 'text/event-stream, application/json',
+  'accept-language': '*',
+  'sec-fetch-mode': 'cors',
+  'user-agent': 'undici',
+  'accept-encoding': 'gzip, deflate',
+  'content-length': '54'
+}
+[HTTP] Handling POST request to /mcp 
+[HTTP] Received chunk: 54 bytes 
+[HTTP] Complete request body received (54 bytes) 
+[HTTP] Request Body: {"method":"notifications/initialized","jsonrpc":"2.0"}
+[HTTP] Parsed JSON message: { method: 'notifications/initialized', jsonrpc: '2.0' }
+[MCP] Handling message: { method: 'notifications/initialized', jsonrpc: '2.0' }
+[2025-10-23T02:09:21.796Z] [STDOUT] [MCP] Processing notifications/initialized (ignoring) 
+[HTTP] Response from handleMessage: 
+[HTTP] Sending 202 response (no content)
+[2025-10-23T02:09:21.796Z] [STDOUT] [HTTP] POST /mcp 
+[HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'content-type': 'application/json',
+  accept: 'text/event-stream, application/json',
+  'accept-language': '*',
+  'sec-fetch-mode': 'cors',
+  'user-agent': 'undici',
+  'accept-encoding': 'gzip, deflate',
+  'content-length': '58'
+}
+[HTTP] Handling POST request to /mcp 
+[HTTP] Received chunk: 58 bytes 
+[HTTP] Complete request body received (58 bytes) 
+[HTTP] Request Body: {"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}
+[HTTP] Parsed JSON message: { jsonrpc: '2.0', id: 2, method: 'tools/list', params: {} }
+[2025-10-23T02:09:21.796Z] [STDOUT] [MCP] Handling message: { jsonrpc: '2.0', id: 2, method: 'tools/list', params: {} }
+[2025-10-23T02:09:21.797Z] [STDOUT] [MCP] Processing tools/list request 
+[TOOLS] tools/list request - Extension sessionId: undefined, Message params: {} 
+[TOOLS] Final sessionIdToUse: default 
+[TOOLS] Returning 1 tools for session: default 
+[TOOLS] Using default tools (no session ID available)
+[2025-10-23T02:09:21.797Z] [STDOUT] [HTTP] Response from handleMessage: { id: 2, type: 'response', result: { tools: [ [Object] ] } }
+[2025-10-23T02:09:21.797Z] [STDOUT] [HTTP] Sending 200 response (1071 bytes)
+[2025-10-23T02:09:21.798Z] [STDOUT] [HTTP] GET /mcp 
+[HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  accept: 'text/event-stream',
+  'accept-language': '*',
+  'sec-fetch-mode': 'cors',
+  'user-agent': 'undici',
+  'accept-encoding': 'gzip, deflate'
+}
+[HTTP] Handling GET request to /mcp 
+[HTTP] Setting up SSE stream for GET request 
+[HTTP] Added SSE connection. Total connections: 2
+[2025-10-23T02:09:28.714Z] [STDOUT] [HTTP] GET /mcp
+[2025-10-23T02:09:28.714Z] [STDOUT] [HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'cache-control': 'max-age=0',
+  'sec-ch-ua': '"Google Chrome";v="141", "Not?A_Brand";v="8", "Chromium";v="141"',
+  'sec-ch-ua-mobile': '?0',
+  'sec-ch-ua-platform': '"macOS"',
+  'upgrade-insecure-requests': '1',
+  'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36',
+  accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+  'sec-fetch-site': 'none',
+  'sec-fetch-mode': 'navigate',
+  'sec-fetch-user': '?1',
+  'sec-fetch-dest': 'document',
+  'accept-encoding': 'gzip, deflate, br, zstd',
+  'accept-language': 'en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6'
+}
+[HTTP] Handling GET request to /mcp 
+[HTTP] Setting up SSE stream for GET request 
+[HTTP] Added SSE connection. Total connections: 3
+[2025-10-23T02:09:29.715Z] [STDOUT] [HTTP] SSE connection closed
+[2025-10-23T02:09:29.716Z] [STDOUT] [HTTP] Removed SSE connection. Total connections: 2 
+[HTTP] SSE connection closed 
+[HTTP] Removed SSE connection. Total connections: 2
+[2025-10-23T02:09:30.680Z] [STDOUT] [HTTP] GET /mcp
+[2025-10-23T02:09:30.681Z] [STDOUT] [HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'cache-control': 'max-age=0',
+  'sec-ch-ua': '"Google Chrome";v="141", "Not?A_Brand";v="8", "Chromium";v="141"',
+  'sec-ch-ua-mobile': '?0',
+  'sec-ch-ua-platform': '"macOS"',
+  'upgrade-insecure-requests': '1',
+  'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36',
+  accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+  'sec-fetch-site': 'none',
+  'sec-fetch-mode': 'navigate',
+  'sec-fetch-user': '?1',
+  'sec-fetch-dest': 'document',
+  'accept-encoding': 'gzip, deflate, br, zstd',
+  'accept-language': 'en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6'
+}
+[HTTP] Handling GET request to /mcp 
+[HTTP] Setting up SSE stream for GET request 
+[HTTP] Added SSE connection. Total connections: 3
+[2025-10-23T02:09:38.325Z] [STDOUT] [HTTP] SSE connection closed
+[2025-10-23T02:09:38.326Z] [STDOUT] [HTTP] Removed SSE connection. Total connections: 2 
+[HTTP] SSE connection closed 
+[HTTP] Removed SSE connection. Total connections: 2
+[2025-10-23T02:09:39.069Z] [STDOUT] [HTTP] GET /mcp
+[2025-10-23T02:09:39.069Z] [STDOUT] [HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'cache-control': 'max-age=0',
+  'sec-ch-ua': '"Google Chrome";v="141", "Not?A_Brand";v="8", "Chromium";v="141"',
+  'sec-ch-ua-mobile': '?0',
+  'sec-ch-ua-platform': '"macOS"',
+  'upgrade-insecure-requests': '1',
+  'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36',
+  accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+  'sec-fetch-site': 'none',
+  'sec-fetch-mode': 'navigate',
+  'sec-fetch-user': '?1',
+  'sec-fetch-dest': 'document',
+  'accept-encoding': 'gzip, deflate, br, zstd',
+  'accept-language': 'en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6'
+}
+[HTTP] Handling GET request to /mcp 
+[HTTP] Setting up SSE stream for GET request 
+[HTTP] Added SSE connection. Total connections: 3
+[2025-10-23T02:09:47.580Z] [STDOUT] [HTTP] SSE connection closed 
+[HTTP] Removed SSE connection. Total connections: 2 
+[HTTP] SSE connection closed
+[2025-10-23T02:09:47.581Z] [STDOUT] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-23T02:09:47.605Z] [STDOUT] [HTTP] POST /mcp 
+[HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'content-type': 'application/json',
+  accept: 'text/event-stream, application/json',
+  'accept-language': '*',
+  'sec-fetch-mode': 'cors',
+  'user-agent': 'undici',
+  'accept-encoding': 'gzip, deflate',
+  'content-length': '228'
+}
+[HTTP] Handling POST request to /mcp
+[2025-10-23T02:09:47.606Z] [STDOUT] [HTTP] Received chunk: 228 bytes 
+[HTTP] Complete request body received (228 bytes) 
+[HTTP] Request Body: {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{"roots":{"listChanged":true},"sampling":{},"elicitation":{}},"clientInfo":{"name":"Visual Studio Code","version":"1.105.1"}}}
+[HTTP] Parsed JSON message: {
+  jsonrpc: '2.0',
+  id: 1,
+  method: 'initialize',
+  params: {
+    protocolVersion: '2025-06-18',
+    capabilities: { roots: [Object], sampling: {}, elicitation: {} },
+    clientInfo: { name: 'Visual Studio Code', version: '1.105.1' }
+  }
+}
+[MCP] Handling message: {
+  jsonrpc: '2.0',
+  id: 1,
+  method: 'initialize',
+  params: {
+    protocolVersion: '2025-06-18',
+    capabilities: { roots: [Object], sampling: {}, elicitation: {} },
+    clientInfo: { name: 'Visual Studio Code', version: '1.105.1' }
+  }
+}
+[MCP] Processing initialize request 
+[HTTP] Response from handleMessage: {
+  id: 1,
+  type: 'response',
+  result: {
+    protocolVersion: '2024-11-05',
+    capabilities: { chat: true, tools: true, resources: false },
+    serverInfo: { name: 'HumanAgent MCP Server', version: '1.0.0' }
+  }
+}
+[HTTP] Sending 200 response (192 bytes)
+[2025-10-23T02:09:47.610Z] [STDOUT] [HTTP] GET /mcp 
+[HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  accept: 'text/event-stream',
+  'accept-language': '*',
+  'sec-fetch-mode': 'cors',
+  'user-agent': 'undici',
+  'accept-encoding': 'gzip, deflate'
+}
+[HTTP] Handling GET request to /mcp 
+[HTTP] Setting up SSE stream for GET request 
+[HTTP] Added SSE connection. Total connections: 3
+[2025-10-23T02:09:47.615Z] [STDOUT] [HTTP] POST /mcp 
+[HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'content-type': 'application/json',
+  accept: 'text/event-stream, application/json',
+  'accept-language': '*',
+  'sec-fetch-mode': 'cors',
+  'user-agent': 'undici',
+  'accept-encoding': 'gzip, deflate',
+  'content-length': '58'
+}
+[HTTP] Handling POST request to /mcp 
+[HTTP] Received chunk: 58 bytes 
+[HTTP] Complete request body received (58 bytes) 
+[HTTP] Request Body: {"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}
+[HTTP] Parsed JSON message: { jsonrpc: '2.0', id: 2, method: 'tools/list', params: {} }
+[MCP] Handling message: { jsonrpc: '2.0', id: 2, method: 'tools/list', params: {} }
+[MCP] Processing tools/list request 
+[TOOLS] tools/list request - Extension sessionId: undefined, Message params: {} 
+[TOOLS] Final sessionIdToUse: default 
+[TOOLS] Returning 1 tools for session: default 
+[TOOLS] Using default tools (no session ID available) 
+[HTTP] Response from handleMessage: { id: 2, type: 'response', result: { tools: [ [Object] ] } }
+[HTTP] Sending 200 response (1071 bytes) 
+[HTTP] POST /mcp 
+[HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'content-type': 'application/json',
+  accept: 'text/event-stream, application/json',
+  'accept-language': '*',
+  'sec-fetch-mode': 'cors',
+  'user-agent': 'undici',
+  'accept-encoding': 'gzip, deflate',
+  'content-length': '54'
+}
+[HTTP] Handling POST request to /mcp 
+[HTTP] Received chunk: 54 bytes 
+[HTTP] Complete request body received (54 bytes) 
+[HTTP] Request Body: {"method":"notifications/initialized","jsonrpc":"2.0"}
+[HTTP] Parsed JSON message: { method: 'notifications/initialized', jsonrpc: '2.0' }
+[MCP] Handling message: { method: 'notifications/initialized', jsonrpc: '2.0' }
+[MCP] Processing notifications/initialized (ignoring) 
+[HTTP] Response from handleMessage: 
+[HTTP] Sending 202 response (no content)
+[2025-10-23T02:09:48.105Z] [STDOUT] [HTTP] SSE connection closed 
+[HTTP] Removed SSE connection. Total connections: 2 
+[HTTP] SSE connection closed 
+[HTTP] Removed SSE connection. Total connections: 2
+[2025-10-23T02:09:48.124Z] [STDOUT] [HTTP] POST /mcp
+[2025-10-23T02:09:48.124Z] [STDOUT] [HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'content-type': 'application/json',
+  accept: 'text/event-stream, application/json',
+  'accept-language': '*',
+  'sec-fetch-mode': 'cors',
+  'user-agent': 'undici',
+  'accept-encoding': 'gzip, deflate',
+  'content-length': '228'
+}
+[HTTP] Handling POST request to /mcp
+[2025-10-23T02:09:48.124Z] [STDOUT] [HTTP] Received chunk: 228 bytes 
+[HTTP] Complete request body received (228 bytes) 
+[HTTP] Request Body: {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{"roots":{"listChanged":true},"sampling":{},"elicitation":{}},"clientInfo":{"name":"Visual Studio Code","version":"1.105.1"}}}
+[2025-10-23T02:09:48.125Z] [STDOUT] [HTTP] Parsed JSON message: {
+  jsonrpc: '2.0',
+  id: 1,
+  method: 'initialize',
+  params: {
+    protocolVersion: '2025-06-18',
+    capabilities: { roots: [Object], sampling: {}, elicitation: {} },
+    clientInfo: { name: 'Visual Studio Code', version: '1.105.1' }
+  }
+}
+[MCP] Handling message: {
+  jsonrpc: '2.0',
+  id: 1,
+  method: 'initialize',
+  params: {
+    protocolVersion: '2025-06-18',
+    capabilities: { roots: [Object], sampling: {}, elicitation: {} },
+    clientInfo: { name: 'Visual Studio Code', version: '1.105.1' }
+  }
+}
+[MCP] Processing initialize request
+[2025-10-23T02:09:48.125Z] [STDOUT] [HTTP] Response from handleMessage: {
+  id: 1,
+  type: 'response',
+  result: {
+    protocolVersion: '2024-11-05',
+    capabilities: { chat: true, tools: true, resources: false },
+    serverInfo: { name: 'HumanAgent MCP Server', version: '1.0.0' }
+  }
+}
+[HTTP] Sending 200 response (192 bytes)
+[2025-10-23T02:09:48.128Z] [STDOUT] [HTTP] POST /mcp 
+[HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'content-type': 'application/json',
+  accept: 'text/event-stream, application/json',
+  'accept-language': '*',
+  'sec-fetch-mode': 'cors',
+  'user-agent': 'undici',
+  'accept-encoding': 'gzip, deflate',
+  'content-length': '54'
+}
+[HTTP] Handling POST request to /mcp 
+[HTTP] Received chunk: 54 bytes 
+[HTTP] Complete request body received (54 bytes) 
+[HTTP] Request Body: {"method":"notifications/initialized","jsonrpc":"2.0"}
+[HTTP] Parsed JSON message: { method: 'notifications/initialized', jsonrpc: '2.0' }
+[MCP] Handling message: { method: 'notifications/initialized', jsonrpc: '2.0' }
+[MCP] Processing notifications/initialized (ignoring) 
+[HTTP] Response from handleMessage: 
+[HTTP] Sending 202 response (no content)
+[2025-10-23T02:09:48.128Z] [STDOUT] [HTTP] POST /mcp 
+[HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'content-type': 'application/json',
+  accept: 'text/event-stream, application/json',
+  'accept-language': '*',
+  'sec-fetch-mode': 'cors',
+  'user-agent': 'undici',
+  'accept-encoding': 'gzip, deflate',
+  'content-length': '58'
+}
+[HTTP] Handling POST request to /mcp 
+[HTTP] Received chunk: 58 bytes 
+[HTTP] Complete request body received (58 bytes) 
+[HTTP] Request Body: {"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}
+[HTTP] Parsed JSON message: { jsonrpc: '2.0', id: 2, method: 'tools/list', params: {} }
+[MCP] Handling message: { jsonrpc: '2.0', id: 2, method: 'tools/list', params: {} }
+[MCP] Processing tools/list request 
+[TOOLS] tools/list request - Extension sessionId: undefined, Message params: {} 
+[TOOLS] Final sessionIdToUse: default 
+[TOOLS] Returning 1 tools for session: default 
+[TOOLS] Using default tools (no session ID available) 
+[HTTP] Response from handleMessage: { id: 2, type: 'response', result: { tools: [ [Object] ] } }
+[HTTP] Sending 200 response (1071 bytes)
+[2025-10-23T02:09:48.129Z] [STDOUT] [HTTP] GET /mcp 
+[HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  accept: 'text/event-stream',
+  'accept-language': '*',
+  'sec-fetch-mode': 'cors',
+  'user-agent': 'undici',
+  'accept-encoding': 'gzip, deflate'
+}
+[HTTP] Handling GET request to /mcp 
+[HTTP] Setting up SSE stream for GET request 
+[HTTP] Added SSE connection. Total connections: 3
+[2025-10-23T02:09:50.764Z] [STDOUT] [HTTP] SSE connection closed
+[2025-10-23T02:09:50.764Z] [STDOUT] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-23T02:09:50.765Z] [STDOUT] [HTTP] SSE connection closed 
+[HTTP] Removed SSE connection. Total connections: 2
+[2025-10-23T02:09:51.558Z] [STDOUT] [HTTP] GET /mcp
+[2025-10-23T02:09:51.559Z] [STDOUT] [HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'cache-control': 'max-age=0',
+  'sec-ch-ua': '"Google Chrome";v="141", "Not?A_Brand";v="8", "Chromium";v="141"',
+  'sec-ch-ua-mobile': '?0',
+  'sec-ch-ua-platform': '"macOS"',
+  'upgrade-insecure-requests': '1',
+  'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36',
+  accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+  'sec-fetch-site': 'none',
+  'sec-fetch-mode': 'navigate',
+  'sec-fetch-user': '?1',
+  'sec-fetch-dest': 'document',
+  'accept-encoding': 'gzip, deflate, br, zstd',
+  'accept-language': 'en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6'
+}
+[HTTP] Handling GET request to /mcp 
+[HTTP] Setting up SSE stream for GET request 
+[HTTP] Added SSE connection. Total connections: 3
+[2025-10-23T02:10:03.616Z] [STDOUT] [HTTP] SSE connection closed 
+[HTTP] Removed SSE connection. Total connections: 2 
+[HTTP] SSE connection closed 
+[HTTP] Removed SSE connection. Total connections: 2
+[2025-10-23T02:10:19.592Z] [STDOUT] [HTTP] DELETE /sessions/unregister 
+[HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'content-type': 'application/json',
+  accept: '*/*',
+  'accept-language': '*',
+  'sec-fetch-mode': 'cors',
+  'user-agent': 'node',
+  'accept-encoding': 'gzip, deflate',
+  'content-length': '60'
+}
+[2025-10-23T02:10:19.593Z] [STDOUT] [INFO] Session unregistered and cleaned up: session-a8f49eee-068c-42f1-b611-14651fa5ccc6 (0 total sessions)
+[2025-10-23T02:10:19.595Z] ServerManager disposed
+[2025-10-23T02:10:19.595Z] [STDOUT] [HTTP] SSE connection closed 
+[HTTP] Removed SSE connection. Total connections: 1 
+[HTTP] SSE connection closed 
+[HTTP] Removed SSE connection. Total connections: 1
+[2025-10-23T02:11:31.493Z] Starting new server process: node /Users/benharper/Coding/HumanAgent-MCP/dist/mcpStandalone.js
+[2025-10-23T02:11:31.494Z] Started server with PID 16638
+[2025-10-23T02:11:31.494Z] Server process spawned successfully
+[2025-10-23T02:11:31.520Z] [STDOUT] [LOGGER] Attempting to create log file at: /var/folders/l9/1r1f80gj6jz4zslg_fns0tyw0000gn/T/HumanAgent.log
+[LOGGER] Cleared existing log file
+[2025-10-23T02:11:31.523Z] [STDOUT] [DEBUG] Debug logging started at 2025-10-23T02:11:31.521Z 
+[DEBUG] Current system time: Thu Oct 23 2025 13:11:31 GMT+1100 (Australian Eastern Daylight Time) 
+[DEBUG] Log file: /var/folders/l9/1r1f80gj6jz4zslg_fns0tyw0000gn/T/HumanAgent.log 
+[DEBUG] Working directory: /Users/benharper/Coding/HumanAgent-MCP/dist 
+[LOGGER] Debug logger initialized successfully
+[2025-10-23T02:11:31.523Z] [STDOUT] [INFO] McpServer initialized
+[2025-10-23T02:11:31.524Z] [STDOUT] [INFO] === MCP SERVER STARTING === 
+[INFO] Starting HTTP server on port 3737...
+[2025-10-23T02:11:31.533Z] [STDOUT] [INFO] MCP HTTP server running on http://127.0.0.1:3737/mcp 
+{"type":"notification","method":"server/started","params":{"name":"HumanAgent MCP Server","version":"1.0.0","capabilities":{"chat":true,"tools":true,"resources":false}}}
+[2025-10-23T02:11:31.533Z] [STDERR] HumanAgent MCP Server started successfully
+[2025-10-23T02:11:34.496Z] Server started successfully and is responding
+[2025-10-23T02:11:36.515Z] [STDOUT] [HTTP] GET /sessions
+[2025-10-23T02:11:36.516Z] [STDOUT] [HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  accept: '*/*',
+  'accept-language': '*',
+  'sec-fetch-mode': 'cors',
+  'user-agent': 'node',
+  'accept-encoding': 'gzip, deflate'
+}
+[2025-10-23T02:11:36.524Z] [STDOUT] [HTTP] POST /mcp 
+[HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'content-type': 'application/json',
+  accept: '*/*',
+  'accept-language': '*',
+  'sec-fetch-mode': 'cors',
+  'user-agent': 'node',
+  'accept-encoding': 'gzip, deflate',
+  'content-length': '82'
+}
+[HTTP] Handling POST request to /mcp
+[2025-10-23T02:11:36.526Z] [STDOUT] [HTTP] Received chunk: 82 bytes 
+[HTTP] Complete request body received (82 bytes) 
+[HTTP] Request Body: {"sessionId":"session-a8f49eee-068c-42f1-b611-14651fa5ccc6","method":"tools/list"}
+[HTTP] Parsed JSON message: {
+  sessionId: 'session-a8f49eee-068c-42f1-b611-14651fa5ccc6',
+  method: 'tools/list'
+}
+[MCP] Handling message: {
+  sessionId: 'session-a8f49eee-068c-42f1-b611-14651fa5ccc6',
+  method: 'tools/list'
+}
+[MCP] Processing tools/list request 
+[TOOLS] tools/list request - Extension sessionId: undefined, Message params: undefined 
+[TOOLS] Final sessionIdToUse: default 
+[TOOLS] Returning 1 tools for session: default 
+[TOOLS] Using default tools (no session ID available) 
+[HTTP] Response from handleMessage: { id: undefined, type: 'response', result: { tools: [ [Object] ] } }
+[2025-10-23T02:11:36.527Z] [STDOUT] [HTTP] Sending 200 response (1064 bytes)
+[2025-10-23T02:11:36.532Z] [STDOUT] [HTTP] POST /sessions/register 
+[HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'content-type': 'application/json',
+  accept: '*/*',
+  'accept-language': '*',
+  'sec-fetch-mode': 'cors',
+  'user-agent': 'node',
+  'accept-encoding': 'gzip, deflate',
+  'content-length': '1794'
+}
+[INFO] Initializing tools for session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6 from override data 
+[INFO] Override data received: {"version":"1.0.0","description":"HumanAgent MCP Tool Overrides for this workspace. Modify tool configurations below to customize MCP server behavior.","tools":{"HumanAgent_Chat":{"name":"HumanAgent_Chat","description":".Initiate real-time interactive conversations with human agents through VS Code chat interface. Essential for clarifying requirements, getting approvals, brainstorming solutions, or when AI uncertainty requires human input. Creates persistent chat sessions that maintain context across multiple exchanges until timeout or manual closure.","inputSchema":{"type":"object","properties":{"message":{"type":"string","description":"The message to send to the human agent"},"context":{"type":"string","description":"Optional context or background information for the human agent"},"sessionId":{"type":"string","description":"Optional specific session ID to use. If not provided, a new session will be created."},"priority":{"type":"string","enum":["low","normal","high","urgent"],"description":"Priority level of the request","default":"normal"},"timeout":{"type":"number","description":"Timeout in seconds to wait for human response (default: 300)","default":300}},"required":["message"]}},"example_custom_tool":{"name":"example_custom_tool","description":"Brief description of what this tool does and its main purpose. Include key usage notes and important warnings when applicable.","inputSchema":{"type":"object","properties":{"input_param":{"type":"string","description":"What this parameter does and how it should be formatted"},"optional_param":{"type":"number","description":"Optional parameter with default behavior explained","default":100}},"required":["input_param"]}}}} 
+[INFO] Added default tool: HumanAgent_Chat 
+[INFO] Applying 2 tool overrides for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6 
+[INFO] Processing override for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6 - HumanAgent_Chat tool: {"name":"HumanAgent_Chat","description":".Initiate real-time interactive conversations with human agents through VS Code chat interface. Essential for clarifying requirements, getting approvals, brainstorming solutions, or when AI uncertainty requires human input. Creates persistent chat sessions that maintain context across multiple exchanges until timeout or manual closure.","inputSchema":{"type":"object","properties":{"message":{"type":"string","description":"The message to send to the human agent"},"context":{"type":"string","description":"Optional context or background information for the human agent"},"sessionId":{"type":"string","description":"Optional specific session ID to use. If not provided, a new session will be created."},"priority":{"type":"string","enum":["low","normal","high","urgent"],"description":"Priority level of the request","default":"normal"},"timeout":{"type":"number","description":"Timeout in seconds to wait for human response (default: 300)","default":300}},"required":["message"]}} 
+[INFO] Processing override for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6 - example_custom_tool tool: {"name":"example_custom_tool","description":"Brief description of what this tool does and its main purpose. Include key usage notes and important warnings when applicable.","inputSchema":{"type":"object","properties":{"input_param":{"type":"string","description":"What this parameter does and how it should be formatted"},"optional_param":{"type":"number","description":"Optional parameter with default behavior explained","default":100}},"required":["input_param"]}}
+[2025-10-23T02:11:36.532Z] [STDOUT] [INFO] Session session-a8f49eee-068c-42f1-b611-14651fa5ccc6 tools initialized with 2 tools 
+[INFO] Session registered: session-a8f49eee-068c-42f1-b611-14651fa5ccc6 (1 total sessions)
+[2025-10-23T02:11:36.577Z] [STDOUT] [HTTP] OPTIONS /mcp
+[2025-10-23T02:11:36.577Z] [STDOUT] [HTTP] Request Headers: {
+  host: 'localhost:3737',
+  connection: 'keep-alive',
+  accept: '*/*',
+  'access-control-request-method': 'GET',
+  'access-control-request-headers': 'cache-control',
+  origin: 'vscode-webview://06ntb21jilovkpqhp3n8qs6oen2rlig4drgi2amm3ehub2r9bg30',
+  'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.105.1 Chrome/138.0.7204.251 Electron/37.6.0 Safari/537.36',
+  'sec-fetch-mode': 'cors',
+  'sec-fetch-site': 'cross-site',
+  'sec-fetch-dest': 'empty',
+  'accept-encoding': 'gzip, deflate, br, zstd',
+  'accept-language': 'en-GB'
+}
+[2025-10-23T02:11:36.577Z] [STDOUT] [HTTP] Handling OPTIONS preflight request
+[2025-10-23T02:11:36.577Z] [STDOUT] [HTTP] GET /mcp
+[2025-10-23T02:11:36.578Z] [STDOUT] [HTTP] Request Headers: {
+  host: 'localhost:3737',
+  connection: 'keep-alive',
+  'sec-ch-ua-platform': '"macOS"',
+  'cache-control': 'no-cache',
+  'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.105.1 Chrome/138.0.7204.251 Electron/37.6.0 Safari/537.36',
+  accept: 'text/event-stream',
+  'sec-ch-ua': '"Not)A;Brand";v="8", "Chromium";v="138"',
+  'sec-ch-ua-mobile': '?0',
+  origin: 'vscode-webview://06ntb21jilovkpqhp3n8qs6oen2rlig4drgi2amm3ehub2r9bg30',
+  'sec-fetch-site': 'cross-site',
+  'sec-fetch-mode': 'cors',
+  'sec-fetch-dest': 'empty',
+  'accept-encoding': 'gzip, deflate, br, zstd',
+  'accept-language': 'en-GB'
+}
+[2025-10-23T02:11:36.578Z] [STDOUT] [HTTP] Handling GET request to /mcp
+[2025-10-23T02:11:36.578Z] [STDOUT] [HTTP] Setting up SSE stream for GET request
+[2025-10-23T02:11:36.578Z] [STDOUT] [HTTP] Added SSE connection. Total connections: 1
+[2025-10-23T02:11:45.695Z] [STDOUT] [HTTP] GET /mcp
+[2025-10-23T02:11:45.695Z] [STDOUT] [HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'cache-control': 'max-age=0',
+  'sec-ch-ua': '"Google Chrome";v="141", "Not?A_Brand";v="8", "Chromium";v="141"',
+  'sec-ch-ua-mobile': '?0',
+  'sec-ch-ua-platform': '"macOS"',
+  'upgrade-insecure-requests': '1',
+  'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36',
+  accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+  'sec-fetch-site': 'none',
+  'sec-fetch-mode': 'navigate',
+  'sec-fetch-user': '?1',
+  'sec-fetch-dest': 'document',
+  'accept-encoding': 'gzip, deflate, br, zstd',
+  'accept-language': 'en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6'
+}
+[HTTP] Handling GET request to /mcp 
+[HTTP] Setting up SSE stream for GET request 
+[HTTP] Added SSE connection. Total connections: 2
+[2025-10-23T02:13:37.886Z] [STDOUT] [HTTP] POST /mcp
+[2025-10-23T02:13:37.887Z] [STDOUT] [HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'content-type': 'application/json',
+  accept: 'text/event-stream, application/json',
+  'accept-language': '*',
+  'sec-fetch-mode': 'cors',
+  'user-agent': 'undici',
+  'accept-encoding': 'gzip, deflate',
+  'content-length': '228'
+}
+[HTTP] Handling POST request to /mcp 
+[HTTP] Received chunk: 228 bytes
+[2025-10-23T02:13:37.887Z] [STDOUT] [HTTP] Complete request body received (228 bytes) 
+[HTTP] Request Body: {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{"roots":{"listChanged":true},"sampling":{},"elicitation":{}},"clientInfo":{"name":"Visual Studio Code","version":"1.105.1"}}}
+[2025-10-23T02:13:37.888Z] [STDOUT] [HTTP] Parsed JSON message: {
+  jsonrpc: '2.0',
+  id: 1,
+  method: 'initialize',
+  params: {
+    protocolVersion: '2025-06-18',
+    capabilities: { roots: [Object], sampling: {}, elicitation: {} },
+    clientInfo: { name: 'Visual Studio Code', version: '1.105.1' }
+  }
+}
+[2025-10-23T02:13:37.888Z] [STDOUT] [MCP] Handling message: {
+  jsonrpc: '2.0',
+  id: 1,
+  method: 'initialize',
+  params: {
+    protocolVersion: '2025-06-18',
+    capabilities: { roots: [Object], sampling: {}, elicitation: {} },
+    clientInfo: { name: 'Visual Studio Code', version: '1.105.1' }
+  }
+}
+[MCP] Processing initialize request 
+[HTTP] Response from handleMessage: {
+  id: 1,
+  type: 'response',
+  result: {
+    protocolVersion: '2024-11-05',
+    capabilities: { chat: true, tools: true, resources: false },
+    serverInfo: { name: 'HumanAgent MCP Server', version: '1.0.0' }
+  }
+}
+[HTTP] Sending 200 response (192 bytes)
+[2025-10-23T02:13:37.895Z] [STDOUT] [HTTP] GET /mcp 
+[HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  accept: 'text/event-stream',
+  'accept-language': '*',
+  'sec-fetch-mode': 'cors',
+  'user-agent': 'undici',
+  'accept-encoding': 'gzip, deflate'
+}
+[HTTP] Handling GET request to /mcp 
+[HTTP] Setting up SSE stream for GET request 
+[HTTP] Added SSE connection. Total connections: 3
+[2025-10-23T02:13:37.897Z] [STDOUT] [HTTP] POST /mcp
+[2025-10-23T02:13:37.897Z] [STDOUT] [HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'content-type': 'application/json',
+  accept: 'text/event-stream, application/json',
+  'accept-language': '*',
+  'sec-fetch-mode': 'cors',
+  'user-agent': 'undici',
+  'accept-encoding': 'gzip, deflate',
+  'content-length': '54'
+}
+[2025-10-23T02:13:37.897Z] [STDOUT] [HTTP] Handling POST request to /mcp
+[2025-10-23T02:13:37.897Z] [STDOUT] [HTTP] Received chunk: 54 bytes
+[2025-10-23T02:13:37.897Z] [STDOUT] [HTTP] Complete request body received (54 bytes)
+[2025-10-23T02:13:37.898Z] [STDOUT] [HTTP] Request Body: {"method":"notifications/initialized","jsonrpc":"2.0"}
+[HTTP] Parsed JSON message: { method: 'notifications/initialized', jsonrpc: '2.0' }
+[MCP] Handling message: { method: 'notifications/initialized', jsonrpc: '2.0' }
+[MCP] Processing notifications/initialized (ignoring)
+[2025-10-23T02:13:37.898Z] [STDOUT] [HTTP] Response from handleMessage: 
+[HTTP] Sending 202 response (no content)
+[2025-10-23T02:13:37.898Z] [STDOUT] [HTTP] POST /mcp 
+[HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'content-type': 'application/json',
+  accept: 'text/event-stream, application/json',
+  'accept-language': '*',
+  'sec-fetch-mode': 'cors',
+  'user-agent': 'undici',
+  'accept-encoding': 'gzip, deflate',
+  'content-length': '58'
+}
+[HTTP] Handling POST request to /mcp
+[2025-10-23T02:13:37.898Z] [STDOUT] [HTTP] Received chunk: 58 bytes
+[2025-10-23T02:13:37.899Z] [STDOUT] [HTTP] Complete request body received (58 bytes) 
+[HTTP] Request Body: {"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}
+[2025-10-23T02:13:37.899Z] [STDOUT] [HTTP] Parsed JSON message: { jsonrpc: '2.0', id: 2, method: 'tools/list', params: {} }
+[MCP] Handling message: { jsonrpc: '2.0', id: 2, method: 'tools/list', params: {} }
+[MCP] Processing tools/list request 
+[TOOLS] tools/list request - Extension sessionId: undefined, Message params: {} 
+[TOOLS] Final sessionIdToUse: default 
+[TOOLS] Returning 1 tools for session: default 
+[TOOLS] Using default tools (no session ID available)
+[2025-10-23T02:13:37.899Z] [STDOUT] [HTTP] Response from handleMessage: { id: 2, type: 'response', result: { tools: [ [Object] ] } }
+[2025-10-23T02:13:37.899Z] [STDOUT] [HTTP] Sending 200 response (1071 bytes)
+[2025-10-23T02:13:40.482Z] [STDOUT] [HTTP] SSE connection closed 
+[HTTP] Removed SSE connection. Total connections: 2 
+[HTTP] SSE connection closed 
+[HTTP] Removed SSE connection. Total connections: 2
+[2025-10-23T02:13:40.524Z] [STDOUT] [HTTP] POST /mcp 
+[HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'content-type': 'application/json',
+  accept: 'text/event-stream, application/json',
+  'accept-language': '*',
+  'sec-fetch-mode': 'cors',
+  'user-agent': 'undici',
+  'accept-encoding': 'gzip, deflate',
+  'content-length': '228'
+}
+[HTTP] Handling POST request to /mcp
+[2025-10-23T02:13:40.524Z] [STDOUT] [HTTP] Received chunk: 228 bytes
+[2025-10-23T02:13:40.524Z] [STDOUT] [HTTP] Complete request body received (228 bytes) 
+[HTTP] Request Body: {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{"roots":{"listChanged":true},"sampling":{},"elicitation":{}},"clientInfo":{"name":"Visual Studio Code","version":"1.105.1"}}}
+[2025-10-23T02:13:40.524Z] [STDOUT] [HTTP] Parsed JSON message: {
+  jsonrpc: '2.0',
+  id: 1,
+  method: 'initialize',
+  params: {
+    protocolVersion: '2025-06-18',
+    capabilities: { roots: [Object], sampling: {}, elicitation: {} },
+    clientInfo: { name: 'Visual Studio Code', version: '1.105.1' }
+  }
+}
+[MCP] Handling message: {
+  jsonrpc: '2.0',
+  id: 1,
+  method: 'initialize',
+  params: {
+    protocolVersion: '2025-06-18',
+    capabilities: { roots: [Object], sampling: {}, elicitation: {} },
+    clientInfo: { name: 'Visual Studio Code', version: '1.105.1' }
+  }
+}
+[MCP] Processing initialize request
+[2025-10-23T02:13:40.524Z] [STDOUT] [HTTP] Response from handleMessage: {
+  id: 1,
+  type: 'response',
+  result: {
+    protocolVersion: '2024-11-05',
+    capabilities: { chat: true, tools: true, resources: false },
+    serverInfo: { name: 'HumanAgent MCP Server', version: '1.0.0' }
+  }
+}
+[HTTP] Sending 200 response (192 bytes)
+[2025-10-23T02:13:40.527Z] [STDOUT] [HTTP] GET /mcp
+[2025-10-23T02:13:40.528Z] [STDOUT] [HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  accept: 'text/event-stream',
+  'accept-language': '*',
+  'sec-fetch-mode': 'cors',
+  'user-agent': 'undici',
+  'accept-encoding': 'gzip, deflate'
+}
+[2025-10-23T02:13:40.528Z] [STDOUT] [HTTP] Handling GET request to /mcp 
+[HTTP] Setting up SSE stream for GET request 
+[HTTP] Added SSE connection. Total connections: 3
+[2025-10-23T02:13:40.530Z] [STDOUT] [HTTP] POST /mcp 
+[HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'content-type': 'application/json',
+  accept: 'text/event-stream, application/json',
+  'accept-language': '*',
+  'sec-fetch-mode': 'cors',
+  'user-agent': 'undici',
+  'accept-encoding': 'gzip, deflate',
+  'content-length': '54'
+}
+[HTTP] Handling POST request to /mcp 
+[HTTP] Received chunk: 54 bytes 
+[HTTP] Complete request body received (54 bytes) 
+[HTTP] Request Body: {"method":"notifications/initialized","jsonrpc":"2.0"}
+[HTTP] Parsed JSON message: { method: 'notifications/initialized', jsonrpc: '2.0' }
+[MCP] Handling message: { method: 'notifications/initialized', jsonrpc: '2.0' }
+[MCP] Processing notifications/initialized (ignoring) 
+[HTTP] Response from handleMessage: 
+[HTTP] Sending 202 response (no content)
+[2025-10-23T02:13:40.530Z] [STDOUT] [HTTP] POST /mcp
+[2025-10-23T02:13:40.530Z] [STDOUT] [HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'content-type': 'application/json',
+  accept: 'text/event-stream, application/json',
+  'accept-language': '*',
+  'sec-fetch-mode': 'cors',
+  'user-agent': 'undici',
+  'accept-encoding': 'gzip, deflate',
+  'content-length': '58'
+}
+[2025-10-23T02:13:40.531Z] [STDOUT] [HTTP] Handling POST request to /mcp
+[2025-10-23T02:13:40.531Z] [STDOUT] [HTTP] Received chunk: 58 bytes
+[2025-10-23T02:13:40.531Z] [STDOUT] [HTTP] Complete request body received (58 bytes) 
+[HTTP] Request Body: {"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}
+[HTTP] Parsed JSON message: { jsonrpc: '2.0', id: 2, method: 'tools/list', params: {} }
+[2025-10-23T02:13:40.531Z] [STDOUT] [MCP] Handling message: { jsonrpc: '2.0', id: 2, method: 'tools/list', params: {} }
+[MCP] Processing tools/list request 
+[TOOLS] tools/list request - Extension sessionId: undefined, Message params: {} 
+[TOOLS] Final sessionIdToUse: default 
+[TOOLS] Returning 1 tools for session: default 
+[TOOLS] Using default tools (no session ID available)
+[2025-10-23T02:13:40.531Z] [STDOUT] [HTTP] Response from handleMessage: { id: 2, type: 'response', result: { tools: [ [Object] ] } }
+[HTTP] Sending 200 response (1071 bytes)
+[2025-10-23T02:13:46.598Z] [STDOUT] [HTTP] SSE connection closed
+[2025-10-23T02:13:46.599Z] [STDOUT] [HTTP] Removed SSE connection. Total connections: 2 
+[HTTP] SSE connection closed 
+[HTTP] Removed SSE connection. Total connections: 2
+[2025-10-23T02:13:47.227Z] [STDOUT] [HTTP] GET /mcp
+[2025-10-23T02:13:47.228Z] [STDOUT] [HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'cache-control': 'max-age=0',
+  'sec-ch-ua': '"Google Chrome";v="141", "Not?A_Brand";v="8", "Chromium";v="141"',
+  'sec-ch-ua-mobile': '?0',
+  'sec-ch-ua-platform': '"macOS"',
+  'upgrade-insecure-requests': '1',
+  'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36',
+  accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+  'sec-fetch-site': 'none',
+  'sec-fetch-mode': 'navigate',
+  'sec-fetch-user': '?1',
+  'sec-fetch-dest': 'document',
+  'accept-encoding': 'gzip, deflate, br, zstd',
+  'accept-language': 'en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6'
+}
+[HTTP] Handling GET request to /mcp 
+[HTTP] Setting up SSE stream for GET request 
+[HTTP] Added SSE connection. Total connections: 3
+[2025-10-23T02:13:49.914Z] [STDOUT] [HTTP] SSE connection closed
+[2025-10-23T02:13:49.915Z] [STDOUT] [HTTP] Removed SSE connection. Total connections: 2 
+[HTTP] SSE connection closed 
+[HTTP] Removed SSE connection. Total connections: 2
+[2025-10-23T02:13:50.689Z] [STDOUT] [HTTP] GET /mcp
+[2025-10-23T02:13:50.690Z] [STDOUT] [HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'cache-control': 'max-age=0',
+  'sec-ch-ua': '"Google Chrome";v="141", "Not?A_Brand";v="8", "Chromium";v="141"',
+  'sec-ch-ua-mobile': '?0',
+  'sec-ch-ua-platform': '"macOS"',
+  'upgrade-insecure-requests': '1',
+  'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36',
+  accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+  'sec-fetch-site': 'none',
+  'sec-fetch-mode': 'navigate',
+  'sec-fetch-user': '?1',
+  'sec-fetch-dest': 'document',
+  'accept-encoding': 'gzip, deflate, br, zstd',
+  'accept-language': 'en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6'
+}
+[HTTP] Handling GET request to /mcp 
+[HTTP] Setting up SSE stream for GET request 
+[HTTP] Added SSE connection. Total connections: 3
+[2025-10-23T02:13:51.870Z] [STDOUT] [HTTP] SSE connection closed
+[2025-10-23T02:13:51.872Z] [STDOUT] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-23T02:13:51.876Z] [STDOUT] [HTTP] SSE connection closed 
+[HTTP] Removed SSE connection. Total connections: 2
+[2025-10-23T02:14:23.335Z] [STDOUT] [HTTP] POST /mcp
+[2025-10-23T02:14:23.335Z] [STDOUT] [HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'content-type': 'application/json',
+  accept: 'text/event-stream, application/json',
+  'accept-language': '*',
+  'sec-fetch-mode': 'cors',
+  'user-agent': 'undici',
+  'accept-encoding': 'gzip, deflate',
+  'content-length': '607'
+}
+[HTTP] Handling POST request to /mcp
+[2025-10-23T02:14:23.335Z] [STDOUT] [HTTP] Received chunk: 607 bytes 
+[HTTP] Complete request body received (607 bytes) 
+[HTTP] Request Body: {"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"HumanAgent_Chat","arguments":{"message":"Hey Ben! I see you're trying to use the human agent chat. What's on your mind? Are you looking to test the functionality, discuss the project, or just have a conversation?","context":"Ben is working on his HumanAgent MCP VS Code extension project and wants to use the human agent chat feature","priority":"normal"},"_meta":{"progressToken":"195ba55d-5de7-4ce3-9569-1bb2890b2620","vscode.conversationId":"083210a2-6e17-433e-a123-7881f595f53f","vscode.requestId":"cc31720f-85a9-4f81-b5d4-e4f6fddb82e0"}}}
+[2025-10-23T02:14:23.336Z] [STDOUT] [HTTP] Parsed JSON message: {
+  jsonrpc: '2.0',
+  id: 3,
+  method: 'tools/call',
+  params: {
+    name: 'HumanAgent_Chat',
+    arguments: {
+      message: "Hey Ben! I see you're trying to use the human agent chat. What's on your mind? Are you looking to test the functionality, discuss the project, or just have a conversation?",
+      context: 'Ben is working on his HumanAgent MCP VS Code extension project and wants to use the human agent chat feature',
+      priority: 'normal'
+    },
+    _meta: {
+      progressToken: '195ba55d-5de7-4ce3-9569-1bb2890b2620',
+      'vscode.conversationId': '083210a2-6e17-433e-a123-7881f595f53f',
+      'vscode.requestId': 'cc31720f-85a9-4f81-b5d4-e4f6fddb82e0'
+    }
+  }
+}
+[2025-10-23T02:14:23.336Z] [STDOUT] [MCP] Handling message: {
+  jsonrpc: '2.0',
+  id: 3,
+  method: 'tools/call',
+  params: {
+    name: 'HumanAgent_Chat',
+    arguments: {
+      message: "Hey Ben! I see you're trying to use the human agent chat. What's on your mind? Are you looking to test the functionality, discuss the project, or just have a conversation?",
+      context: 'Ben is working on his HumanAgent MCP VS Code extension project and wants to use the human agent chat feature',
+      priority: 'normal'
+    },
+    _meta: {
+      progressToken: '195ba55d-5de7-4ce3-9569-1bb2890b2620',
+      'vscode.conversationId': '083210a2-6e17-433e-a123-7881f595f53f',
+      'vscode.requestId': 'cc31720f-85a9-4f81-b5d4-e4f6fddb82e0'
+    }
+  }
+}
+[2025-10-23T02:14:23.336Z] [STDOUT] [MCP] Processing tools/call request for tool: HumanAgent_Chat
+[2025-10-23T02:14:23.337Z] [STDOUT] [MCP] Tool call - name: "HumanAgent_Chat", session: undefined {
+  name: 'HumanAgent_Chat',
+  args: {
+    message: "Hey Ben! I see you're trying to use the human agent chat. What's on your mind? Are you looking to test the functionality, discuss the project, or just have a conversation?",
+    context: 'Ben is working on his HumanAgent MCP VS Code extension project and wants to use the human agent chat feature',
+    priority: 'normal'
+  }
+}
+[MCP] Available tools for session default: [ 'HumanAgent_Chat' ]
+[MCP] Executing HumanAgent_Chat tool 
+[TOOL] HumanAgent_Chat called with params: {
+  message: "Hey Ben! I see you're trying to use the human agent chat. What's on your mind? Are you looking to test the functionality, discuss the project, or just have a conversation?",
+  context: 'Ben is working on his HumanAgent MCP VS Code extension project and wants to use the human agent chat feature',
+  priority: 'normal'
+}
+[TOOL] Using timeout: 300000ms (300s) 
+[TOOL] Generated request ID: 3-1761185663337 
+[TOOL] Displaying message in chat UI: Ben is working on his HumanAgent MCP VS Code extension project and wants to use the human agent chat feature
+
+Hey Ben! I see you're trying to use the human agent chat. What's on your mind? Are you looking to test the functionality, discuss the project, or just have a conversation?
+[SSE] Forwarding human-agent-request to SSE connections
+[2025-10-23T02:14:23.338Z] [STDOUT] [SSE] Broadcasting to 2 SSE connections: {"type":"human-agent-request","data":{"requestId":"3-1761185663337","message":"Hey Ben! I see you're trying to use the human agent chat. What's on your mind? Are you looking to test the functionality, discuss the project, or just have a conversation?","context":"Ben is working on his HumanAgent MCP VS Code extension project and wants to use the human agent chat feature","priority":"normal","timestamp":"2025-10-23T02:14:23.337Z"}}
+[TOOL] Request 3-1761185663337 waiting for human response...
+[2025-10-23T02:16:31.096Z] [STDOUT] [HTTP] POST /mcp
+[2025-10-23T02:16:31.097Z] [STDOUT] [HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'content-type': 'application/json',
+  accept: 'text/event-stream, application/json',
+  'accept-language': '*',
+  'sec-fetch-mode': 'cors',
+  'user-agent': 'undici',
+  'accept-encoding': 'gzip, deflate',
+  'content-length': '77'
+}
+[HTTP] Handling POST request to /mcp 
+[HTTP] Received chunk: 77 bytes 
+[HTTP] Complete request body received (77 bytes) 
+[HTTP] Request Body: {"method":"notifications/cancelled","params":{"requestId":3},"jsonrpc":"2.0"}
+[HTTP] Parsed JSON message: {
+  method: 'notifications/cancelled',
+  params: { requestId: 3 },
+  jsonrpc: '2.0'
+}
+[2025-10-23T02:16:31.097Z] [STDOUT] [MCP] Handling message: {
+  method: 'notifications/cancelled',
+  params: { requestId: 3 },
+  jsonrpc: '2.0'
+}
+[MCP] Unknown method: notifications/cancelled 
+[HTTP] Response from handleMessage: {
+  id: undefined,
+  type: 'response',
+  error: { code: -32601, message: 'Method notifications/cancelled not found' }
+}
+[HTTP] Sending 200 response (96 bytes)
+[2025-10-23T02:17:42.027Z] [STDOUT] [HTTP] POST /mcp
+[2025-10-23T02:17:42.027Z] [STDOUT] [HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'content-type': 'application/json',
+  accept: 'text/event-stream, application/json',
+  'accept-language': '*',
+  'sec-fetch-mode': 'cors',
+  'user-agent': 'undici',
+  'accept-encoding': 'gzip, deflate',
+  'content-length': '631'
+}
+[2025-10-23T02:17:42.027Z] [STDOUT] [HTTP] Handling POST request to /mcp
+[2025-10-23T02:17:42.028Z] [STDOUT] [HTTP] Received chunk: 631 bytes
+[2025-10-23T02:17:42.028Z] [STDOUT] [HTTP] Complete request body received (631 bytes)
+[2025-10-23T02:17:42.028Z] [STDOUT] [HTTP] Request Body: {"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"HumanAgent_Chat","arguments":{"message":"Hey Ben! Your MCP server is running and I'm here to chat. What's on your mind today? We could discuss your HumanAgent MCP project, test the functionality, or talk about whatever you'd like!","context":"Ben is working on his HumanAgent MCP VS Code extension project and wants to use the human agent chat functionality","priority":"normal"},"_meta":{"progressToken":"1ec26a86-b7c7-4d0a-904f-d2af07264355","vscode.conversationId":"083210a2-6e17-433e-a123-7881f595f53f","vscode.requestId":"09f9333d-b495-46e1-a937-65e985db3511"}}}
+[2025-10-23T02:17:42.028Z] [STDOUT] [HTTP] Parsed JSON message: {
+  jsonrpc: '2.0',
+  id: 4,
+  method: 'tools/call',
+  params: {
+    name: 'HumanAgent_Chat',
+    arguments: {
+      message: "Hey Ben! Your MCP server is running and I'm here to chat. What's on your mind today? We could discuss your HumanAgent MCP project, test the functionality, or talk about whatever you'd like!",
+      context: 'Ben is working on his HumanAgent MCP VS Code extension project and wants to use the human agent chat functionality',
+      priority: 'normal'
+    },
+    _meta: {
+      progressToken: '1ec26a86-b7c7-4d0a-904f-d2af07264355',
+      'vscode.conversationId': '083210a2-6e17-433e-a123-7881f595f53f',
+      'vscode.requestId': '09f9333d-b495-46e1-a937-65e985db3511'
+    }
+  }
+}
+[2025-10-23T02:17:42.028Z] [STDOUT] [MCP] Handling message: {
+  jsonrpc: '2.0',
+  id: 4,
+  method: 'tools/call',
+  params: {
+    name: 'HumanAgent_Chat',
+    arguments: {
+      message: "Hey Ben! Your MCP server is running and I'm here to chat. What's on your mind today? We could discuss your HumanAgent MCP project, test the functionality, or talk about whatever you'd like!",
+      context: 'Ben is working on his HumanAgent MCP VS Code extension project and wants to use the human agent chat functionality',
+      priority: 'normal'
+    },
+    _meta: {
+      progressToken: '1ec26a86-b7c7-4d0a-904f-d2af07264355',
+      'vscode.conversationId': '083210a2-6e17-433e-a123-7881f595f53f',
+      'vscode.requestId': '09f9333d-b495-46e1-a937-65e985db3511'
+    }
+  }
+}
+[2025-10-23T02:17:42.029Z] [STDOUT] [MCP] Processing tools/call request for tool: HumanAgent_Chat
+[2025-10-23T02:17:42.029Z] [STDOUT] [MCP] Tool call - name: "HumanAgent_Chat", session: undefined {
+  name: 'HumanAgent_Chat',
+  args: {
+    message: "Hey Ben! Your MCP server is running and I'm here to chat. What's on your mind today? We could discuss your HumanAgent MCP project, test the functionality, or talk about whatever you'd like!",
+    context: 'Ben is working on his HumanAgent MCP VS Code extension project and wants to use the human agent chat functionality',
+    priority: 'normal'
+  }
+}
+[2025-10-23T02:17:42.029Z] [STDOUT] [MCP] Available tools for session default: [ 'HumanAgent_Chat' ]
+[2025-10-23T02:17:42.029Z] [STDOUT] [MCP] Executing HumanAgent_Chat tool
+[2025-10-23T02:17:42.029Z] [STDOUT] [TOOL] HumanAgent_Chat called with params: {
+  message: "Hey Ben! Your MCP server is running and I'm here to chat. What's on your mind today? We could discuss your HumanAgent MCP project, test the functionality, or talk about whatever you'd like!",
+  context: 'Ben is working on his HumanAgent MCP VS Code extension project and wants to use the human agent chat functionality',
+  priority: 'normal'
+}
+[TOOL] Using timeout: 300000ms (300s)
+[2025-10-23T02:17:42.029Z] [STDOUT] [TOOL] Generated request ID: 4-1761185862029 
+[TOOL] Displaying message in chat UI: Ben is working on his HumanAgent MCP VS Code extension project and wants to use the human agent chat functionality
+
+Hey Ben! Your MCP server is running and I'm here to chat. What's on your mind today? We could discuss your HumanAgent MCP project, test the functionality, or talk about whatever you'd like!
+[SSE] Forwarding human-agent-request to SSE connections
+[2025-10-23T02:17:42.030Z] [STDOUT] [SSE] Broadcasting to 2 SSE connections: {"type":"human-agent-request","data":{"requestId":"4-1761185862029","message":"Hey Ben! Your MCP server is running and I'm here to chat. What's on your mind today? We could discuss your HumanAgent MCP project, test the functionality, or talk about whatever you'd like!","context":"Ben is working on his HumanAgent MCP VS Code extension project and wants to use the human agent chat functionality","priority":"normal","timestamp":"2025-10-23T02:17:42.029Z"}}
+[2025-10-23T02:17:42.030Z] [STDOUT] [TOOL] Request 4-1761185862029 waiting for human response...
+[2025-10-23T02:19:23.337Z] [STDOUT] [TOOL] Request 3-1761185663337 timed out after 300s
+[2025-10-23T02:19:23.337Z] [STDOUT] [HTTP] Response from handleMessage: {
+  id: 3,
+  type: 'response',
+  error: { code: -32603, message: 'Human response timeout after 300 seconds' }
+}
+[HTTP] Sending 200 response (103 bytes)
+[2025-10-23T02:20:25.805Z] [STDOUT] [HTTP] GET /mcp 
+[HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'cache-control': 'max-age=0',
+  'sec-ch-ua': '"Google Chrome";v="141", "Not?A_Brand";v="8", "Chromium";v="141"',
+  'sec-ch-ua-mobile': '?0',
+  'sec-ch-ua-platform': '"macOS"',
+  'upgrade-insecure-requests': '1',
+  'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36',
+  accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+  'sec-fetch-site': 'none',
+  'sec-fetch-mode': 'navigate',
+  'sec-fetch-user': '?1',
+  'sec-fetch-dest': 'document',
+  'accept-encoding': 'gzip, deflate, br, zstd',
+  'accept-language': 'en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6'
+}
+[HTTP] Handling GET request to /mcp 
+[HTTP] Setting up SSE stream for GET request 
+[HTTP] Added SSE connection. Total connections: 3
+[2025-10-23T02:20:26.438Z] [STDOUT] [HTTP] SSE connection closed 
+[HTTP] Removed SSE connection. Total connections: 2 
+[HTTP] SSE connection closed 
+[HTTP] Removed SSE connection. Total connections: 2
+[2025-10-23T02:20:57.739Z] [STDOUT] [HTTP] DELETE /sessions/unregister 
+[HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'content-type': 'application/json',
+  accept: '*/*',
+  'accept-language': '*',
+  'sec-fetch-mode': 'cors',
+  'user-agent': 'node',
+  'accept-encoding': 'gzip, deflate',
+  'content-length': '60'
+}
+[INFO] Session unregistered and cleaned up: session-a8f49eee-068c-42f1-b611-14651fa5ccc6 (0 total sessions)
+[2025-10-23T02:20:57.741Z] ServerManager disposed
+[2025-10-23T02:20:57.748Z] [STDOUT] [HTTP] SSE connection closed 
+[HTTP] Removed SSE connection. Total connections: 1 
+[HTTP] SSE connection closed 
+[HTTP] Removed SSE connection. Total connections: 1
+[2025-10-23T02:22:34.332Z] Starting new server process: node /Users/benharper/Coding/HumanAgent-MCP/dist/mcpStandalone.js
+[2025-10-23T02:22:34.333Z] Started server with PID 19958
+[2025-10-23T02:22:34.333Z] Server process spawned successfully
+[2025-10-23T02:22:34.380Z] [STDOUT] [LOGGER] Attempting to create log file at: /var/folders/l9/1r1f80gj6jz4zslg_fns0tyw0000gn/T/HumanAgent.log
+[LOGGER] Cleared existing log file
+[DEBUG] Debug logging started at 2025-10-23T02:22:34.360Z 
+[DEBUG] Current system time: Thu Oct 23 2025 13:22:34 GMT+1100 (Australian Eastern Daylight Time) 
+[DEBUG] Log file: /var/folders/l9/1r1f80gj6jz4zslg_fns0tyw0000gn/T/HumanAgent.log 
+[DEBUG] Working directory: /Users/benharper/Coding/HumanAgent-MCP/dist 
+[LOGGER] Debug logger initialized successfully
+[INFO] McpServer initialized 
+[INFO] === MCP SERVER STARTING === 
+[INFO] Starting HTTP server on port 3737... 
+[INFO] MCP HTTP server running on http://127.0.0.1:3737/mcp 
+{"type":"notification","method":"server/started","params":{"name":"HumanAgent MCP Server","version":"1.0.0","capabilities":{"chat":true,"tools":true,"resources":false}}}
+[2025-10-23T02:22:34.380Z] [STDERR] HumanAgent MCP Server started successfully
+[2025-10-23T02:22:35.687Z] [STDOUT] [HTTP] GET /mcp 
+[HTTP] Request Headers: {
+  host: '127.0.0.1:3737',
+  connection: 'keep-alive',
+  'cache-control': 'max-age=0',
+  'sec-ch-ua': '"Google Chrome";v="141", "Not?A_Brand";v="8", "Chromium";v="141"',
+  'sec-ch-ua-mobile': '?0',
+  'sec-ch-ua-platform': '"macOS"',
+  'upgrade-insecure-requests': '1',
+  'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36',
+  accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+  'sec-fetch-site': 'none',
+  'sec-fetch-mode': 'navigate',
+  'sec-fetch-user': '?1',
+  'sec-fetch-dest': 'document',
+  'accept-encoding': 'gzip, deflate, br, zstd',
+  'accept-language': 'en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6'
+}
+[HTTP] Handling GET request to /mcp 
+[HTTP] Setting up SSE stream for GET request 
+[HTTP] Added SSE connection. Total connections: 1
+[2025-10-23T02:22:37.338Z] Server started successfully and is responding
+[2025-10-23T02:27:26.490Z] Starting new server process: node /Users/benharper/Coding/HumanAgent-MCP/dist/mcpStandalone.js
+[2025-10-23T02:27:26.491Z] Started independent server with PID 20918
+[2025-10-23T02:27:26.491Z] Server process started as independent background process
+[2025-10-23T02:27:29.505Z] Independent server started successfully and is responding
+[2025-10-23T02:27:29.509Z] Server started successfully and is responding
+[2025-10-23T02:27:33.413Z] ServerManager disposed
+[2025-10-23T02:33:29.924Z] ServerManager disposed
+[2025-10-23T02:39:00.691Z] ServerManager disposed
+[2025-10-23T02:42:11.163Z] ServerManager disposed
+[2025-10-23T02:47:48.817Z] Stopping independent server with PID 20918
+[2025-10-23T02:47:50.824Z] Force killing independent server with PID 20918
+[2025-10-23T02:47:51.831Z] Server stop operation completed
+[2025-10-23T02:47:56.847Z] Starting new server process: node /Users/benharper/Coding/HumanAgent-MCP/dist/mcpStandalone.js
+[2025-10-23T02:47:56.849Z] Started independent server with PID 27165
+[2025-10-23T02:47:56.849Z] Server process started as independent background process
+[2025-10-23T02:47:59.856Z] Independent server started successfully and is responding
+[2025-10-23T02:47:59.858Z] Server started successfully and is responding
+[2025-10-23T02:48:03.884Z] Stopping independent server with PID 27165
+[2025-10-23T02:48:05.886Z] Force killing independent server with PID 27165
+[2025-10-23T02:48:06.893Z] Server stop operation completed
+[2025-10-23T02:48:11.335Z] Starting new server process: node /Users/benharper/Coding/HumanAgent-MCP/dist/mcpStandalone.js
+[2025-10-23T02:48:11.337Z] Started independent server with PID 27245
+[2025-10-23T02:48:11.337Z] Server process started as independent background process
+[2025-10-23T02:48:14.340Z] Independent server started successfully and is responding
+[2025-10-23T02:48:14.341Z] Server started successfully and is responding
+[2025-10-23T02:49:21.944Z] ServerManager disposed
+[2025-10-23T02:49:25.663Z] Found running server process with PID 27245, but it's not responding on port. Waiting...
+[2025-10-23T02:49:27.718Z] Starting new server process: node /Users/benharper/Coding/HumanAgent-MCP/dist/mcpStandalone.js
+[2025-10-23T02:49:27.719Z] Started independent server with PID 27693
+[2025-10-23T02:49:27.719Z] Server process started as independent background process
+[2025-10-23T02:49:30.727Z] Independent server started successfully and is responding
+[2025-10-23T02:49:30.733Z] Server started successfully and is responding
+[2025-10-23T02:56:48.057Z] Starting new server process: node /Users/benharper/Coding/HumanAgent-MCP/dist/mcpStandalone.js
+[2025-10-23T02:56:48.058Z] Started independent server with PID 30014
+[2025-10-23T02:56:48.058Z] Server process started as independent background process
+[2025-10-23T02:56:51.064Z] Independent server started successfully and is responding
+[2025-10-23T02:56:51.070Z] Server started successfully and is responding
+[2025-10-23T03:05:44.663Z] ServerManager disposed
+[2025-10-23T03:06:08.582Z] Starting new server process: node /Users/benharper/Coding/HumanAgent-MCP/dist/mcpStandalone.js
+[2025-10-23T03:06:08.583Z] Started independent server with PID 33089
+[2025-10-23T03:06:08.583Z] Server process started as independent background process
+[2025-10-23T03:06:11.588Z] Independent server started successfully and is responding
+[2025-10-23T03:06:11.592Z] Server started successfully and is responding
+[2025-10-23T03:07:33.871Z] ServerManager disposed
+[2025-10-23T03:08:20.397Z] Starting new server process: node /Users/benharper/Coding/HumanAgent-MCP/dist/mcpStandalone.js
+[2025-10-23T03:08:20.399Z] Started independent server with PID 33742
+[2025-10-23T03:08:20.399Z] Server process started as independent background process
+[2025-10-23T03:08:23.404Z] Independent server started successfully and is responding
+[2025-10-23T03:08:23.408Z] Server started successfully and is responding
+[2025-10-23T03:09:55.946Z] ServerManager disposed
+[2025-10-23T03:10:00.928Z] Starting new server process: node /Users/benharper/Coding/HumanAgent-MCP/dist/mcpStandalone.js
+[2025-10-23T03:10:00.930Z] Started independent server with PID 34477
+[2025-10-23T03:10:00.930Z] Server process started as independent background process
+[2025-10-23T03:10:03.934Z] Independent server started successfully and is responding
+[2025-10-23T03:10:03.938Z] Server started successfully and is responding
+[2025-10-23T03:14:10.974Z] ServerManager disposed
+[2025-10-23T03:14:15.341Z] Starting new server process: node /Users/benharper/Coding/HumanAgent-MCP/dist/mcpStandalone.js
+[2025-10-23T03:14:15.342Z] Started independent server with PID 35896
+[2025-10-23T03:14:15.342Z] Server process started as independent background process
+[2025-10-23T03:14:18.346Z] Independent server started successfully and is responding
+[2025-10-23T03:14:18.351Z] Server started successfully and is responding
+[2025-10-23T03:16:35.656Z] Stopping independent server with PID 35896
+[2025-10-23T03:16:37.663Z] Force killing independent server with PID 35896
+[2025-10-23T03:16:38.668Z] Server stop operation completed
+[2025-10-23T03:16:45.994Z] ServerManager disposed
+[2025-10-23T03:16:50.366Z] Starting new server process: node /Users/benharper/Coding/HumanAgent-MCP/dist/mcpStandalone.js
+[2025-10-23T03:16:50.367Z] Started independent server with PID 36825
+[2025-10-23T03:16:50.367Z] Server process started as independent background process
+[2025-10-23T03:16:53.370Z] Independent server started successfully and is responding
+[2025-10-23T03:16:53.375Z] Server started successfully and is responding
+[2025-10-23T03:24:32.636Z] ServerManager disposed
+[2025-10-23T03:24:36.038Z] Starting new server process: node /Users/benharper/Coding/HumanAgent-MCP/dist/mcpStandalone.js
+[2025-10-23T03:24:36.040Z] Started independent server with PID 39311
+[2025-10-23T03:24:36.040Z] Server process started as independent background process
+[2025-10-23T03:24:39.046Z] Independent server started successfully and is responding
+[2025-10-23T03:24:39.050Z] Server started successfully and is responding
+[2025-10-23T03:30:51.677Z] Starting new server process: node /Users/benharper/Coding/HumanAgent-MCP/dist/mcpStandalone.js
+[2025-10-23T03:30:51.678Z] Started independent server with PID 41061
+[2025-10-23T03:30:51.678Z] Server process started as independent background process
+[2025-10-23T03:30:54.679Z] Independent server started successfully and is responding
+[2025-10-23T03:30:54.686Z] Server started successfully and is responding
+[2025-10-23T03:33:31.917Z] ServerManager disposed
+[2025-10-23T03:33:35.888Z] Starting new server process: node /Users/benharper/Coding/HumanAgent-MCP/dist/mcpStandalone.js
+[2025-10-23T03:33:35.890Z] Started independent server with PID 41988
+[2025-10-23T03:33:35.890Z] Server process started as independent background process
+[2025-10-23T03:33:38.892Z] Independent server started successfully and is responding
+[2025-10-23T03:33:38.896Z] Server started successfully and is responding
+[2025-10-23T03:33:42.352Z] ServerManager disposed
+[2025-10-23T03:34:17.431Z] Starting new server process: node /Users/benharper/Coding/HumanAgent-MCP/dist/mcpStandalone.js
+[2025-10-23T03:34:17.432Z] Started independent server with PID 42203
+[2025-10-23T03:34:17.432Z] Server process started as independent background process
+[2025-10-23T03:34:20.436Z] Independent server started successfully and is responding
+[2025-10-23T03:34:20.441Z] Server started successfully and is responding
+[2025-10-23T03:36:00.692Z] ServerManager disposed
+[2025-10-23T03:36:04.977Z] Starting new server process: node /Users/benharper/Coding/HumanAgent-MCP/dist/mcpStandalone.js
+[2025-10-23T03:36:04.978Z] Started independent server with PID 43088
+[2025-10-23T03:36:04.978Z] Server process started as independent background process
+[2025-10-23T03:36:07.981Z] Independent server started successfully and is responding
+[2025-10-23T03:36:17.577Z] ServerManager disposed

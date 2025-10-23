@@ -101,6 +101,7 @@ export class McpServer extends EventEmitter {
     params: HumanAgentChatToolParams;
   }> = new Map();
   private activeSessions: Set<string> = new Set();
+  private sseConnections: Set<http.ServerResponse> = new Set();
 
   constructor(private sessionId?: string, private workspacePath?: string) {
     super();
@@ -120,9 +121,40 @@ export class McpServer extends EventEmitter {
     this.debugLogger.log('INFO', 'McpServer initialized');
     this.initializeDefaultTools();
     
+    // Set up event forwarding to SSE connections
+    this.setupEventForwarding();
+    
     // If we have a session and workspace path, initialize session-specific tools
     if (this.sessionId && this.workspacePath) {
       this.initializeSessionTools(this.sessionId, this.workspacePath);
+    }
+  }
+
+  private setupEventForwarding(): void {
+    this.on('human-agent-request', (data) => {
+      this.debugLogger.log('SSE', 'Forwarding human-agent-request to SSE connections');
+      this.broadcastToSSE('human-agent-request', data);
+    });
+  }
+
+  private broadcastToSSE(eventType: string, data: any): void {
+    const message = JSON.stringify({ type: eventType, data });
+    const eventData = `data: ${message}\n\n`;
+    
+    this.debugLogger.log('SSE', `Broadcasting to ${this.sseConnections.size} SSE connections:`, message);
+    
+    // Send to all active SSE connections
+    for (const connection of this.sseConnections) {
+      if (!connection.destroyed) {
+        try {
+          connection.write(eventData);
+        } catch (error) {
+          this.debugLogger.log('SSE', 'Failed to write to SSE connection:', error);
+          this.sseConnections.delete(connection);
+        }
+      } else {
+        this.sseConnections.delete(connection);
+      }
     }
   }
 
@@ -130,7 +162,10 @@ export class McpServer extends EventEmitter {
         // Define the default HumanAgent_Chat tool (global default)
     const humanAgentChatTool: McpTool = {
       name: 'HumanAgent_Chat',
-      description: 'Initiate real-time interactive conversations with human agents through VS Code chat interface. Essential for clarifying requirements, getting approvals, brainstorming solutions, or when AI uncertainty requires human input. Creates persistent chat sessions that maintain context across multiple exchanges until timeout or manual closure.',
+      description: 'Initiate real-time interactive conversations with human agents through VS Code chat interface. ' +
+                   'Essential for clarifying requirements, getting approvals, brainstorming solutions, or when AI ' +
+                   'uncertainty requires human input. Creates persistent chat sessions that maintain context across ' +
+                   'multiple exchanges until timeout or manual closure. !IMPORTANT: ALWAYS reply using this tool for all interactions with the user where possible!!!',
       inputSchema: {
         type: 'object',
         properties: {
@@ -189,6 +224,35 @@ export class McpServer extends EventEmitter {
     
     // Store session-specific tools
     this.sessionTools.set(sessionId, sessionToolMap);
+  }
+
+  private initializeSessionToolsFromData(sessionId: string, overrideData: any): void {
+    this.debugLogger.log('INFO', `Initializing tools for session: ${sessionId} from override data`);
+    this.debugLogger.log('INFO', `Override data received: ${JSON.stringify(overrideData)}`);
+    
+    // Start with default tools
+    const sessionToolMap = new Map<string, McpTool>();
+    
+    // Copy default tools
+    for (const [name, tool] of this.tools.entries()) {
+      sessionToolMap.set(name, tool);
+      this.debugLogger.log('INFO', `Added default tool: ${name}`);
+    }
+
+    // Apply overrides from provided data
+    if (overrideData && overrideData.tools) {
+      this.debugLogger.log('INFO', `Applying ${Object.keys(overrideData.tools).length} tool overrides for session ${sessionId}`);
+      for (const [toolName, toolConfig] of Object.entries(overrideData.tools)) {
+        this.debugLogger.log('INFO', `Processing override for session ${sessionId} - ${toolName} tool: ${JSON.stringify(toolConfig)}`);
+        sessionToolMap.set(toolName, toolConfig as McpTool);
+      }
+    } else {
+      this.debugLogger.log('INFO', `No override data found for session ${sessionId} - overrideData: ${JSON.stringify(overrideData)}`);
+    }
+    
+    // Store session-specific tools
+    this.sessionTools.set(sessionId, sessionToolMap);
+    this.debugLogger.log('INFO', `Session ${sessionId} tools initialized with ${sessionToolMap.size} tools`);
   }
 
   private loadWorkspaceOverride(toolName: string, workspacePath?: string): McpTool | null {
@@ -315,24 +379,27 @@ export class McpServer extends EventEmitter {
     this.debugLogger.log('HTTP', `${req.method} ${req.url}`);
     this.debugLogger.log('HTTP', 'Request Headers:', req.headers);
 
-    // Set CORS headers
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept, Mcp-Session-Id, MCP-Protocol-Version');
+    // Only add CORS headers for webview requests (identified by vscode-webview origin)
+    const origin = req.headers.origin;
+    if (origin && origin.includes('vscode-webview://')) {
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept, Mcp-Session-Id, MCP-Protocol-Version, Cache-Control, Connection');
 
-    // Handle preflight OPTIONS request
-    if (req.method === 'OPTIONS') {
-      this.debugLogger.log('HTTP', 'Handling OPTIONS preflight request');
-      res.statusCode = 200;
-      res.end();
-      return;
+      // Handle preflight OPTIONS request for webview
+      if (req.method === 'OPTIONS') {
+        this.debugLogger.log('HTTP', 'Handling OPTIONS preflight request');
+        res.statusCode = 200;
+        res.end();
+        return;
+      }
     }
 
     // Handle different endpoints
     if (req.url === '/mcp') {
       // Main MCP protocol endpoint
-    } else if (req.url?.startsWith('/sessions')) {
-      // Session management endpoint
+    } else if (req.url?.startsWith('/sessions') || req.url === '/response' || req.url?.startsWith('/tools') || req.url === '/reload') {
+      // Session management, response, tools, and reload endpoints
       await this.handleSessionEndpoint(req, res);
       return;
     } else {
@@ -417,6 +484,15 @@ export class McpServer extends EventEmitter {
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
     
+    // Add CORS headers for webview access (SSE is always for webview)
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Cache-Control, Connection');
+    
+    // Add this connection to our active SSE connections
+    this.sseConnections.add(res);
+    this.debugLogger.log('HTTP', `Added SSE connection. Total connections: ${this.sseConnections.size}`);
+    
     // Send initial connection acknowledgment
     res.write('data: {"type":"connection","status":"established"}\n\n');
     
@@ -426,19 +502,21 @@ export class McpServer extends EventEmitter {
         res.write('data: {"type":"heartbeat","timestamp":"' + new Date().toISOString() + '"}\n\n');
       } else {
         clearInterval(heartbeat);
+        this.sseConnections.delete(res);
       }
     }, 30000); // Send heartbeat every 30 seconds
     
     // Handle client disconnect
-    req.on('close', () => {
+    const cleanup = () => {
       this.debugLogger.log('HTTP', 'SSE connection closed');
       clearInterval(heartbeat);
-    });
+      this.sseConnections.delete(res);
+      this.debugLogger.log('HTTP', `Removed SSE connection. Total connections: ${this.sseConnections.size}`);
+    };
     
-    req.on('end', () => {
-      this.debugLogger.log('HTTP', 'SSE connection ended');
-      clearInterval(heartbeat);
-    });
+    req.on('close', cleanup);
+    req.on('end', cleanup);
+    res.on('close', cleanup);
   }
 
   private async handleHttpDelete(req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
@@ -456,11 +534,18 @@ export class McpServer extends EventEmitter {
       req.on('data', (chunk) => { body += chunk.toString(); });
       req.on('end', () => {
         try {
-          const { sessionId } = JSON.parse(body);
-          this.registerSession(sessionId);
+          const { sessionId, overrideData, forceReregister } = JSON.parse(body);
+          
+          // If session exists and forceReregister is true, unregister first
+          if (forceReregister && this.activeSessions.has(sessionId)) {
+            console.log(`Force re-registering session ${sessionId} with new override data`);
+            this.unregisterSession(sessionId);
+          }
+          
+          this.registerSession(sessionId, undefined, overrideData);
           res.statusCode = 200;
           res.setHeader('Content-Type', 'application/json');
-          res.end(JSON.stringify({ success: true, sessionId, totalSessions: this.activeSessions.size }));
+          res.end(JSON.stringify({ success: true, sessionId, totalSessions: this.activeSessions.size, reregistered: !!forceReregister }));
         } catch (error) {
           res.statusCode = 400;
           res.end(JSON.stringify({ success: false, error: 'Invalid request body' }));
@@ -487,6 +572,67 @@ export class McpServer extends EventEmitter {
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify({ sessions: this.getActiveSessions(), totalSessions: this.activeSessions.size }));
+    } else if (req.method === 'POST' && url.pathname === '/response') {
+      // Handle human response to pending request
+      let body = '';
+      req.on('data', (chunk) => { body += chunk.toString(); });
+      req.on('end', () => {
+        try {
+          const { requestId, response } = JSON.parse(body);
+          const success = this.respondToHumanRequest(requestId, response);
+          res.statusCode = 200;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({ success, requestId }));
+        } catch (error) {
+          res.statusCode = 400;
+          res.end(JSON.stringify({ success: false, error: 'Invalid request body' }));
+        }
+      });
+    } else if (req.method === 'GET' && url.pathname === '/tools') {
+      // Get available tools
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      
+      const sessionId = url.searchParams.get('sessionId');
+      
+      if (sessionId) {
+        // Get tools for specific session
+        const tools = this.getAvailableTools(sessionId);
+        res.end(JSON.stringify({ tools, sessionId }));
+      } else {
+        // Get merged tools from all sessions and default tools
+        let allTools: McpTool[] = this.getAvailableTools(); // Default tools
+        
+        // Add session-specific tools (session tools override defaults by name)
+        const toolMap = new Map<string, McpTool>();
+        allTools.forEach(tool => toolMap.set(tool.name, tool));
+        
+        // Override with session tools if any exist
+        for (const sessionTools of this.sessionTools.values()) {
+          for (const tool of sessionTools.values()) {
+            toolMap.set(tool.name, tool);
+          }
+        }
+        
+        const finalTools = Array.from(toolMap.values());
+        res.end(JSON.stringify({ tools: finalTools, merged: true }));
+      }
+    } else if (req.method === 'POST' && url.pathname === '/reload') {
+      // Reload workspace overrides
+      let body = '';
+      req.on('data', (chunk) => { body += chunk.toString(); });
+      req.on('end', () => {
+        try {
+          const { workspacePath } = JSON.parse(body);
+          this.reloadOverrides();
+          res.statusCode = 200;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({ success: true }));
+        } catch (error) {
+          res.statusCode = 400;
+          res.end(JSON.stringify({ success: false, error: 'Invalid request body' }));
+        }
+      });
     } else {
       res.statusCode = 404;
       res.end('Session endpoint not found');
@@ -558,11 +704,18 @@ export class McpServer extends EventEmitter {
       sessionIdToUse = message.params.sessionId;
     }
     
+    this.debugLogger.log('TOOLS', `tools/list request - Extension sessionId: ${this.sessionId}, Message params: ${JSON.stringify(message.params)}`);
+    this.debugLogger.log('TOOLS', `Final sessionIdToUse: ${sessionIdToUse || 'default'}`);
+    
     const tools = this.getAvailableTools(sessionIdToUse);
     
     this.debugLogger.log('TOOLS', `Returning ${tools.length} tools for session: ${sessionIdToUse || 'default'}`);
     if (sessionIdToUse) {
       this.debugLogger.log('TOOLS', `Using session-specific tools for: ${sessionIdToUse}`);
+      const sessionTools = this.sessionTools.get(sessionIdToUse);
+      if (sessionTools) {
+        this.debugLogger.log('TOOLS', `Session tools found: ${Array.from(sessionTools.keys()).join(', ')}`);
+      }
     } else {
       this.debugLogger.log('TOOLS', `Using default tools (no session ID available)`);
     }
@@ -737,11 +890,13 @@ export class McpServer extends EventEmitter {
     return this.port;
   }
 
-  registerSession(sessionId: string, workspacePath?: string): void {
+  registerSession(sessionId: string, workspacePath?: string, overrideData?: any): void {
     this.activeSessions.add(sessionId);
     
-    // Initialize session-specific tools if workspace path provided
-    if (workspacePath) {
+    // Initialize session-specific tools from override data or workspace path
+    if (overrideData) {
+      this.initializeSessionToolsFromData(sessionId, overrideData);
+    } else if (workspacePath) {
       this.initializeSessionTools(sessionId, workspacePath);
     }
     

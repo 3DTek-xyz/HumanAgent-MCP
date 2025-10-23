@@ -194,21 +194,30 @@ export class McpConfigManager {
 
   private isRegisteredInWorkspace(): boolean {
     const currentWorkspaceRoot = this.getCurrentWorkspaceRoot();
+    console.log(`HumanAgent MCP: Checking workspace registration - workspaceRoot: ${currentWorkspaceRoot}`);
+    
     if (!currentWorkspaceRoot) {
+      console.log('HumanAgent MCP: No workspace root available');
       return false;
     }
 
     try {
       const mcpConfigPath = path.join(currentWorkspaceRoot, McpConfigManager.MCP_CONFIG_FILE);
+      console.log(`HumanAgent MCP: Checking MCP config at: ${mcpConfigPath}`);
       
       if (!fs.existsSync(mcpConfigPath)) {
+        console.log('HumanAgent MCP: MCP config file does not exist');
         return false;
       }
 
       const configContent = fs.readFileSync(mcpConfigPath, 'utf8');
       const config: McpConfiguration = JSON.parse(configContent);
+      
+      const isRegistered = !!config.servers[McpConfigManager.SERVER_NAME];
+      console.log(`HumanAgent MCP: Server registration check - registered: ${isRegistered}`);
+      console.log(`HumanAgent MCP: Available servers: ${Object.keys(config.servers).join(', ')}`);
 
-      return !!config.servers[McpConfigManager.SERVER_NAME];
+      return isRegistered;
     } catch (error) {
       console.error('Failed to check MCP server registration in workspace:', error);
       return false;

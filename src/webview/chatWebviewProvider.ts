@@ -10,11 +10,12 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'humanagent-mcp.chatView';
 
   private _view?: vscode.WebviewView;
-  private mcpServer: McpServer;
+  private mcpServer: McpServer | null;
   private mcpConfigManager?: McpConfigManager;
   private extensionPath: string;
   private messages: ChatMessage[] = [];
   private currentRequestId?: string;
+  private registrationCheckComplete = false;
   private notificationSettings = {
     enableSound: true,
     enableFlashing: true
@@ -22,7 +23,7 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
 
   constructor(
     private readonly _extensionUri: vscode.Uri,
-    mcpServer: McpServer,
+    mcpServer: McpServer | null,
     mcpConfigManager?: McpConfigManager,
     private readonly workspaceSessionId?: string
   ) {
@@ -126,12 +127,15 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
       ]
     };
 
-    this.updateWebview();
+    // Only update webview if registration check is complete, otherwise it will be updated when notifyRegistrationComplete is called
+    if (this.registrationCheckComplete) {
+      this.updateWebview();
+    }
 
     webviewView.webview.onDidReceiveMessage(async (data) => {
       switch (data.type) {
         case 'sendMessage':
-          await this.sendHumanResponse(data.content);
+          await this.sendHumanResponse(data.content, data.requestId);
           break;
         case 'mcpAction':
           await this.handleMcpAction(data.action);
@@ -144,7 +148,7 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
     });
   }
 
-  private async sendHumanResponse(content: string) {
+  private async sendHumanResponse(content: string, requestId?: string) {
     try {
       console.log('ChatWebviewProvider: Sending human response:', content);
       
@@ -160,16 +164,35 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
       this.messages.push(humanMessage);
       this.updateWebview();
 
-      // Send response back to MCP server
-      if (this.currentRequestId) {
-        console.log('ChatWebviewProvider: Responding to request ID:', this.currentRequestId);
-        const success = this.mcpServer.respondToHumanRequest(this.currentRequestId, content);
-        if (success) {
-          this.currentRequestId = undefined;
-          this.updateWebview(); // Force UI update to clear "waiting" state
-        } else {
-          console.warn('ChatWebviewProvider: Failed to respond - request may have expired');
+      // Send response back to standalone MCP server via HTTP
+      const responseRequestId = requestId || this.currentRequestId;
+      if (responseRequestId) {
+        console.log('ChatWebviewProvider: Responding to request ID:', responseRequestId);
+        
+        try {
+          const response = await fetch('http://localhost:3737/response', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              requestId: responseRequestId,
+              response: content
+            })
+          });
+          
+          if (response.ok) {
+            const result = await response.json();
+            console.log('ChatWebviewProvider: Response sent successfully:', result);
+          } else {
+            console.error('ChatWebviewProvider: Failed to send response:', response.status, response.statusText);
+          }
+        } catch (httpError) {
+          console.error('ChatWebviewProvider: HTTP error sending response:', httpError);
         }
+        
+        this.currentRequestId = undefined;
+        this.updateWebview(); // Force UI update to clear "waiting" state
       } else {
         console.warn('ChatWebviewProvider: No pending request to respond to');
       }
@@ -189,13 +212,22 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
     }
   }
 
+  public refreshWebview() {
+    this.updateWebview();
+  }
+
+  public notifyRegistrationComplete() {
+    this.registrationCheckComplete = true;
+    if (this._view) {
+      this.updateWebview();
+    }
+  }
+
   private updateServerStatus() {
     if (!this._view) {
       return;
     }
 
-    const tools = this.mcpServer.getAvailableTools();
-    const pendingRequests = this.mcpServer.getPendingRequests();
     const isRegisteredWorkspace = this.mcpConfigManager?.isMcpServerRegistered(false) ?? false;
     const isRegisteredGlobal = this.mcpConfigManager?.isMcpServerRegistered(true) ?? false;
     const configType = isRegisteredWorkspace ? 'workspace' : (isRegisteredGlobal ? 'global' : 'none');
@@ -203,9 +235,9 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
     this._view.webview.postMessage({
       type: 'serverStatus',
       data: {
-        running: this.mcpServer.isServerRunning(),
-        tools: tools.length,
-        pendingRequests: pendingRequests.length,
+        running: true, // Assume standalone server is running if configured
+        tools: 1, // Default tool count
+        pendingRequests: 0, // Can't get from standalone server easily
         registered: isRegisteredWorkspace || isRegisteredGlobal,
         configType: configType
       }
@@ -231,13 +263,45 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
         return;
       }
 
-      // Restart the session to pick up new overrides (ensures fresh tool loading)
-      if (this.workspaceSessionId) {
-        await this.mcpServer.restartSession(this.workspaceSessionId);
-        vscode.window.showInformationMessage('Override file reloaded - session restarted with fresh tools');
-      } else {
-        await this.mcpServer.reloadOverrides();
-        vscode.window.showInformationMessage('Override file reloaded successfully');
+      // Force session re-registration with fresh override data
+      try {
+        // Read the current override file
+        let overrideData = null;
+        if (fs.existsSync(overrideFilePath)) {
+          const overrideContent = fs.readFileSync(overrideFilePath, 'utf8');
+          overrideData = JSON.parse(overrideContent);
+        }
+
+        // Get current sessions and re-register them with fresh data
+        const sessionsResponse = await fetch('http://localhost:3737/sessions');
+        if (sessionsResponse.ok) {
+          const sessionsData = await sessionsResponse.json() as { sessions: string[] };
+          
+          for (const sessionId of sessionsData.sessions) {
+            const response = await fetch('http://localhost:3737/sessions/register', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                sessionId,
+                overrideData: overrideData,
+                forceReregister: true
+              })
+            });
+            
+            if (!response.ok) {
+              console.error(`Failed to re-register session ${sessionId}`);
+            }
+          }
+          
+          vscode.window.showInformationMessage('Override file reloaded successfully!');
+        } else {
+          vscode.window.showWarningMessage('Failed to get sessions from server');
+        }
+      } catch (error) {
+        console.error('Failed to reload override file:', error);
+        vscode.window.showWarningMessage('Could not communicate with MCP server for reload');
       }
       
       // Refresh the webview to update the menu
@@ -283,40 +347,19 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
         }
       }
 
-      // Get default tool configuration
-      const defaultTool = {
-        name: 'HumanAgent_Chat',
-        description: 'Initiate real-time interactive conversations with human agents through VS Code chat interface. Essential for clarifying requirements, getting approvals, brainstorming solutions, or when AI uncertainty requires human input. Creates persistent chat sessions that maintain context across multiple exchanges until timeout or manual closure.',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            message: {
-              type: 'string',
-              description: 'The message to send to the human agent'
-            },
-            context: {
-              type: 'string', 
-              description: 'Optional context or background information for the human agent'
-            },
-            sessionId: {
-              type: 'string',
-              description: 'Optional specific session ID to use. If not provided, a new session will be created.'
-            },
-            priority: {
-              type: 'string',
-              enum: ['low', 'normal', 'high', 'urgent'],
-              description: 'Priority level of the request',
-              default: 'normal'
-            },
-            timeout: {
-              type: 'number',
-              description: 'Timeout in seconds to wait for human response (default: 300)',
-              default: 300
-            }
-          },
-          required: ['message']
-        }
-      };
+      // Get current tool configuration from server - NO FALLBACKS!
+      const response = await fetch('http://localhost:3737/tools');
+      if (!response.ok) {
+        throw new Error(`Failed to fetch tools from server: ${response.status}`);
+      }
+      
+      const toolsData = await response.json() as { tools: any[] };
+      const defaultTool = toolsData.tools.find((tool: any) => tool.name === 'HumanAgent_Chat');
+      if (!defaultTool) {
+        throw new Error('HumanAgent_Chat tool not found on server');
+      }
+      
+      console.log('ChatWebviewProvider: Fetched current tool configuration from server');
 
       // Create example tool with medium detail
       const exampleTool = {
@@ -373,24 +416,9 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
     try {
       switch (action) {
         case 'start':
-          await this.mcpServer.start();
-          vscode.window.showInformationMessage('MCP Server started');
-          break;
         case 'stop':
-          await this.mcpServer.stop();
-          vscode.window.showInformationMessage('MCP Server stopped');
-          break;
         case 'restart':
-          try {
-            await this.mcpServer.stop();
-            // Small delay to ensure complete cleanup before restart
-            await new Promise(resolve => setTimeout(resolve, 500));
-            await this.mcpServer.start();
-            vscode.window.showInformationMessage('MCP Server restarted');
-          } catch (error) {
-            console.error('Error during MCP server restart:', error);
-            vscode.window.showErrorMessage('Failed to restart MCP Server');
-          }
+          vscode.window.showInformationMessage('MCP Server management not available - using standalone server');
           break;
         case 'register':
           // Use the MCP configuration from the parent command
@@ -824,14 +852,47 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
 
           function sendMessage() {
             const input = document.getElementById('messageInput');
+            const sendButton = document.getElementById('sendButton');
             const message = input.value.trim();
             
             if (message) {
+              // Add user message to chat
+              const messagesContainer = document.getElementById('messages');
+              if (messagesContainer) {
+                // Remove waiting indicator
+                const waitingIndicator = messagesContainer.querySelector('.waiting-indicator');
+                if (waitingIndicator) {
+                  waitingIndicator.remove();
+                }
+                
+                // Add user message
+                const userMessageDiv = document.createElement('div');
+                userMessageDiv.className = 'message user-message';
+                userMessageDiv.innerHTML = \`
+                  <div class="message-header">
+                    <strong>You</strong>
+                    <span class="timestamp">\${new Date().toLocaleTimeString()}</span>
+                  </div>
+                  <div class="message-content">\${message.replace(/\\n/g, '<br>')}</div>
+                \`;
+                messagesContainer.appendChild(userMessageDiv);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+              }
+              
+              // Send message to extension
               vscode.postMessage({
                 type: 'sendMessage',
-                content: message
+                content: message,
+                requestId: currentPendingRequestId
               });
+              
+              // Clear input and disable controls
               input.value = '';
+              input.disabled = true;
+              sendButton.disabled = true;
+              
+              // Clear the pending request ID
+              currentPendingRequestId = null;
             }
           }
 
@@ -845,7 +906,7 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
               // Default options when status unknown
               const defaultOptions = [
                 { text: '📦 Install Globally', action: 'register' },
-                { text: '📁 Install in Workspace', action: 'unregister' },
+                { text: '📁 Install in Workspace', action: 'register' },
                 { text: '📊 Show Status', action: 'requestServerStatus' },
                 { text: '🛠️ Override Prompt', action: 'overridePrompt' }
               ];
@@ -869,7 +930,7 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
             } else {
               // Not installed anywhere
               options.push({ text: '📦 Install Globally', action: 'register' });
-              options.push({ text: '📁 Install in Workspace', action: 'unregister' });
+              options.push({ text: '📁 Install in Workspace', action: 'register' });
             }
             
             options.push({ text: '📊 Show Status', action: 'requestServerStatus' });
@@ -933,6 +994,105 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
               playNotificationBeep();
             }
           });
+
+          // Set up SSE connection for real-time server events
+          function setupSSEConnection() {
+            try {
+              console.log('Setting up SSE connection to MCP server...');
+              const eventSource = new EventSource('http://localhost:3737/mcp');
+              
+              eventSource.onopen = function(event) {
+                console.log('SSE connection opened:', event);
+              };
+              
+              eventSource.onmessage = function(event) {
+                try {
+                  const data = JSON.parse(event.data);
+                  console.log('SSE event received:', data);
+                  
+                  if (data.type === 'human-agent-request') {
+                    handleHumanAgentRequest(data.data);
+                  }
+                } catch (error) {
+                  console.error('Error parsing SSE data:', error);
+                }
+              };
+              
+              eventSource.onerror = function(error) {
+                console.error('SSE connection error:', error);
+                // Try to reconnect after 5 seconds
+                setTimeout(setupSSEConnection, 5000);
+              };
+              
+            } catch (error) {
+              console.error('Failed to setup SSE connection:', error);
+            }
+          }
+
+          // Global variable to store current request ID for responses
+          let currentPendingRequestId = null;
+
+          function handleHumanAgentRequest(data) {
+            console.log('Handling human agent request:', data);
+            
+            // Store the request ID for sending response
+            currentPendingRequestId = data.requestId;
+            
+            // Add the AI message to chat
+            const messagesContainer = document.getElementById('messages');
+            if (messagesContainer) {
+              // Remove empty state if it exists
+              const emptyState = messagesContainer.querySelector('.empty-state');
+              if (emptyState) {
+                emptyState.remove();
+              }
+              
+              const messageDiv = document.createElement('div');
+              messageDiv.className = 'message ai-message';
+              
+              const displayMessage = data.context ? \`\${data.context}\\n\\n\${data.message}\` : data.message;
+              messageDiv.innerHTML = \`
+                <div class="message-header">
+                  <strong>AI Agent</strong>
+                  <span class="timestamp">\${new Date(data.timestamp).toLocaleTimeString()}</span>
+                </div>
+                <div class="message-content">\${displayMessage.replace(/\\n/g, '<br>')}</div>
+              \`;
+              
+              messagesContainer.appendChild(messageDiv);
+              messagesContainer.scrollTop = messagesContainer.scrollHeight;
+              
+              // Enable input controls for response
+              const messageInput = document.getElementById('messageInput');
+              const sendButton = document.getElementById('sendButton');
+              if (messageInput && sendButton) {
+                messageInput.disabled = false;
+                sendButton.disabled = false;
+                messageInput.focus();
+              }
+              
+              // Add waiting indicator if not present
+              const existingWaiting = messagesContainer.querySelector('.waiting-indicator');
+              if (!existingWaiting) {
+                const waitingDiv = document.createElement('div');
+                waitingDiv.className = 'waiting-indicator';
+                waitingDiv.textContent = '⏳ Waiting for your response...';
+                messagesContainer.appendChild(waitingDiv);
+              }
+              
+              // Play notification
+              playNotificationBeep();
+              
+              // Flash border
+              document.body.classList.add('flashing');
+              setTimeout(() => {
+                document.body.classList.remove('flashing');
+              }, 2000);
+            }
+          }
+
+          // Initialize SSE connection
+          setupSSEConnection();
           
           // Webview initialized - status can be requested manually via cog menu
         </script>
