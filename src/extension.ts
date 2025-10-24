@@ -34,11 +34,46 @@ function getWorkspaceSessionId(context: vscode.ExtensionContext): string {
 	return sessionId;
 }
 
+// Restore and send persisted session name to server
+async function restoreSessionName(context: vscode.ExtensionContext, sessionId: string) {
+	const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+	const workspaceKey = workspaceRoot ? `workspace-${crypto.createHash('md5').update(workspaceRoot).digest('hex')}` : 'no-workspace';
+	
+	const savedName = context.globalState.get<string>(`sessionName-${workspaceKey}`);
+	
+	if (savedName) {
+		try {
+			// Send the saved name to the server
+			const response = await fetch('http://localhost:3737/sessions/name', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					sessionId: sessionId,
+					name: savedName
+				})
+			});
+			
+			if (response.ok) {
+				console.log(`Restored session name: "${savedName}" for session ${sessionId}`);
+			} else {
+				console.log(`Failed to restore session name: HTTP ${response.status}`);
+			}
+		} catch (error) {
+			console.log(`Failed to restore session name: ${error}`);
+		}
+	}
+}
+
 export async function activate(context: vscode.ExtensionContext) {
 	console.log('HumanAgent MCP extension is now active!');
 
 	// Generate or retrieve persistent workspace session ID
 	workspaceSessionId = getWorkspaceSessionId(context);
+
+	// Restore the persisted session name for this session ID
+	await restoreSessionName(context, workspaceSessionId);
 
 	// Initialize MCP Configuration Manager
 	const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
@@ -64,7 +99,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 
 	// Initialize Chat Webview Provider (no internal server dependency)
-	const chatWebviewProvider = new ChatWebviewProvider(context.extensionUri, null, mcpConfigManager, workspaceSessionId);
+	const chatWebviewProvider = new ChatWebviewProvider(context.extensionUri, null, mcpConfigManager, workspaceSessionId, context);
 	context.subscriptions.push(
 		vscode.window.registerWebviewViewProvider(ChatWebviewProvider.viewType, chatWebviewProvider)
 	);

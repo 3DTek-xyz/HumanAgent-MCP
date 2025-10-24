@@ -1144,7 +1144,7 @@ export class McpServer extends EventEmitter {
                 
             } catch (error) {
                 console.error('Failed to send response:', error);
-                addMessageToUI(sessionId, 'assistant', \`Error: \${error.message}\`);
+                addMessageToUI(sessionId, 'assistant', \`Error: \${error.message}\`, null, null);
             } finally {
                 // Re-enable controls
                 textarea.disabled = false;
@@ -1153,7 +1153,7 @@ export class McpServer extends EventEmitter {
             }
         }
         
-        function addMessageToUI(sessionId, role, content, source) {
+        function addMessageToUI(sessionId, role, content, source, timestamp) {
             const messagesContainer = document.getElementById(\`messages-\${sessionId}\`);
             if (!messagesContainer) return;
             
@@ -1166,8 +1166,11 @@ export class McpServer extends EventEmitter {
                 header += \` (\${source === 'web' ? 'Web' : 'VS Code'})\`;
             }
             
+            // Use actual message timestamp or current time as fallback
+            const displayTime = timestamp ? new Date(timestamp).toLocaleTimeString() : new Date().toLocaleTimeString();
+            
             messageDiv.innerHTML = \`
-                <div class="message-header">\${header} • \${new Date().toLocaleTimeString()}</div>
+                <div class="message-header">\${header} • \${displayTime}</div>
                 <div class="message-content">\${escapeHtml(content)}</div>
             \`;
             
@@ -1197,7 +1200,7 @@ export class McpServer extends EventEmitter {
                             
                             // Add each message
                             for (const msg of data.messages) {
-                                addMessageToUI(sessionId, msg.sender, msg.content, msg.source);
+                                addMessageToUI(sessionId, msg.sender, msg.content, msg.source, msg.timestamp);
                             }
                         }
                     }
@@ -1227,7 +1230,7 @@ export class McpServer extends EventEmitter {
                             
                             // Add each message from chat manager
                             for (const msg of data.messages) {
-                                addMessageToUI(sessionId, msg.sender, msg.content, msg.source);
+                                addMessageToUI(sessionId, msg.sender, msg.content, msg.source, msg.timestamp);
                             }
                             
                             console.log(\`Loaded \${data.messages.length} messages for session \${sessionId}\`);
@@ -1258,9 +1261,9 @@ export class McpServer extends EventEmitter {
                     
                     // Handle different types of updates
                     if (data.type === 'chat_message' && data.sessionId && data.message) {
-                        addMessageToUI(data.sessionId, data.message.sender, data.message.content, data.message.source);
+                        addMessageToUI(data.sessionId, data.message.sender, data.message.content, data.message.source, data.message.timestamp);
                     } else if (data.type === 'message' && data.sessionId) {
-                        addMessageToUI(data.sessionId, data.role || 'assistant', data.content);
+                        addMessageToUI(data.sessionId, data.role || 'assistant', data.content, null, null);
                     } else if (data.type === 'request-state-change' && data.data) {
                         // Handle request state changes for input control
                         console.log('Web interface received request-state-change:', data.data);
@@ -1675,7 +1678,8 @@ export class McpServer extends EventEmitter {
         id: message.id,
         content: message.content,
         sender: message.sender,
-        timestamp: message.timestamp.toISOString()
+        timestamp: message.timestamp.toISOString(),
+        source: message.source
       }
     };
     

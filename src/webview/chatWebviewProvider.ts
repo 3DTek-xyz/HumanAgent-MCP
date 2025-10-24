@@ -25,7 +25,8 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
     private readonly _extensionUri: vscode.Uri,
     mcpServer: McpServer | null,
     mcpConfigManager?: McpConfigManager,
-    private readonly workspaceSessionId?: string
+    private readonly workspaceSessionId?: string,
+    private readonly context?: vscode.ExtensionContext
   ) {
     this.mcpServer = mcpServer;
     this.mcpConfigManager = mcpConfigManager;
@@ -534,6 +535,13 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
       });
 
       if (response.ok) {
+        // Persist the session name using the same method as session ID
+        if (this.context) {
+          const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+          const workspaceKey = workspaceRoot ? `workspace-${require('crypto').createHash('md5').update(workspaceRoot).digest('hex')}` : 'no-workspace';
+          await this.context.globalState.update(`sessionName-${workspaceKey}`, sessionName.trim());
+        }
+        
         vscode.window.showInformationMessage(`Session named: "${sessionName}"`);
       } else {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);

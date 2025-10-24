@@ -5,4 +5,4 @@
 [ ] Change Waiting for AI messages..." to "Waiting for AI MCP Tool Call...
 [ ] Get it to store the Friendly Name similar to how it stores the session ID - the existing session seems to be found on startup
 [ ] Override Prompt Script is not generated from exact coded system tool description - seems to be stale - where is the info coming from for the override creation?
-[ ]
+[ ] Can we include an option to enable logging and set logging to take place in the .vscode directory of the active workspace. It should be an option that the user can turn on in the cog.
