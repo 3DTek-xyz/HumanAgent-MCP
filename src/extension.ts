@@ -265,11 +265,11 @@ export async function activate(context: vscode.ExtensionContext) {
 					await vscode.commands.executeCommand('humanagent-mcp.restartServer');
 					break;
 				case '📝 Register for This Workspace':
-					await mcpConfigManager!.ensureMcpServerRegistered(false);
+					await mcpConfigManager!.ensureMcpServerRegistered(false, workspaceSessionId);
 					vscode.window.showInformationMessage('MCP server registered for this workspace! Restart VS Code to enable Copilot integration.');
 					break;
 				case '🌐 Register Globally':
-					await mcpConfigManager!.ensureMcpServerRegistered(true);
+					await mcpConfigManager!.ensureMcpServerRegistered(true, workspaceSessionId);
 					vscode.window.showInformationMessage('MCP server registered globally! Restart VS Code to enable Copilot integration.');
 					break;
 				case '🗑️ Unregister from This Workspace':

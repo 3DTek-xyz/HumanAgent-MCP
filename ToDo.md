@@ -13,3 +13,4 @@
 [ ] Publish Extension - WHEN ALL ELSE IS DONE!
 [ ] Consider how a user might also interact from their mobile phone.  Dont want to do port forwarding and setting up web servers etc.  How about using telegram as an interface - could this work? Look into it. 
 [ ] Would be great if I could paste in an image or screen shot - Copilot agent allows this in the vscode plugin.
+[ ]  put an option in the MCP.json and the global setup to change the default timout to a new value

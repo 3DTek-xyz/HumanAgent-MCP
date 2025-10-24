@@ -26,15 +26,15 @@ export class McpConfigManager {
     }
   }
 
-  async ensureMcpServerRegistered(global: boolean = false): Promise<boolean> {
+  async ensureMcpServerRegistered(global: boolean = false, sessionId?: string): Promise<boolean> {
     if (global) {
-      return this.registerGlobally();
+      return this.registerGlobally(sessionId);
     } else {
-      return this.registerInWorkspace();
+      return this.registerInWorkspace(sessionId);
     }
   }
 
-  private async registerInWorkspace(): Promise<boolean> {
+  private async registerInWorkspace(sessionId?: string): Promise<boolean> {
     const currentWorkspaceRoot = this.getCurrentWorkspaceRoot();
     if (!currentWorkspaceRoot) {
       throw new Error('No workspace folder available for workspace registration - this is a blank workspace');
@@ -53,28 +53,26 @@ export class McpConfigManager {
         fs.mkdirSync(vscodeDirPath, { recursive: true });
       }
 
-      // Read existing config or create new one
+      // Load existing config or create new one
       let config: McpConfiguration = { servers: {}, inputs: [] };
       if (fs.existsSync(mcpConfigPath)) {
         try {
-          const configContent = fs.readFileSync(mcpConfigPath, 'utf8');
-          config = JSON.parse(configContent);
-        } catch (error) {
-          console.warn('Failed to parse existing mcp.json, creating new one', error);
+          const existingConfig = fs.readFileSync(mcpConfigPath, 'utf8');
+          config = JSON.parse(existingConfig);
+          if (!config.servers) { config.servers = {}; }
+          if (!config.inputs) { config.inputs = []; }
+        } catch (parseError) {
+          console.log(`Creating new MCP config file due to parse error: ${parseError}`);
         }
-      }
-
-      // Check if our server is already registered
-      if (config.servers[McpConfigManager.SERVER_NAME]) {
-        return true; // Already configured
       }
 
       // Use the extension path passed during construction
 
       // Configure our MCP server (HTTP transport)
+      const mcpUrl = sessionId ? `http://127.0.0.1:3737/mcp?sessionId=${sessionId}` : 'http://127.0.0.1:3737/mcp';
       const serverConfig: any = {
         type: 'http',
-        url: 'http://127.0.0.1:3737/mcp',
+        url: mcpUrl,
         notifications: {
           enableSound: true,
           enableFlashing: true
@@ -94,7 +92,7 @@ export class McpConfigManager {
     }
   }
 
-  private async registerGlobally(): Promise<boolean> {
+  private async registerGlobally(sessionId?: string): Promise<boolean> {
     if (!this.extensionPath) {
       throw new Error('Extension path not provided');
     }
@@ -103,9 +101,10 @@ export class McpConfigManager {
       // Use the extension path passed during construction
 
       // Configure our MCP server (HTTP transport)
+      const mcpUrl = sessionId ? `http://127.0.0.1:3737/mcp?sessionId=${sessionId}` : 'http://127.0.0.1:3737/mcp';
       const serverConfig: any = {
         type: 'http',
-        url: 'http://127.0.0.1:3737/mcp',
+        url: mcpUrl,
         notifications: {
           enableSound: true,
           enableFlashing: true

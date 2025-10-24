@@ -482,7 +482,10 @@ export class McpServer extends EventEmitter {
     }
 
     // Handle different endpoints
-    if (req.url === '/mcp') {
+    // Parse URL to handle query parameters
+    const reqUrl = new URL(req.url!, `http://${req.headers.host}`);
+    
+    if (reqUrl.pathname === '/mcp') {
       // Main MCP protocol endpoint
     } else if (req.url === '/HumanAgent') {
       // Web interface for multi-session chat
@@ -527,9 +530,23 @@ export class McpServer extends EventEmitter {
         this.debugLogger.log('HTTP', `Complete request body received (${body.length} bytes)`);
         this.debugLogger.log('HTTP', 'Request Body:', body);
         
+        // Extract sessionId from query params in URL
+        const url = new URL(req.url!, `http://${req.headers.host}`);
+        const sessionId = url.searchParams.get('sessionId');
+        this.debugLogger.log('HTTP', `MCP request sessionId from URL: ${sessionId}`);
+        
         try {
           const message = JSON.parse(body);
           this.debugLogger.log('HTTP', 'Parsed JSON message:', message);
+          
+          // Add sessionId to message params if available
+          if (sessionId) {
+            if (!message.params) {
+              message.params = {};
+            }
+            message.params.sessionId = sessionId;
+            this.debugLogger.log('HTTP', `Added sessionId ${sessionId} to MCP message params`);
+          }
           
           const response = await this.handleMessage(message);
           this.debugLogger.log('HTTP', 'Response from handleMessage:', response);
@@ -1524,10 +1541,10 @@ export class McpServer extends EventEmitter {
   }
 
   private handleToolsList(message: McpMessage): McpMessage {
-    // Use extension session ID if available, otherwise fall back to detecting from headers
+    // Use extension session ID if available, otherwise extract from message params
     let sessionIdToUse = this.sessionId; // Extension session ID
     
-    // If no extension session, try to extract from message params or headers
+    // If no extension session, try to extract from message params
     if (!sessionIdToUse && message.params?.sessionId) {
       sessionIdToUse = message.params.sessionId;
     }

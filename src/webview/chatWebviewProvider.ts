@@ -314,6 +314,27 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
             }
           }
           
+          // Call reload endpoint to trigger tools/list_changed notification to VS Code MCP
+          try {
+            const reloadResponse = await fetch('http://localhost:3737/reload', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                workspacePath: workspaceFolder.uri.fsPath
+              })
+            });
+            
+            if (reloadResponse.ok) {
+              console.log('Successfully triggered tools/list_changed notification for VS Code MCP');
+            } else {
+              console.error('Failed to trigger MCP tools reload');
+            }
+          } catch (reloadError) {
+            console.error('Failed to call /reload endpoint:', reloadError);
+          }
+
           vscode.window.showInformationMessage('Override file reloaded successfully!');
         } else {
           vscode.window.showWarningMessage('Failed to get sessions from server');
