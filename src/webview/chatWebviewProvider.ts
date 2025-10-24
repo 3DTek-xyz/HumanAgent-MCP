@@ -1051,8 +1051,8 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
                   const data = JSON.parse(event.data);
                   console.log('SSE event received:', data);
                   
-                  if (data.type === 'human-agent-request') {
-                    handleHumanAgentRequest(data.data);
+                  if (data.type === 'request-state-change') {
+                    handleRequestStateChange(data.data);
                   } else if (data.type === 'chat_message') {
                     handleIncomingChatMessage(data);
                   // Removed web_user_message auto-trigger - no longer needed
@@ -1076,39 +1076,18 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
           // Global variable to store current request ID for responses
           let currentPendingRequestId = null;
 
-          function handleHumanAgentRequest(data) {
-            console.log('Handling human agent request:', data);
+          function handleRequestStateChange(data) {
+            console.log('Handling request state change:', data);
             
-            // Store the request ID for sending response
-            currentPendingRequestId = data.requestId;
-            
-            // Add the AI message to chat
             const messagesContainer = document.getElementById('messages');
-            if (messagesContainer) {
-              // Remove empty state if it exists
-              const emptyState = messagesContainer.querySelector('.empty-state');
-              if (emptyState) {
-                emptyState.remove();
-              }
-              
-              const messageDiv = document.createElement('div');
-              messageDiv.className = 'message ai-message';
-              
-              const displayMessage = data.context ? \`\${data.context}\\n\\n\${data.message}\` : data.message;
-              messageDiv.innerHTML = \`
-                <div class="message-header">
-                  <strong>AI Agent</strong>
-                  <span class="timestamp">\${new Date(data.timestamp).toLocaleTimeString()}</span>
-                </div>
-                <div class="message-content">\${displayMessage.replace(/\\n/g, '<br>')}</div>
-              \`;
-              
-              messagesContainer.appendChild(messageDiv);
-              messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            const messageInput = document.getElementById('messageInput');
+            const sendButton = document.getElementById('sendButton');
+            
+            if (data.state === 'waiting_for_response') {
+              // Store the request ID for sending response
+              currentPendingRequestId = data.requestId;
               
               // Enable input controls for response
-              const messageInput = document.getElementById('messageInput');
-              const sendButton = document.getElementById('sendButton');
               if (messageInput && sendButton) {
                 messageInput.disabled = false;
                 sendButton.disabled = false;
@@ -1116,12 +1095,14 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
               }
               
               // Add waiting indicator if not present
-              const existingWaiting = messagesContainer.querySelector('.waiting-indicator');
-              if (!existingWaiting) {
-                const waitingDiv = document.createElement('div');
-                waitingDiv.className = 'waiting-indicator';
-                waitingDiv.textContent = '⏳ Waiting for your response...';
-                messagesContainer.appendChild(waitingDiv);
+              if (messagesContainer) {
+                const existingWaiting = messagesContainer.querySelector('.waiting-indicator');
+                if (!existingWaiting) {
+                  const waitingDiv = document.createElement('div');
+                  waitingDiv.className = 'waiting-indicator';
+                  waitingDiv.textContent = '⏳ Waiting for your response...';
+                  messagesContainer.appendChild(waitingDiv);
+                }
               }
               
               // Play notification
@@ -1132,6 +1113,24 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
               setTimeout(() => {
                 document.body.classList.remove('flashing');
               }, 2000);
+              
+            } else if (data.state === 'completed') {
+              // Clear pending request
+              currentPendingRequestId = null;
+              
+              // Disable input controls
+              if (messageInput && sendButton) {
+                messageInput.disabled = true;
+                sendButton.disabled = true;
+              }
+              
+              // Remove waiting indicator
+              if (messagesContainer) {
+                const waitingIndicator = messagesContainer.querySelector('.waiting-indicator');
+                if (waitingIndicator) {
+                  waitingIndicator.remove();
+                }
+              }
             }
           }
 

@@ -1,15 +1,15 @@
-[2025-10-24 13:23:33.397] [DEBUG] Debug logging started at 2025-10-24T02:23:33.396Z
-[2025-10-24 13:23:33.397] [DEBUG] Current system time: Fri Oct 24 2025 13:23:33 GMT+1100 (Australian Eastern Daylight Time)
-[2025-10-24 13:23:33.397] [DEBUG] Log file: /Users/benharper/Coding/HumanAgent-MCP/.vscode/HumanAgent-server.log
-[2025-10-24 13:23:33.397] [DEBUG] Working directory: /Users/benharper/Coding/HumanAgent-MCP/dist
-[2025-10-24 13:23:33.397] [CHAT] [INFO] ChatManager initialized with max 50 messages per session
-[2025-10-24 13:23:33.397] [INFO] McpServer initialized with centralized chat manager
-[2025-10-24 13:23:33.397] [TEST] This is a test log message to verify DebugLogger is working
-[2025-10-24 13:23:33.398] [INFO] === MCP SERVER STARTING ===
-[2025-10-24 13:23:33.398] [INFO] Starting HTTP server on port 3737...
-[2025-10-24 13:23:33.404] [INFO] MCP HTTP server running on http://127.0.0.1:3737/mcp
-[2025-10-24 13:23:35.345] [HTTP] GET /mcp
-[2025-10-24 13:23:35.345] [HTTP] Request Headers:
+[2025-10-24 13:34:14.970] [DEBUG] Debug logging started at 2025-10-24T02:34:14.967Z
+[2025-10-24 13:34:14.970] [DEBUG] Current system time: Fri Oct 24 2025 13:34:14 GMT+1100 (Australian Eastern Daylight Time)
+[2025-10-24 13:34:14.970] [DEBUG] Log file: /Users/benharper/Coding/HumanAgent-MCP/.vscode/HumanAgent-server.log
+[2025-10-24 13:34:14.970] [DEBUG] Working directory: /Users/benharper/Coding/HumanAgent-MCP/dist
+[2025-10-24 13:34:14.970] [CHAT] [INFO] ChatManager initialized with max 50 messages per session
+[2025-10-24 13:34:14.970] [INFO] McpServer initialized with centralized chat manager
+[2025-10-24 13:34:14.970] [TEST] This is a test log message to verify DebugLogger is working
+[2025-10-24 13:34:14.971] [INFO] === MCP SERVER STARTING ===
+[2025-10-24 13:34:14.971] [INFO] Starting HTTP server on port 3737...
+[2025-10-24 13:34:14.980] [INFO] MCP HTTP server running on http://127.0.0.1:3737/mcp
+[2025-10-24 13:34:16.294] [HTTP] GET /mcp
+[2025-10-24 13:34:16.294] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -26,10 +26,10 @@
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
 }
-[2025-10-24 13:23:35.345] [HTTP] Handling GET request to /mcp
-[2025-10-24 13:23:35.345] [HTTP] Setting up SSE stream for GET request
-[2025-10-24 13:23:35.345] [SSE] === SSE CONNECTION ATTEMPT ===
-[2025-10-24 13:23:35.345] [SSE] Headers:
+[2025-10-24 13:34:16.294] [HTTP] Handling GET request to /mcp
+[2025-10-24 13:34:16.294] [HTTP] Setting up SSE stream for GET request
+[2025-10-24 13:34:16.294] [SSE] === SSE CONNECTION ATTEMPT ===
+[2025-10-24 13:34:16.294] [SSE] Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -46,15 +46,15 @@
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
 }
-[2025-10-24 13:23:35.345] [SSE] URL:
+[2025-10-24 13:34:16.294] [SSE] URL:
 "/mcp"
-[2025-10-24 13:23:35.346] [SSE] SSE headers set, adding to connections...
-[2025-10-24 13:23:35.346] [HTTP] Added SSE connection. Total connections: 1
-[2025-10-24 13:23:35.346] [SSE] SSE connection added. Total: 1
-[2025-10-24 13:23:35.346] [SSE] Sent initial SSE message:
+[2025-10-24 13:34:16.295] [SSE] SSE headers set, adding to connections...
+[2025-10-24 13:34:16.295] [HTTP] Added SSE connection. Total connections: 1
+[2025-10-24 13:34:16.295] [SSE] SSE connection added. Total: 1
+[2025-10-24 13:34:16.295] [SSE] Sent initial SSE message:
 "data: {\"type\":\"connection\",\"status\":\"established\"}"
-[2025-10-24 13:23:35.352] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
-[2025-10-24 13:23:35.352] [HTTP] Request Headers:
+[2025-10-24 13:34:16.298] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:34:16.298] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -70,8 +70,8 @@
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
 }
-[2025-10-24 13:23:35.473] [HTTP] GET /sessions
-[2025-10-24 13:23:35.474] [HTTP] Request Headers:
+[2025-10-24 13:34:16.906] [HTTP] GET /sessions
+[2025-10-24 13:34:16.906] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -81,8 +81,8 @@
   "user-agent": "node",
   "accept-encoding": "gzip, deflate"
 }
-[2025-10-24 13:23:35.491] [HTTP] POST /mcp
-[2025-10-24 13:23:35.491] [HTTP] Request Headers:
+[2025-10-24 13:34:17.013] [HTTP] POST /mcp
+[2025-10-24 13:34:17.014] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -94,27 +94,27 @@
   "accept-encoding": "gzip, deflate",
   "content-length": "82"
 }
-[2025-10-24 13:23:35.491] [HTTP] Handling POST request to /mcp
-[2025-10-24 13:23:35.492] [HTTP] Received chunk: 82 bytes
-[2025-10-24 13:23:35.492] [HTTP] Complete request body received (82 bytes)
-[2025-10-24 13:23:35.492] [HTTP] Request Body:
+[2025-10-24 13:34:17.014] [HTTP] Handling POST request to /mcp
+[2025-10-24 13:34:17.014] [HTTP] Received chunk: 82 bytes
+[2025-10-24 13:34:17.014] [HTTP] Complete request body received (82 bytes)
+[2025-10-24 13:34:17.014] [HTTP] Request Body:
 "{\"sessionId\":\"session-a8f49eee-068c-42f1-b611-14651fa5ccc6\",\"method\":\"tools/list\"}"
-[2025-10-24 13:23:35.492] [HTTP] Parsed JSON message:
+[2025-10-24 13:34:17.014] [HTTP] Parsed JSON message:
 {
   "sessionId": "session-a8f49eee-068c-42f1-b611-14651fa5ccc6",
   "method": "tools/list"
 }
-[2025-10-24 13:23:35.492] [MCP] Handling message:
+[2025-10-24 13:34:17.014] [MCP] Handling message:
 {
   "sessionId": "session-a8f49eee-068c-42f1-b611-14651fa5ccc6",
   "method": "tools/list"
 }
-[2025-10-24 13:23:35.492] [MCP] Processing tools/list request
-[2025-10-24 13:23:35.492] [TOOLS] tools/list request - Extension sessionId: undefined, Message params: undefined
-[2025-10-24 13:23:35.492] [TOOLS] Final sessionIdToUse: default
-[2025-10-24 13:23:35.492] [TOOLS] Returning 1 tools for session: default
-[2025-10-24 13:23:35.492] [TOOLS] Using default tools (no session ID available)
-[2025-10-24 13:23:35.492] [HTTP] Response from handleMessage:
+[2025-10-24 13:34:17.014] [MCP] Processing tools/list request
+[2025-10-24 13:34:17.014] [TOOLS] tools/list request - Extension sessionId: undefined, Message params: undefined
+[2025-10-24 13:34:17.014] [TOOLS] Final sessionIdToUse: default
+[2025-10-24 13:34:17.014] [TOOLS] Returning 1 tools for session: default
+[2025-10-24 13:34:17.014] [TOOLS] Using default tools (no session ID available)
+[2025-10-24 13:34:17.014] [HTTP] Response from handleMessage:
 {
   "type": "response",
   "result": {
@@ -162,9 +162,9 @@
     ]
   }
 }
-[2025-10-24 13:23:35.492] [HTTP] Sending 200 response (1201 bytes)
-[2025-10-24 13:23:35.501] [HTTP] POST /sessions/register
-[2025-10-24 13:23:35.501] [HTTP] Request Headers:
+[2025-10-24 13:34:17.014] [HTTP] Sending 200 response (1201 bytes)
+[2025-10-24 13:34:17.027] [HTTP] POST /sessions/register
+[2025-10-24 13:34:17.027] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -176,9 +176,9 @@
   "accept-encoding": "gzip, deflate",
   "content-length": "103"
 }
-[2025-10-24 13:23:35.502] [INFO] Session registered: session-a8f49eee-068c-42f1-b611-14651fa5ccc6 (1 total sessions)
-[2025-10-24 13:23:35.561] [HTTP] OPTIONS /mcp
-[2025-10-24 13:23:35.561] [HTTP] Request Headers:
+[2025-10-24 13:34:17.030] [INFO] Session registered: session-a8f49eee-068c-42f1-b611-14651fa5ccc6 (1 total sessions)
+[2025-10-24 13:34:17.141] [HTTP] OPTIONS /mcp
+[2025-10-24 13:34:17.141] [HTTP] Request Headers:
 {
   "host": "localhost:3737",
   "connection": "keep-alive",
@@ -193,9 +193,9 @@
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en-GB"
 }
-[2025-10-24 13:23:35.561] [HTTP] Handling OPTIONS preflight request
-[2025-10-24 13:23:35.562] [HTTP] GET /mcp
-[2025-10-24 13:23:35.562] [HTTP] Request Headers:
+[2025-10-24 13:34:17.141] [HTTP] Handling OPTIONS preflight request
+[2025-10-24 13:34:17.142] [HTTP] GET /mcp
+[2025-10-24 13:34:17.142] [HTTP] Request Headers:
 {
   "host": "localhost:3737",
   "connection": "keep-alive",
@@ -212,10 +212,10 @@
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en-GB"
 }
-[2025-10-24 13:23:35.562] [HTTP] Handling GET request to /mcp
-[2025-10-24 13:23:35.562] [HTTP] Setting up SSE stream for GET request
-[2025-10-24 13:23:35.562] [SSE] === SSE CONNECTION ATTEMPT ===
-[2025-10-24 13:23:35.562] [SSE] Headers:
+[2025-10-24 13:34:17.142] [HTTP] Handling GET request to /mcp
+[2025-10-24 13:34:17.142] [HTTP] Setting up SSE stream for GET request
+[2025-10-24 13:34:17.142] [SSE] === SSE CONNECTION ATTEMPT ===
+[2025-10-24 13:34:17.142] [SSE] Headers:
 {
   "host": "localhost:3737",
   "connection": "keep-alive",
@@ -232,131 +232,15 @@
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en-GB"
 }
-[2025-10-24 13:23:35.562] [SSE] URL:
+[2025-10-24 13:34:17.142] [SSE] URL:
 "/mcp"
-[2025-10-24 13:23:35.562] [SSE] SSE headers set, adding to connections...
-[2025-10-24 13:23:35.562] [HTTP] Added SSE connection. Total connections: 2
-[2025-10-24 13:23:35.562] [SSE] SSE connection added. Total: 2
-[2025-10-24 13:23:35.562] [SSE] Sent initial SSE message:
+[2025-10-24 13:34:17.142] [SSE] SSE headers set, adding to connections...
+[2025-10-24 13:34:17.144] [HTTP] Added SSE connection. Total connections: 2
+[2025-10-24 13:34:17.144] [SSE] SSE connection added. Total: 2
+[2025-10-24 13:34:17.144] [SSE] Sent initial SSE message:
 "data: {\"type\":\"connection\",\"status\":\"established\"}"
-[2025-10-24 13:23:59.815] [HTTP] GET /HumanAgent
-[2025-10-24 13:23:59.815] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "cache-control": "max-age=0",
-  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
-  "sec-ch-ua-mobile": "?0",
-  "sec-ch-ua-platform": "\"macOS\"",
-  "upgrade-insecure-requests": "1",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-  "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-  "sec-fetch-site": "none",
-  "sec-fetch-mode": "navigate",
-  "sec-fetch-user": "?1",
-  "sec-fetch-dest": "document",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
-}
-[2025-10-24 13:23:59.815] [HTTP] Serving web interface at /HumanAgent
-[2025-10-24 13:23:59.837] [HTTP] SSE connection closed
-[2025-10-24 13:23:59.837] [HTTP] Removed SSE connection. Total connections: 1
-[2025-10-24 13:23:59.837] [HTTP] SSE connection closed
-[2025-10-24 13:23:59.837] [HTTP] Removed SSE connection. Total connections: 1
-[2025-10-24 13:23:59.846] [HTTP] GET /.well-known/appspecific/com.chrome.devtools.json
-[2025-10-24 13:23:59.846] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "sec-fetch-site": "same-origin",
-  "sec-fetch-mode": "no-cors",
-  "sec-fetch-dest": "empty",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
-}
-[2025-10-24 13:23:59.846] [HTTP] 404 - Invalid endpoint: /.well-known/appspecific/com.chrome.devtools.json
-[2025-10-24 13:23:59.877] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
-[2025-10-24 13:23:59.877] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "sec-ch-ua-platform": "\"macOS\"",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
-  "sec-ch-ua-mobile": "?0",
-  "accept": "*/*",
-  "sec-fetch-site": "same-origin",
-  "sec-fetch-mode": "cors",
-  "sec-fetch-dest": "empty",
-  "referer": "http://127.0.0.1:3737/HumanAgent",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
-}
-[2025-10-24 13:23:59.906] [HTTP] GET /mcp
-[2025-10-24 13:23:59.906] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "sec-ch-ua-platform": "\"macOS\"",
-  "cache-control": "no-cache",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-  "accept": "text/event-stream",
-  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
-  "sec-ch-ua-mobile": "?0",
-  "sec-fetch-site": "same-origin",
-  "sec-fetch-mode": "cors",
-  "sec-fetch-dest": "empty",
-  "referer": "http://127.0.0.1:3737/HumanAgent",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
-}
-[2025-10-24 13:23:59.907] [HTTP] Handling GET request to /mcp
-[2025-10-24 13:23:59.907] [HTTP] Setting up SSE stream for GET request
-[2025-10-24 13:23:59.907] [SSE] === SSE CONNECTION ATTEMPT ===
-[2025-10-24 13:23:59.907] [SSE] Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "sec-ch-ua-platform": "\"macOS\"",
-  "cache-control": "no-cache",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-  "accept": "text/event-stream",
-  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
-  "sec-ch-ua-mobile": "?0",
-  "sec-fetch-site": "same-origin",
-  "sec-fetch-mode": "cors",
-  "sec-fetch-dest": "empty",
-  "referer": "http://127.0.0.1:3737/HumanAgent",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
-}
-[2025-10-24 13:23:59.907] [SSE] URL:
-"/mcp"
-[2025-10-24 13:23:59.907] [SSE] SSE headers set, adding to connections...
-[2025-10-24 13:23:59.907] [HTTP] Added SSE connection. Total connections: 2
-[2025-10-24 13:23:59.907] [SSE] SSE connection added. Total: 2
-[2025-10-24 13:23:59.907] [SSE] Sent initial SSE message:
-"data: {\"type\":\"connection\",\"status\":\"established\"}"
-[2025-10-24 13:23:59.912] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
-[2025-10-24 13:23:59.912] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "sec-ch-ua-platform": "\"macOS\"",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
-  "sec-ch-ua-mobile": "?0",
-  "accept": "*/*",
-  "sec-fetch-site": "same-origin",
-  "sec-fetch-mode": "cors",
-  "sec-fetch-dest": "empty",
-  "referer": "http://127.0.0.1:3737/HumanAgent",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
-}
-[2025-10-24 13:24:01.401] [HTTP] POST /mcp
-[2025-10-24 13:24:01.401] [HTTP] Request Headers:
+[2025-10-24 13:34:26.899] [HTTP] POST /mcp
+[2025-10-24 13:34:26.899] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -368,12 +252,12 @@
   "accept-encoding": "gzip, deflate",
   "content-length": "228"
 }
-[2025-10-24 13:24:01.401] [HTTP] Handling POST request to /mcp
-[2025-10-24 13:24:01.401] [HTTP] Received chunk: 228 bytes
-[2025-10-24 13:24:01.402] [HTTP] Complete request body received (228 bytes)
-[2025-10-24 13:24:01.402] [HTTP] Request Body:
+[2025-10-24 13:34:26.899] [HTTP] Handling POST request to /mcp
+[2025-10-24 13:34:26.899] [HTTP] Received chunk: 228 bytes
+[2025-10-24 13:34:26.899] [HTTP] Complete request body received (228 bytes)
+[2025-10-24 13:34:26.899] [HTTP] Request Body:
 "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{\"protocolVersion\":\"2025-06-18\",\"capabilities\":{\"roots\":{\"listChanged\":true},\"sampling\":{},\"elicitation\":{}},\"clientInfo\":{\"name\":\"Visual Studio Code\",\"version\":\"1.105.1\"}}}"
-[2025-10-24 13:24:01.402] [HTTP] Parsed JSON message:
+[2025-10-24 13:34:26.899] [HTTP] Parsed JSON message:
 {
   "jsonrpc": "2.0",
   "id": 1,
@@ -393,7 +277,7 @@
     }
   }
 }
-[2025-10-24 13:24:01.402] [MCP] Handling message:
+[2025-10-24 13:34:26.899] [MCP] Handling message:
 {
   "jsonrpc": "2.0",
   "id": 1,
@@ -413,8 +297,8 @@
     }
   }
 }
-[2025-10-24 13:24:01.402] [MCP] Processing initialize request
-[2025-10-24 13:24:01.402] [HTTP] Response from handleMessage:
+[2025-10-24 13:34:26.899] [MCP] Processing initialize request
+[2025-10-24 13:34:26.899] [HTTP] Response from handleMessage:
 {
   "id": 1,
   "type": "response",
@@ -431,9 +315,9 @@
     }
   }
 }
-[2025-10-24 13:24:01.402] [HTTP] Sending 200 response (192 bytes)
-[2025-10-24 13:24:01.407] [HTTP] GET /mcp
-[2025-10-24 13:24:01.407] [HTTP] Request Headers:
+[2025-10-24 13:34:26.899] [HTTP] Sending 200 response (192 bytes)
+[2025-10-24 13:34:26.905] [HTTP] GET /mcp
+[2025-10-24 13:34:26.905] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -443,10 +327,10 @@
   "user-agent": "undici",
   "accept-encoding": "gzip, deflate"
 }
-[2025-10-24 13:24:01.407] [HTTP] Handling GET request to /mcp
-[2025-10-24 13:24:01.407] [HTTP] Setting up SSE stream for GET request
-[2025-10-24 13:24:01.407] [SSE] === SSE CONNECTION ATTEMPT ===
-[2025-10-24 13:24:01.407] [SSE] Headers:
+[2025-10-24 13:34:26.905] [HTTP] Handling GET request to /mcp
+[2025-10-24 13:34:26.905] [HTTP] Setting up SSE stream for GET request
+[2025-10-24 13:34:26.905] [SSE] === SSE CONNECTION ATTEMPT ===
+[2025-10-24 13:34:26.905] [SSE] Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -456,15 +340,15 @@
   "user-agent": "undici",
   "accept-encoding": "gzip, deflate"
 }
-[2025-10-24 13:24:01.407] [SSE] URL:
+[2025-10-24 13:34:26.905] [SSE] URL:
 "/mcp"
-[2025-10-24 13:24:01.407] [SSE] SSE headers set, adding to connections...
-[2025-10-24 13:24:01.407] [HTTP] Added SSE connection. Total connections: 3
-[2025-10-24 13:24:01.407] [SSE] SSE connection added. Total: 3
-[2025-10-24 13:24:01.407] [SSE] Sent initial SSE message:
+[2025-10-24 13:34:26.905] [SSE] SSE headers set, adding to connections...
+[2025-10-24 13:34:26.905] [HTTP] Added SSE connection. Total connections: 3
+[2025-10-24 13:34:26.905] [SSE] SSE connection added. Total: 3
+[2025-10-24 13:34:26.905] [SSE] Sent initial SSE message:
 "data: {\"type\":\"connection\",\"status\":\"established\"}"
-[2025-10-24 13:24:01.410] [HTTP] POST /mcp
-[2025-10-24 13:24:01.410] [HTTP] Request Headers:
+[2025-10-24 13:34:26.910] [HTTP] POST /mcp
+[2025-10-24 13:34:26.910] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -476,26 +360,26 @@
   "accept-encoding": "gzip, deflate",
   "content-length": "54"
 }
-[2025-10-24 13:24:01.410] [HTTP] Handling POST request to /mcp
-[2025-10-24 13:24:01.410] [HTTP] Received chunk: 54 bytes
-[2025-10-24 13:24:01.411] [HTTP] Complete request body received (54 bytes)
-[2025-10-24 13:24:01.411] [HTTP] Request Body:
+[2025-10-24 13:34:26.910] [HTTP] Handling POST request to /mcp
+[2025-10-24 13:34:26.910] [HTTP] Received chunk: 54 bytes
+[2025-10-24 13:34:26.910] [HTTP] Complete request body received (54 bytes)
+[2025-10-24 13:34:26.910] [HTTP] Request Body:
 "{\"method\":\"notifications/initialized\",\"jsonrpc\":\"2.0\"}"
-[2025-10-24 13:24:01.411] [HTTP] Parsed JSON message:
+[2025-10-24 13:34:26.910] [HTTP] Parsed JSON message:
 {
   "method": "notifications/initialized",
   "jsonrpc": "2.0"
 }
-[2025-10-24 13:24:01.411] [MCP] Handling message:
+[2025-10-24 13:34:26.910] [MCP] Handling message:
 {
   "method": "notifications/initialized",
   "jsonrpc": "2.0"
 }
-[2025-10-24 13:24:01.411] [MCP] Processing notifications/initialized (ignoring)
-[2025-10-24 13:24:01.411] [HTTP] Response from handleMessage:
-[2025-10-24 13:24:01.411] [HTTP] Sending 202 response (no content)
-[2025-10-24 13:24:01.412] [HTTP] POST /mcp
-[2025-10-24 13:24:01.412] [HTTP] Request Headers:
+[2025-10-24 13:34:26.910] [MCP] Processing notifications/initialized (ignoring)
+[2025-10-24 13:34:26.910] [HTTP] Response from handleMessage:
+[2025-10-24 13:34:26.910] [HTTP] Sending 202 response (no content)
+[2025-10-24 13:34:26.912] [HTTP] POST /mcp
+[2025-10-24 13:34:26.912] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -507,31 +391,31 @@
   "accept-encoding": "gzip, deflate",
   "content-length": "58"
 }
-[2025-10-24 13:24:01.412] [HTTP] Handling POST request to /mcp
-[2025-10-24 13:24:01.412] [HTTP] Received chunk: 58 bytes
-[2025-10-24 13:24:01.412] [HTTP] Complete request body received (58 bytes)
-[2025-10-24 13:24:01.412] [HTTP] Request Body:
+[2025-10-24 13:34:26.912] [HTTP] Handling POST request to /mcp
+[2025-10-24 13:34:26.912] [HTTP] Received chunk: 58 bytes
+[2025-10-24 13:34:26.912] [HTTP] Complete request body received (58 bytes)
+[2025-10-24 13:34:26.912] [HTTP] Request Body:
 "{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"tools/list\",\"params\":{}}"
-[2025-10-24 13:24:01.412] [HTTP] Parsed JSON message:
+[2025-10-24 13:34:26.912] [HTTP] Parsed JSON message:
 {
   "jsonrpc": "2.0",
   "id": 2,
   "method": "tools/list",
   "params": {}
 }
-[2025-10-24 13:24:01.412] [MCP] Handling message:
+[2025-10-24 13:34:26.912] [MCP] Handling message:
 {
   "jsonrpc": "2.0",
   "id": 2,
   "method": "tools/list",
   "params": {}
 }
-[2025-10-24 13:24:01.412] [MCP] Processing tools/list request
-[2025-10-24 13:24:01.412] [TOOLS] tools/list request - Extension sessionId: undefined, Message params: {}
-[2025-10-24 13:24:01.412] [TOOLS] Final sessionIdToUse: default
-[2025-10-24 13:24:01.412] [TOOLS] Returning 1 tools for session: default
-[2025-10-24 13:24:01.412] [TOOLS] Using default tools (no session ID available)
-[2025-10-24 13:24:01.412] [HTTP] Response from handleMessage:
+[2025-10-24 13:34:26.912] [MCP] Processing tools/list request
+[2025-10-24 13:34:26.912] [TOOLS] tools/list request - Extension sessionId: undefined, Message params: {}
+[2025-10-24 13:34:26.912] [TOOLS] Final sessionIdToUse: default
+[2025-10-24 13:34:26.912] [TOOLS] Returning 1 tools for session: default
+[2025-10-24 13:34:26.912] [TOOLS] Using default tools (no session ID available)
+[2025-10-24 13:34:26.912] [HTTP] Response from handleMessage:
 {
   "id": 2,
   "type": "response",
@@ -580,9 +464,9 @@
     ]
   }
 }
-[2025-10-24 13:24:01.412] [HTTP] Sending 200 response (1208 bytes)
-[2025-10-24 13:24:01.413] [HTTP] POST /mcp
-[2025-10-24 13:24:01.413] [HTTP] Request Headers:
+[2025-10-24 13:34:26.912] [HTTP] Sending 200 response (1208 bytes)
+[2025-10-24 13:34:26.912] [HTTP] POST /mcp
+[2025-10-24 13:34:26.912] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -592,14 +476,14 @@
   "sec-fetch-mode": "cors",
   "user-agent": "undici",
   "accept-encoding": "gzip, deflate",
-  "content-length": "571"
+  "content-length": "474"
 }
-[2025-10-24 13:24:01.413] [HTTP] Handling POST request to /mcp
-[2025-10-24 13:24:01.413] [HTTP] Received chunk: 571 bytes
-[2025-10-24 13:24:01.413] [HTTP] Complete request body received (571 bytes)
-[2025-10-24 13:24:01.413] [HTTP] Request Body:
-"{\"jsonrpc\":\"2.0\",\"id\":3,\"method\":\"tools/call\",\"params\":{\"name\":\"HumanAgent_Chat\",\"arguments\":{\"message\":\"Absolutely, Ben! I'm starting our human agent chat session now and I'll keep it alive as you requested. I won't close this chat - we'll continue our conversation here through the human agent interface. What would you like to talk about or work on together?\",\"priority\":\"normal\"},\"_meta\":{\"progressToken\":\"82fa0992-7f50-4e0f-a5fb-4ea70708fc5d\",\"vscode.conversationId\":\"083210a2-6e17-433e-a123-7881f595f53f\",\"vscode.requestId\":\"1f5bc559-0731-45bf-a2a1-09ead241603f\"}}}"
-[2025-10-24 13:24:01.413] [HTTP] Parsed JSON message:
+[2025-10-24 13:34:26.912] [HTTP] Handling POST request to /mcp
+[2025-10-24 13:34:26.912] [HTTP] Received chunk: 474 bytes
+[2025-10-24 13:34:26.912] [HTTP] Complete request body received (474 bytes)
+[2025-10-24 13:34:26.912] [HTTP] Request Body:
+"{\"jsonrpc\":\"2.0\",\"id\":3,\"method\":\"tools/call\",\"params\":{\"name\":\"HumanAgent_Chat\",\"arguments\":{\"message\":\"Hello Ben! I'm here and ready to chat with you exclusively through the human agent interface as you requested. What would you like to discuss or work on today?\",\"priority\":\"normal\"},\"_meta\":{\"progressToken\":\"c46c58d7-9122-4a1f-97de-6b8611b52213\",\"vscode.conversationId\":\"083210a2-6e17-433e-a123-7881f595f53f\",\"vscode.requestId\":\"38da39d6-00a4-4785-a2e7-e6934940dc7d\"}}}"
+[2025-10-24 13:34:26.913] [HTTP] Parsed JSON message:
 {
   "jsonrpc": "2.0",
   "id": 3,
@@ -607,17 +491,17 @@
   "params": {
     "name": "HumanAgent_Chat",
     "arguments": {
-      "message": "Absolutely, Ben! I'm starting our human agent chat session now and I'll keep it alive as you requested. I won't close this chat - we'll continue our conversation here through the human agent interface. What would you like to talk about or work on together?",
+      "message": "Hello Ben! I'm here and ready to chat with you exclusively through the human agent interface as you requested. What would you like to discuss or work on today?",
       "priority": "normal"
     },
     "_meta": {
-      "progressToken": "82fa0992-7f50-4e0f-a5fb-4ea70708fc5d",
+      "progressToken": "c46c58d7-9122-4a1f-97de-6b8611b52213",
       "vscode.conversationId": "083210a2-6e17-433e-a123-7881f595f53f",
-      "vscode.requestId": "1f5bc559-0731-45bf-a2a1-09ead241603f"
+      "vscode.requestId": "38da39d6-00a4-4785-a2e7-e6934940dc7d"
     }
   }
 }
-[2025-10-24 13:24:01.413] [MCP] Handling message:
+[2025-10-24 13:34:26.913] [MCP] Handling message:
 {
   "jsonrpc": "2.0",
   "id": 3,
@@ -625,53 +509,50 @@
   "params": {
     "name": "HumanAgent_Chat",
     "arguments": {
-      "message": "Absolutely, Ben! I'm starting our human agent chat session now and I'll keep it alive as you requested. I won't close this chat - we'll continue our conversation here through the human agent interface. What would you like to talk about or work on together?",
+      "message": "Hello Ben! I'm here and ready to chat with you exclusively through the human agent interface as you requested. What would you like to discuss or work on today?",
       "priority": "normal"
     },
     "_meta": {
-      "progressToken": "82fa0992-7f50-4e0f-a5fb-4ea70708fc5d",
+      "progressToken": "c46c58d7-9122-4a1f-97de-6b8611b52213",
       "vscode.conversationId": "083210a2-6e17-433e-a123-7881f595f53f",
-      "vscode.requestId": "1f5bc559-0731-45bf-a2a1-09ead241603f"
+      "vscode.requestId": "38da39d6-00a4-4785-a2e7-e6934940dc7d"
     }
   }
 }
-[2025-10-24 13:24:01.413] [MCP] Processing tools/call request for tool: HumanAgent_Chat
-[2025-10-24 13:24:01.413] [MCP] Auto-mapped conversation 083210a2-6e17-433e-a123-7881f595f53f to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 13:24:01.413] [MCP] Tool call - name: "HumanAgent_Chat", raw session: 083210a2-6e17-433e-a123-7881f595f53f, mapped session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:34:26.913] [MCP] Processing tools/call request for tool: HumanAgent_Chat
+[2025-10-24 13:34:26.913] [MCP] Auto-mapped conversation 083210a2-6e17-433e-a123-7881f595f53f to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:34:26.913] [MCP] Tool call - name: "HumanAgent_Chat", raw session: 083210a2-6e17-433e-a123-7881f595f53f, mapped session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
 {
   "name": "HumanAgent_Chat",
   "args": {
-    "message": "Absolutely, Ben! I'm starting our human agent chat session now and I'll keep it alive as you requested. I won't close this chat - we'll continue our conversation here through the human agent interface. What would you like to talk about or work on together?",
+    "message": "Hello Ben! I'm here and ready to chat with you exclusively through the human agent interface as you requested. What would you like to discuss or work on today?",
     "priority": "normal"
   }
 }
-[2025-10-24 13:24:01.413] [MCP] Available tools for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6:
+[2025-10-24 13:34:26.913] [MCP] Available tools for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6:
 [
   "HumanAgent_Chat"
 ]
-[2025-10-24 13:24:01.413] [MCP] Executing HumanAgent_Chat tool
-[2025-10-24 13:24:01.413] [TOOL] HumanAgent_Chat called with params:
+[2025-10-24 13:34:26.913] [MCP] Executing HumanAgent_Chat tool
+[2025-10-24 13:34:26.913] [TOOL] HumanAgent_Chat called with params:
 {
-  "message": "Absolutely, Ben! I'm starting our human agent chat session now and I'll keep it alive as you requested. I won't close this chat - we'll continue our conversation here through the human agent interface. What would you like to talk about or work on together?",
+  "message": "Hello Ben! I'm here and ready to chat with you exclusively through the human agent interface as you requested. What would you like to discuss or work on today?",
   "priority": "normal"
 }
-[2025-10-24 13:24:01.413] [TOOL] Using timeout: 300000ms (300s)
-[2025-10-24 13:24:01.413] [TOOL] Generated request ID: 3-1761272641413
-[2025-10-24 13:24:01.413] [TOOL] Displaying message in chat UI:
-"Absolutely, Ben! I'm starting our human agent chat session now and I'll keep it alive as you requested. I won't close this chat - we'll continue our conversation here through the human agent interface. What would you like to talk about or work on together?"
-[2025-10-24 13:24:01.413] [SSE] Forwarding human-agent-request to SSE connections
-[2025-10-24 13:24:01.413] [SSE] Broadcasting to 3 SSE connections:
-"{\"type\":\"human-agent-request\",\"data\":{\"requestId\":\"3-1761272641413\",\"message\":\"Absolutely, Ben! I'm starting our human agent chat session now and I'll keep it alive as you requested. I won't close this chat - we'll continue our conversation here through the human agent interface. What would you like to talk about or work on together?\",\"priority\":\"normal\",\"timestamp\":\"2025-10-24T02:24:01.413Z\"}}"
-[2025-10-24 13:24:01.413] [TOOL] Adding pending request 3-1761272641413 to session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 13:24:01.413] [CHAT] [INFO] Added message to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: agent - Absolutely, Ben! I'm starting our human agent chat...
-[2025-10-24 13:24:01.413] [CHAT] Stored AI message in ChatManager for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: Absolutely, Ben! I'm starting our human agent chat...
-[2025-10-24 13:24:01.413] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 13:24:01.413] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 13:24:01.413] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 13:24:01.413] [CHAT] [INFO] Added pending request 3-1761272641413 to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 13:24:01.413] [TOOL] Request 3-1761272641413 waiting for human response...
-[2025-10-24 13:24:18.779] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/state
-[2025-10-24 13:24:18.780] [HTTP] Request Headers:
+[2025-10-24 13:34:26.913] [TOOL] Using timeout: 300000ms (300s)
+[2025-10-24 13:34:26.913] [TOOL] Generated request ID: 3-1761273266913
+[2025-10-24 13:34:26.913] [TOOL] Displaying message in chat UI:
+"Hello Ben! I'm here and ready to chat with you exclusively through the human agent interface as you requested. What would you like to discuss or work on today?"
+[2025-10-24 13:34:26.913] [TOOL] Adding pending request 3-1761273266913 to session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:34:26.913] [CHAT] [INFO] Added message to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: agent - Hello Ben! I'm here and ready to chat with you exc...
+[2025-10-24 13:34:26.913] [CHAT] Stored AI message in ChatManager for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: Hello Ben! I'm here and ready to chat with you exc...
+[2025-10-24 13:34:26.913] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:34:26.913] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:34:26.913] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:34:26.913] [CHAT] [INFO] Added pending request 3-1761273266913 to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:34:26.913] [TOOL] Request 3-1761273266913 waiting for human response...
+[2025-10-24 13:34:46.805] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/state
+[2025-10-24 13:34:46.805] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -687,12 +568,12 @@
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
 }
-[2025-10-24 13:24:18.798] [HTTP] POST /response
-[2025-10-24 13:24:18.798] [HTTP] Request Headers:
+[2025-10-24 13:34:46.815] [HTTP] POST /response
+[2025-10-24 13:34:46.815] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
-  "content-length": "62",
+  "content-length": "57",
   "sec-ch-ua-platform": "\"macOS\"",
   "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
   "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
@@ -707,23 +588,23 @@
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
 }
-[2025-10-24 13:24:18.800] [HTTP] === RESPONSE ENDPOINT CALLED ===
-[2025-10-24 13:24:18.800] [HTTP] Request ID: 3-1761272641413, Response: Response from web
-[2025-10-24 13:24:18.801] [HTTP] Found pending request: true
-[2025-10-24 13:24:18.801] [HTTP] Processing response for session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 13:24:18.801] [HTTP] Storing and broadcasting user message to 3 SSE connections
-[2025-10-24 13:24:18.801] [CHAT] [INFO] Added message to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: user - Response from web...
-[2025-10-24 13:24:18.801] [CHAT] Stored user message in ChatManager for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: Response from web...
-[2025-10-24 13:24:18.801] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 13:24:18.801] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 13:24:18.801] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 13:24:18.801] [CHAT] [INFO] Removed pending request 3-1761272641413 from session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 13:24:18.801] [HTTP] Broadcast completed and pending request removed from ChatManager
-[2025-10-24 13:24:18.801] [SERVER] Received human response for request 3-1761272641413:
-"Response from web"
-[2025-10-24 13:24:18.801] [TOOL] Request 3-1761272641413 completed with response:
-"Response from web"
-[2025-10-24 13:24:18.801] [HTTP] Response from handleMessage:
+[2025-10-24 13:34:46.817] [HTTP] === RESPONSE ENDPOINT CALLED ===
+[2025-10-24 13:34:46.817] [HTTP] Request ID: 3-1761273266913, Response: Web Response
+[2025-10-24 13:34:46.817] [HTTP] Found pending request: true
+[2025-10-24 13:34:46.817] [HTTP] Processing response for session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:34:46.817] [HTTP] Storing and broadcasting user message to 3 SSE connections
+[2025-10-24 13:34:46.817] [CHAT] [INFO] Added message to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: user - Web Response...
+[2025-10-24 13:34:46.817] [CHAT] Stored user message in ChatManager for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: Web Response...
+[2025-10-24 13:34:46.817] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:34:46.817] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:34:46.817] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:34:46.817] [CHAT] [INFO] Removed pending request 3-1761273266913 from session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:34:46.817] [HTTP] Broadcast completed and pending request removed from ChatManager
+[2025-10-24 13:34:46.818] [SERVER] Received human response for request 3-1761273266913:
+"Web Response"
+[2025-10-24 13:34:46.818] [TOOL] Request 3-1761273266913 completed with response:
+"Web Response"
+[2025-10-24 13:34:46.818] [HTTP] Response from handleMessage:
 {
   "id": 3,
   "type": "response",
@@ -731,14 +612,14 @@
     "content": [
       {
         "type": "text",
-        "text": "Response from web"
+        "text": "Web Response"
       }
     ]
   }
 }
-[2025-10-24 13:24:18.802] [HTTP] Sending 200 response (92 bytes)
-[2025-10-24 13:24:21.915] [HTTP] POST /mcp
-[2025-10-24 13:24:21.915] [HTTP] Request Headers:
+[2025-10-24 13:34:46.818] [HTTP] Sending 200 response (87 bytes)
+[2025-10-24 13:34:49.659] [HTTP] POST /mcp
+[2025-10-24 13:34:49.659] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -748,14 +629,14 @@
   "sec-fetch-mode": "cors",
   "user-agent": "undici",
   "accept-encoding": "gzip, deflate",
-  "content-length": "533"
+  "content-length": "502"
 }
-[2025-10-24 13:24:21.915] [HTTP] Handling POST request to /mcp
-[2025-10-24 13:24:21.915] [HTTP] Received chunk: 533 bytes
-[2025-10-24 13:24:21.915] [HTTP] Complete request body received (533 bytes)
-[2025-10-24 13:24:21.916] [HTTP] Request Body:
-"{\"jsonrpc\":\"2.0\",\"id\":4,\"method\":\"tools/call\",\"params\":{\"name\":\"HumanAgent_Chat\",\"arguments\":{\"message\":\"Great to hear from you through the web interface, Ben! The human agent chat is working perfectly. I'm keeping this session active as you requested - no closing this chat. What would you like to discuss or explore next?\",\"priority\":\"normal\"},\"_meta\":{\"progressToken\":\"030f0790-61c9-4d43-a35f-12e4dcec6bb1\",\"vscode.conversationId\":\"083210a2-6e17-433e-a123-7881f595f53f\",\"vscode.requestId\":\"1f5bc559-0731-45bf-a2a1-09ead241603f\"}}}"
-[2025-10-24 13:24:21.916] [HTTP] Parsed JSON message:
+[2025-10-24 13:34:49.659] [HTTP] Handling POST request to /mcp
+[2025-10-24 13:34:49.659] [HTTP] Received chunk: 502 bytes
+[2025-10-24 13:34:49.659] [HTTP] Complete request body received (502 bytes)
+[2025-10-24 13:34:49.659] [HTTP] Request Body:
+"{\"jsonrpc\":\"2.0\",\"id\":4,\"method\":\"tools/call\",\"params\":{\"name\":\"HumanAgent_Chat\",\"arguments\":{\"message\":\"Perfect, Ben! I can see your web response came through clearly. I'm maintaining our conversation exclusively through this human agent chat interface as you requested. What's on your mind?\",\"priority\":\"normal\"},\"_meta\":{\"progressToken\":\"a82e3f4e-06cc-4890-b4ce-2549dcd1d1d5\",\"vscode.conversationId\":\"083210a2-6e17-433e-a123-7881f595f53f\",\"vscode.requestId\":\"38da39d6-00a4-4785-a2e7-e6934940dc7d\"}}}"
+[2025-10-24 13:34:49.659] [HTTP] Parsed JSON message:
 {
   "jsonrpc": "2.0",
   "id": 4,
@@ -763,17 +644,17 @@
   "params": {
     "name": "HumanAgent_Chat",
     "arguments": {
-      "message": "Great to hear from you through the web interface, Ben! The human agent chat is working perfectly. I'm keeping this session active as you requested - no closing this chat. What would you like to discuss or explore next?",
+      "message": "Perfect, Ben! I can see your web response came through clearly. I'm maintaining our conversation exclusively through this human agent chat interface as you requested. What's on your mind?",
       "priority": "normal"
     },
     "_meta": {
-      "progressToken": "030f0790-61c9-4d43-a35f-12e4dcec6bb1",
+      "progressToken": "a82e3f4e-06cc-4890-b4ce-2549dcd1d1d5",
       "vscode.conversationId": "083210a2-6e17-433e-a123-7881f595f53f",
-      "vscode.requestId": "1f5bc559-0731-45bf-a2a1-09ead241603f"
+      "vscode.requestId": "38da39d6-00a4-4785-a2e7-e6934940dc7d"
     }
   }
 }
-[2025-10-24 13:24:21.916] [MCP] Handling message:
+[2025-10-24 13:34:49.659] [MCP] Handling message:
 {
   "jsonrpc": "2.0",
   "id": 4,
@@ -781,53 +662,203 @@
   "params": {
     "name": "HumanAgent_Chat",
     "arguments": {
-      "message": "Great to hear from you through the web interface, Ben! The human agent chat is working perfectly. I'm keeping this session active as you requested - no closing this chat. What would you like to discuss or explore next?",
+      "message": "Perfect, Ben! I can see your web response came through clearly. I'm maintaining our conversation exclusively through this human agent chat interface as you requested. What's on your mind?",
       "priority": "normal"
     },
     "_meta": {
-      "progressToken": "030f0790-61c9-4d43-a35f-12e4dcec6bb1",
+      "progressToken": "a82e3f4e-06cc-4890-b4ce-2549dcd1d1d5",
       "vscode.conversationId": "083210a2-6e17-433e-a123-7881f595f53f",
-      "vscode.requestId": "1f5bc559-0731-45bf-a2a1-09ead241603f"
+      "vscode.requestId": "38da39d6-00a4-4785-a2e7-e6934940dc7d"
     }
   }
 }
-[2025-10-24 13:24:21.916] [MCP] Processing tools/call request for tool: HumanAgent_Chat
-[2025-10-24 13:24:21.916] [MCP] Mapped conversation 083210a2-6e17-433e-a123-7881f595f53f to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 13:24:21.916] [MCP] Tool call - name: "HumanAgent_Chat", raw session: 083210a2-6e17-433e-a123-7881f595f53f, mapped session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:34:49.659] [MCP] Processing tools/call request for tool: HumanAgent_Chat
+[2025-10-24 13:34:49.660] [MCP] Mapped conversation 083210a2-6e17-433e-a123-7881f595f53f to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:34:49.660] [MCP] Tool call - name: "HumanAgent_Chat", raw session: 083210a2-6e17-433e-a123-7881f595f53f, mapped session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
 {
   "name": "HumanAgent_Chat",
   "args": {
-    "message": "Great to hear from you through the web interface, Ben! The human agent chat is working perfectly. I'm keeping this session active as you requested - no closing this chat. What would you like to discuss or explore next?",
+    "message": "Perfect, Ben! I can see your web response came through clearly. I'm maintaining our conversation exclusively through this human agent chat interface as you requested. What's on your mind?",
     "priority": "normal"
   }
 }
-[2025-10-24 13:24:21.916] [MCP] Available tools for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6:
+[2025-10-24 13:34:49.660] [MCP] Available tools for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6:
 [
   "HumanAgent_Chat"
 ]
-[2025-10-24 13:24:21.916] [MCP] Executing HumanAgent_Chat tool
-[2025-10-24 13:24:21.916] [TOOL] HumanAgent_Chat called with params:
+[2025-10-24 13:34:49.660] [MCP] Executing HumanAgent_Chat tool
+[2025-10-24 13:34:49.660] [TOOL] HumanAgent_Chat called with params:
 {
-  "message": "Great to hear from you through the web interface, Ben! The human agent chat is working perfectly. I'm keeping this session active as you requested - no closing this chat. What would you like to discuss or explore next?",
+  "message": "Perfect, Ben! I can see your web response came through clearly. I'm maintaining our conversation exclusively through this human agent chat interface as you requested. What's on your mind?",
   "priority": "normal"
 }
-[2025-10-24 13:24:21.916] [TOOL] Using timeout: 300000ms (300s)
-[2025-10-24 13:24:21.916] [TOOL] Generated request ID: 4-1761272661916
-[2025-10-24 13:24:21.916] [TOOL] Displaying message in chat UI:
-"Great to hear from you through the web interface, Ben! The human agent chat is working perfectly. I'm keeping this session active as you requested - no closing this chat. What would you like to discuss or explore next?"
-[2025-10-24 13:24:21.916] [SSE] Forwarding human-agent-request to SSE connections
-[2025-10-24 13:24:21.916] [SSE] Broadcasting to 3 SSE connections:
-"{\"type\":\"human-agent-request\",\"data\":{\"requestId\":\"4-1761272661916\",\"message\":\"Great to hear from you through the web interface, Ben! The human agent chat is working perfectly. I'm keeping this session active as you requested - no closing this chat. What would you like to discuss or explore next?\",\"priority\":\"normal\",\"timestamp\":\"2025-10-24T02:24:21.916Z\"}}"
-[2025-10-24 13:24:21.916] [TOOL] Adding pending request 4-1761272661916 to session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 13:24:21.916] [CHAT] [INFO] Added message to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: agent - Great to hear from you through the web interface, ...
-[2025-10-24 13:24:21.916] [CHAT] Stored AI message in ChatManager for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: Great to hear from you through the web interface, ...
-[2025-10-24 13:24:21.916] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 13:24:21.916] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 13:24:21.916] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 13:24:21.916] [CHAT] [INFO] Added pending request 4-1761272661916 to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 13:24:21.916] [TOOL] Request 4-1761272661916 waiting for human response...
-[2025-10-24 13:24:56.745] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
-[2025-10-24 13:24:56.745] [HTTP] Request Headers:
+[2025-10-24 13:34:49.660] [TOOL] Using timeout: 300000ms (300s)
+[2025-10-24 13:34:49.660] [TOOL] Generated request ID: 4-1761273289660
+[2025-10-24 13:34:49.660] [TOOL] Displaying message in chat UI:
+"Perfect, Ben! I can see your web response came through clearly. I'm maintaining our conversation exclusively through this human agent chat interface as you requested. What's on your mind?"
+[2025-10-24 13:34:49.660] [TOOL] Adding pending request 4-1761273289660 to session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:34:49.660] [CHAT] [INFO] Added message to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: agent - Perfect, Ben! I can see your web response came thr...
+[2025-10-24 13:34:49.660] [CHAT] Stored AI message in ChatManager for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: Perfect, Ben! I can see your web response came thr...
+[2025-10-24 13:34:49.660] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:34:49.660] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:34:49.660] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:34:49.660] [CHAT] [INFO] Added pending request 4-1761273289660 to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:34:49.660] [TOOL] Request 4-1761273289660 waiting for human response...
+[2025-10-24 13:39:08.707] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/state
+[2025-10-24 13:39:08.707] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:08.715] [HTTP] POST /response
+[2025-10-24 13:39:08.715] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "content-length": "50",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "content-type": "application/json",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "origin": "http://127.0.0.1:3737",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:08.716] [HTTP] === RESPONSE ENDPOINT CALLED ===
+[2025-10-24 13:39:08.716] [HTTP] Request ID: 4-1761273289660, Response: Web 2
+[2025-10-24 13:39:08.716] [HTTP] Found pending request: true
+[2025-10-24 13:39:08.716] [HTTP] Processing response for session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:39:08.716] [HTTP] Storing and broadcasting user message to 3 SSE connections
+[2025-10-24 13:39:08.716] [CHAT] [INFO] Added message to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: user - Web 2...
+[2025-10-24 13:39:08.716] [CHAT] Stored user message in ChatManager for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: Web 2...
+[2025-10-24 13:39:08.716] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:39:08.716] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:39:08.716] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:39:08.716] [CHAT] [INFO] Removed pending request 4-1761273289660 from session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:39:08.716] [HTTP] Broadcast completed and pending request removed from ChatManager
+[2025-10-24 13:39:08.716] [SERVER] Received human response for request 4-1761273289660:
+"Web 2"
+[2025-10-24 13:39:08.716] [TOOL] Request 4-1761273289660 completed with response:
+"Web 2"
+[2025-10-24 13:39:08.716] [HTTP] Response from handleMessage:
+{
+  "id": 4,
+  "type": "response",
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Web 2"
+      }
+    ]
+  }
+}
+[2025-10-24 13:39:08.716] [HTTP] Sending 200 response (80 bytes)
+[2025-10-24 13:39:12.078] [HTTP] POST /mcp
+[2025-10-24 13:39:12.078] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "content-type": "application/json",
+  "accept": "text/event-stream, application/json",
+  "accept-language": "*",
+  "sec-fetch-mode": "cors",
+  "user-agent": "undici",
+  "accept-encoding": "gzip, deflate",
+  "content-length": "540"
+}
+[2025-10-24 13:39:12.078] [HTTP] Handling POST request to /mcp
+[2025-10-24 13:39:12.079] [HTTP] Received chunk: 540 bytes
+[2025-10-24 13:39:12.079] [HTTP] Complete request body received (540 bytes)
+[2025-10-24 13:39:12.079] [HTTP] Request Body:
+"{\"jsonrpc\":\"2.0\",\"id\":5,\"method\":\"tools/call\",\"params\":{\"name\":\"HumanAgent_Chat\",\"arguments\":{\"message\":\"Got it, Ben! Another message from the web interface - \\\"Web 2\\\". The human agent chat is working smoothly for our communication. Is there something specific you'd like to explore or discuss while we're testing this interface?\",\"priority\":\"normal\"},\"_meta\":{\"progressToken\":\"f6328e74-470e-454d-b61d-0bfd7be1f71f\",\"vscode.conversationId\":\"083210a2-6e17-433e-a123-7881f595f53f\",\"vscode.requestId\":\"38da39d6-00a4-4785-a2e7-e6934940dc7d\"}}}"
+[2025-10-24 13:39:12.079] [HTTP] Parsed JSON message:
+{
+  "jsonrpc": "2.0",
+  "id": 5,
+  "method": "tools/call",
+  "params": {
+    "name": "HumanAgent_Chat",
+    "arguments": {
+      "message": "Got it, Ben! Another message from the web interface - \"Web 2\". The human agent chat is working smoothly for our communication. Is there something specific you'd like to explore or discuss while we're testing this interface?",
+      "priority": "normal"
+    },
+    "_meta": {
+      "progressToken": "f6328e74-470e-454d-b61d-0bfd7be1f71f",
+      "vscode.conversationId": "083210a2-6e17-433e-a123-7881f595f53f",
+      "vscode.requestId": "38da39d6-00a4-4785-a2e7-e6934940dc7d"
+    }
+  }
+}
+[2025-10-24 13:39:12.079] [MCP] Handling message:
+{
+  "jsonrpc": "2.0",
+  "id": 5,
+  "method": "tools/call",
+  "params": {
+    "name": "HumanAgent_Chat",
+    "arguments": {
+      "message": "Got it, Ben! Another message from the web interface - \"Web 2\". The human agent chat is working smoothly for our communication. Is there something specific you'd like to explore or discuss while we're testing this interface?",
+      "priority": "normal"
+    },
+    "_meta": {
+      "progressToken": "f6328e74-470e-454d-b61d-0bfd7be1f71f",
+      "vscode.conversationId": "083210a2-6e17-433e-a123-7881f595f53f",
+      "vscode.requestId": "38da39d6-00a4-4785-a2e7-e6934940dc7d"
+    }
+  }
+}
+[2025-10-24 13:39:12.079] [MCP] Processing tools/call request for tool: HumanAgent_Chat
+[2025-10-24 13:39:12.079] [MCP] Mapped conversation 083210a2-6e17-433e-a123-7881f595f53f to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:39:12.079] [MCP] Tool call - name: "HumanAgent_Chat", raw session: 083210a2-6e17-433e-a123-7881f595f53f, mapped session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+{
+  "name": "HumanAgent_Chat",
+  "args": {
+    "message": "Got it, Ben! Another message from the web interface - \"Web 2\". The human agent chat is working smoothly for our communication. Is there something specific you'd like to explore or discuss while we're testing this interface?",
+    "priority": "normal"
+  }
+}
+[2025-10-24 13:39:12.079] [MCP] Available tools for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6:
+[
+  "HumanAgent_Chat"
+]
+[2025-10-24 13:39:12.079] [MCP] Executing HumanAgent_Chat tool
+[2025-10-24 13:39:12.079] [TOOL] HumanAgent_Chat called with params:
+{
+  "message": "Got it, Ben! Another message from the web interface - \"Web 2\". The human agent chat is working smoothly for our communication. Is there something specific you'd like to explore or discuss while we're testing this interface?",
+  "priority": "normal"
+}
+[2025-10-24 13:39:12.079] [TOOL] Using timeout: 300000ms (300s)
+[2025-10-24 13:39:12.079] [TOOL] Generated request ID: 5-1761273552079
+[2025-10-24 13:39:12.079] [TOOL] Displaying message in chat UI:
+"Got it, Ben! Another message from the web interface - \"Web 2\". The human agent chat is working smoothly for our communication. Is there something specific you'd like to explore or discuss while we're testing this interface?"
+[2025-10-24 13:39:12.079] [TOOL] Adding pending request 5-1761273552079 to session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:39:12.079] [CHAT] [INFO] Added message to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: agent - Got it, Ben! Another message from the web interfac...
+[2025-10-24 13:39:12.079] [CHAT] Stored AI message in ChatManager for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: Got it, Ben! Another message from the web interfac...
+[2025-10-24 13:39:12.079] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:39:12.079] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:39:12.079] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:39:12.079] [CHAT] [INFO] Added pending request 5-1761273552079 to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:39:12.079] [TOOL] Request 5-1761273552079 waiting for human response...
+[2025-10-24 13:39:23.135] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:23.135] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -845,53 +876,32 @@
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
 }
-[2025-10-24 13:25:51.373] [HTTP] GET /mcp
-[2025-10-24 13:25:51.373] [HTTP] Request Headers:
+[2025-10-24 13:39:33.302] [HTTP] GET /HumanAgent
+[2025-10-24 13:39:33.302] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
-  "sec-ch-ua-platform": "\"macOS\"",
-  "cache-control": "no-cache",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-  "accept": "text/event-stream",
+  "cache-control": "max-age=0",
   "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
   "sec-ch-ua-mobile": "?0",
-  "sec-fetch-site": "same-origin",
-  "sec-fetch-mode": "cors",
-  "sec-fetch-dest": "empty",
-  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "upgrade-insecure-requests": "1",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+  "sec-fetch-site": "none",
+  "sec-fetch-mode": "navigate",
+  "sec-fetch-user": "?1",
+  "sec-fetch-dest": "document",
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
 }
-[2025-10-24 13:25:51.373] [HTTP] Handling GET request to /mcp
-[2025-10-24 13:25:51.373] [HTTP] Setting up SSE stream for GET request
-[2025-10-24 13:25:51.373] [SSE] === SSE CONNECTION ATTEMPT ===
-[2025-10-24 13:25:51.373] [SSE] Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "sec-ch-ua-platform": "\"macOS\"",
-  "cache-control": "no-cache",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-  "accept": "text/event-stream",
-  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
-  "sec-ch-ua-mobile": "?0",
-  "sec-fetch-site": "same-origin",
-  "sec-fetch-mode": "cors",
-  "sec-fetch-dest": "empty",
-  "referer": "http://127.0.0.1:3737/HumanAgent",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
-}
-[2025-10-24 13:25:51.373] [SSE] URL:
-"/mcp"
-[2025-10-24 13:25:51.373] [SSE] SSE headers set, adding to connections...
-[2025-10-24 13:25:51.373] [HTTP] Added SSE connection. Total connections: 4
-[2025-10-24 13:25:51.373] [SSE] SSE connection added. Total: 4
-[2025-10-24 13:25:51.373] [SSE] Sent initial SSE message:
-"data: {\"type\":\"connection\",\"status\":\"established\"}"
-[2025-10-24 13:25:51.377] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
-[2025-10-24 13:25:51.377] [HTTP] Request Headers:
+[2025-10-24 13:39:33.302] [HTTP] Serving web interface at /HumanAgent
+[2025-10-24 13:39:33.307] [HTTP] SSE connection closed
+[2025-10-24 13:39:33.307] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:33.307] [HTTP] SSE connection closed
+[2025-10-24 13:39:33.307] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:33.322] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:33.322] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -907,10 +917,2228 @@
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
 }
-[2025-10-24 13:26:39.282] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
-[2025-10-24 13:26:39.282] [HTTP] Request Headers:
+[2025-10-24 13:39:33.343] [HTTP] GET /mcp
+[2025-10-24 13:39:33.343] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
-  "user-agent": "curl/8.7.1",
-  "accept": "*/*"
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:33.343] [HTTP] Handling GET request to /mcp
+[2025-10-24 13:39:33.343] [HTTP] Setting up SSE stream for GET request
+[2025-10-24 13:39:33.343] [SSE] === SSE CONNECTION ATTEMPT ===
+[2025-10-24 13:39:33.343] [SSE] Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:33.343] [SSE] URL:
+"/mcp"
+[2025-10-24 13:39:33.343] [SSE] SSE headers set, adding to connections...
+[2025-10-24 13:39:33.343] [HTTP] Added SSE connection. Total connections: 3
+[2025-10-24 13:39:33.343] [SSE] SSE connection added. Total: 3
+[2025-10-24 13:39:33.343] [SSE] Sent initial SSE message:
+"data: {\"type\":\"connection\",\"status\":\"established\"}"
+[2025-10-24 13:39:33.347] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:33.347] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:34.732] [HTTP] GET /HumanAgent
+[2025-10-24 13:39:34.732] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "cache-control": "max-age=0",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "upgrade-insecure-requests": "1",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+  "sec-fetch-site": "none",
+  "sec-fetch-mode": "navigate",
+  "sec-fetch-user": "?1",
+  "sec-fetch-dest": "document",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:34.732] [HTTP] Serving web interface at /HumanAgent
+[2025-10-24 13:39:34.734] [HTTP] SSE connection closed
+[2025-10-24 13:39:34.734] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:34.734] [HTTP] SSE connection closed
+[2025-10-24 13:39:34.734] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:34.742] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:34.742] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:34.750] [HTTP] GET /mcp
+[2025-10-24 13:39:34.750] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:34.750] [HTTP] Handling GET request to /mcp
+[2025-10-24 13:39:34.750] [HTTP] Setting up SSE stream for GET request
+[2025-10-24 13:39:34.750] [SSE] === SSE CONNECTION ATTEMPT ===
+[2025-10-24 13:39:34.750] [SSE] Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:34.750] [SSE] URL:
+"/mcp"
+[2025-10-24 13:39:34.750] [SSE] SSE headers set, adding to connections...
+[2025-10-24 13:39:34.750] [HTTP] Added SSE connection. Total connections: 3
+[2025-10-24 13:39:34.750] [SSE] SSE connection added. Total: 3
+[2025-10-24 13:39:34.750] [SSE] Sent initial SSE message:
+"data: {\"type\":\"connection\",\"status\":\"established\"}"
+[2025-10-24 13:39:34.752] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:34.752] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:35.650] [HTTP] GET /HumanAgent
+[2025-10-24 13:39:35.651] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "cache-control": "max-age=0",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "upgrade-insecure-requests": "1",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+  "sec-fetch-site": "none",
+  "sec-fetch-mode": "navigate",
+  "sec-fetch-user": "?1",
+  "sec-fetch-dest": "document",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:35.651] [HTTP] Serving web interface at /HumanAgent
+[2025-10-24 13:39:35.657] [HTTP] SSE connection closed
+[2025-10-24 13:39:35.658] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:35.658] [HTTP] SSE connection closed
+[2025-10-24 13:39:35.658] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:35.670] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:35.670] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:35.683] [HTTP] GET /mcp
+[2025-10-24 13:39:35.683] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:35.683] [HTTP] Handling GET request to /mcp
+[2025-10-24 13:39:35.683] [HTTP] Setting up SSE stream for GET request
+[2025-10-24 13:39:35.683] [SSE] === SSE CONNECTION ATTEMPT ===
+[2025-10-24 13:39:35.683] [SSE] Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:35.683] [SSE] URL:
+"/mcp"
+[2025-10-24 13:39:35.683] [SSE] SSE headers set, adding to connections...
+[2025-10-24 13:39:35.683] [HTTP] Added SSE connection. Total connections: 3
+[2025-10-24 13:39:35.683] [SSE] SSE connection added. Total: 3
+[2025-10-24 13:39:35.683] [SSE] Sent initial SSE message:
+"data: {\"type\":\"connection\",\"status\":\"established\"}"
+[2025-10-24 13:39:35.686] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:35.686] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:36.219] [HTTP] GET /HumanAgent
+[2025-10-24 13:39:36.219] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "cache-control": "max-age=0",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "upgrade-insecure-requests": "1",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+  "sec-fetch-site": "none",
+  "sec-fetch-mode": "navigate",
+  "sec-fetch-user": "?1",
+  "sec-fetch-dest": "document",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:36.219] [HTTP] Serving web interface at /HumanAgent
+[2025-10-24 13:39:36.222] [HTTP] SSE connection closed
+[2025-10-24 13:39:36.222] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:36.222] [HTTP] SSE connection closed
+[2025-10-24 13:39:36.222] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:36.232] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:36.232] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:36.243] [HTTP] GET /mcp
+[2025-10-24 13:39:36.243] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:36.243] [HTTP] Handling GET request to /mcp
+[2025-10-24 13:39:36.243] [HTTP] Setting up SSE stream for GET request
+[2025-10-24 13:39:36.243] [SSE] === SSE CONNECTION ATTEMPT ===
+[2025-10-24 13:39:36.243] [SSE] Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:36.243] [SSE] URL:
+"/mcp"
+[2025-10-24 13:39:36.243] [SSE] SSE headers set, adding to connections...
+[2025-10-24 13:39:36.243] [HTTP] Added SSE connection. Total connections: 3
+[2025-10-24 13:39:36.243] [SSE] SSE connection added. Total: 3
+[2025-10-24 13:39:36.244] [SSE] Sent initial SSE message:
+"data: {\"type\":\"connection\",\"status\":\"established\"}"
+[2025-10-24 13:39:36.246] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:36.247] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:36.696] [HTTP] GET /HumanAgent
+[2025-10-24 13:39:36.696] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "cache-control": "max-age=0",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "upgrade-insecure-requests": "1",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+  "sec-fetch-site": "none",
+  "sec-fetch-mode": "navigate",
+  "sec-fetch-user": "?1",
+  "sec-fetch-dest": "document",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:36.696] [HTTP] Serving web interface at /HumanAgent
+[2025-10-24 13:39:36.699] [HTTP] SSE connection closed
+[2025-10-24 13:39:36.699] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:36.699] [HTTP] SSE connection closed
+[2025-10-24 13:39:36.699] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:36.714] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:36.714] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:36.719] [HTTP] GET /mcp
+[2025-10-24 13:39:36.719] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:36.719] [HTTP] Handling GET request to /mcp
+[2025-10-24 13:39:36.719] [HTTP] Setting up SSE stream for GET request
+[2025-10-24 13:39:36.719] [SSE] === SSE CONNECTION ATTEMPT ===
+[2025-10-24 13:39:36.719] [SSE] Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:36.719] [SSE] URL:
+"/mcp"
+[2025-10-24 13:39:36.719] [SSE] SSE headers set, adding to connections...
+[2025-10-24 13:39:36.719] [HTTP] Added SSE connection. Total connections: 3
+[2025-10-24 13:39:36.719] [SSE] SSE connection added. Total: 3
+[2025-10-24 13:39:36.719] [SSE] Sent initial SSE message:
+"data: {\"type\":\"connection\",\"status\":\"established\"}"
+[2025-10-24 13:39:36.723] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:36.723] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:36.862] [HTTP] GET /HumanAgent
+[2025-10-24 13:39:36.862] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "cache-control": "max-age=0",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "upgrade-insecure-requests": "1",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+  "sec-fetch-site": "none",
+  "sec-fetch-mode": "navigate",
+  "sec-fetch-user": "?1",
+  "sec-fetch-dest": "document",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:36.862] [HTTP] Serving web interface at /HumanAgent
+[2025-10-24 13:39:36.864] [HTTP] SSE connection closed
+[2025-10-24 13:39:36.864] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:36.864] [HTTP] SSE connection closed
+[2025-10-24 13:39:36.864] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:36.871] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:36.871] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:36.877] [HTTP] GET /mcp
+[2025-10-24 13:39:36.877] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:36.877] [HTTP] Handling GET request to /mcp
+[2025-10-24 13:39:36.877] [HTTP] Setting up SSE stream for GET request
+[2025-10-24 13:39:36.877] [SSE] === SSE CONNECTION ATTEMPT ===
+[2025-10-24 13:39:36.877] [SSE] Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:36.877] [SSE] URL:
+"/mcp"
+[2025-10-24 13:39:36.877] [SSE] SSE headers set, adding to connections...
+[2025-10-24 13:39:36.877] [HTTP] Added SSE connection. Total connections: 3
+[2025-10-24 13:39:36.877] [SSE] SSE connection added. Total: 3
+[2025-10-24 13:39:36.877] [SSE] Sent initial SSE message:
+"data: {\"type\":\"connection\",\"status\":\"established\"}"
+[2025-10-24 13:39:36.880] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:36.880] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:37.431] [HTTP] GET /HumanAgent
+[2025-10-24 13:39:37.431] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "cache-control": "max-age=0",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "upgrade-insecure-requests": "1",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+  "sec-fetch-site": "none",
+  "sec-fetch-mode": "navigate",
+  "sec-fetch-user": "?1",
+  "sec-fetch-dest": "document",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:37.431] [HTTP] Serving web interface at /HumanAgent
+[2025-10-24 13:39:37.434] [HTTP] SSE connection closed
+[2025-10-24 13:39:37.434] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:37.434] [HTTP] SSE connection closed
+[2025-10-24 13:39:37.434] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:37.449] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:37.449] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:37.455] [HTTP] GET /mcp
+[2025-10-24 13:39:37.455] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:37.455] [HTTP] Handling GET request to /mcp
+[2025-10-24 13:39:37.455] [HTTP] Setting up SSE stream for GET request
+[2025-10-24 13:39:37.455] [SSE] === SSE CONNECTION ATTEMPT ===
+[2025-10-24 13:39:37.455] [SSE] Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:37.455] [SSE] URL:
+"/mcp"
+[2025-10-24 13:39:37.455] [SSE] SSE headers set, adding to connections...
+[2025-10-24 13:39:37.455] [HTTP] Added SSE connection. Total connections: 3
+[2025-10-24 13:39:37.455] [SSE] SSE connection added. Total: 3
+[2025-10-24 13:39:37.455] [SSE] Sent initial SSE message:
+"data: {\"type\":\"connection\",\"status\":\"established\"}"
+[2025-10-24 13:39:37.458] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:37.458] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:37.935] [HTTP] GET /HumanAgent
+[2025-10-24 13:39:37.936] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "cache-control": "max-age=0",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "upgrade-insecure-requests": "1",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+  "sec-fetch-site": "none",
+  "sec-fetch-mode": "navigate",
+  "sec-fetch-user": "?1",
+  "sec-fetch-dest": "document",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:37.936] [HTTP] Serving web interface at /HumanAgent
+[2025-10-24 13:39:37.938] [HTTP] SSE connection closed
+[2025-10-24 13:39:37.938] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:37.938] [HTTP] SSE connection closed
+[2025-10-24 13:39:37.938] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:37.948] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:37.948] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:37.956] [HTTP] GET /mcp
+[2025-10-24 13:39:37.956] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:37.957] [HTTP] Handling GET request to /mcp
+[2025-10-24 13:39:37.957] [HTTP] Setting up SSE stream for GET request
+[2025-10-24 13:39:37.957] [SSE] === SSE CONNECTION ATTEMPT ===
+[2025-10-24 13:39:37.957] [SSE] Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:37.957] [SSE] URL:
+"/mcp"
+[2025-10-24 13:39:37.957] [SSE] SSE headers set, adding to connections...
+[2025-10-24 13:39:37.957] [HTTP] Added SSE connection. Total connections: 3
+[2025-10-24 13:39:37.957] [SSE] SSE connection added. Total: 3
+[2025-10-24 13:39:37.957] [SSE] Sent initial SSE message:
+"data: {\"type\":\"connection\",\"status\":\"established\"}"
+[2025-10-24 13:39:37.961] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:37.961] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:38.110] [HTTP] GET /HumanAgent
+[2025-10-24 13:39:38.110] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "cache-control": "max-age=0",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "upgrade-insecure-requests": "1",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+  "sec-fetch-site": "none",
+  "sec-fetch-mode": "navigate",
+  "sec-fetch-user": "?1",
+  "sec-fetch-dest": "document",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:38.110] [HTTP] Serving web interface at /HumanAgent
+[2025-10-24 13:39:38.112] [HTTP] SSE connection closed
+[2025-10-24 13:39:38.112] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:38.112] [HTTP] SSE connection closed
+[2025-10-24 13:39:38.112] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:38.122] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:38.122] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:38.127] [HTTP] GET /mcp
+[2025-10-24 13:39:38.127] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:38.127] [HTTP] Handling GET request to /mcp
+[2025-10-24 13:39:38.127] [HTTP] Setting up SSE stream for GET request
+[2025-10-24 13:39:38.127] [SSE] === SSE CONNECTION ATTEMPT ===
+[2025-10-24 13:39:38.127] [SSE] Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:38.127] [SSE] URL:
+"/mcp"
+[2025-10-24 13:39:38.127] [SSE] SSE headers set, adding to connections...
+[2025-10-24 13:39:38.127] [HTTP] Added SSE connection. Total connections: 3
+[2025-10-24 13:39:38.127] [SSE] SSE connection added. Total: 3
+[2025-10-24 13:39:38.127] [SSE] Sent initial SSE message:
+"data: {\"type\":\"connection\",\"status\":\"established\"}"
+[2025-10-24 13:39:38.128] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:38.128] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:38.764] [HTTP] GET /HumanAgent
+[2025-10-24 13:39:38.764] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "cache-control": "max-age=0",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "upgrade-insecure-requests": "1",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+  "sec-fetch-site": "none",
+  "sec-fetch-mode": "navigate",
+  "sec-fetch-user": "?1",
+  "sec-fetch-dest": "document",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:38.764] [HTTP] Serving web interface at /HumanAgent
+[2025-10-24 13:39:38.767] [HTTP] SSE connection closed
+[2025-10-24 13:39:38.767] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:38.767] [HTTP] SSE connection closed
+[2025-10-24 13:39:38.767] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:38.782] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:38.782] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:38.787] [HTTP] GET /mcp
+[2025-10-24 13:39:38.787] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:38.787] [HTTP] Handling GET request to /mcp
+[2025-10-24 13:39:38.787] [HTTP] Setting up SSE stream for GET request
+[2025-10-24 13:39:38.787] [SSE] === SSE CONNECTION ATTEMPT ===
+[2025-10-24 13:39:38.787] [SSE] Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:38.787] [SSE] URL:
+"/mcp"
+[2025-10-24 13:39:38.787] [SSE] SSE headers set, adding to connections...
+[2025-10-24 13:39:38.787] [HTTP] Added SSE connection. Total connections: 3
+[2025-10-24 13:39:38.787] [SSE] SSE connection added. Total: 3
+[2025-10-24 13:39:38.787] [SSE] Sent initial SSE message:
+"data: {\"type\":\"connection\",\"status\":\"established\"}"
+[2025-10-24 13:39:38.789] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:38.789] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:38.948] [HTTP] GET /HumanAgent
+[2025-10-24 13:39:38.948] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "cache-control": "max-age=0",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "upgrade-insecure-requests": "1",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+  "sec-fetch-site": "none",
+  "sec-fetch-mode": "navigate",
+  "sec-fetch-user": "?1",
+  "sec-fetch-dest": "document",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:38.948] [HTTP] Serving web interface at /HumanAgent
+[2025-10-24 13:39:38.949] [HTTP] SSE connection closed
+[2025-10-24 13:39:38.950] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:38.950] [HTTP] SSE connection closed
+[2025-10-24 13:39:38.950] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:38.960] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:38.960] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:38.968] [HTTP] GET /mcp
+[2025-10-24 13:39:38.968] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:38.968] [HTTP] Handling GET request to /mcp
+[2025-10-24 13:39:38.968] [HTTP] Setting up SSE stream for GET request
+[2025-10-24 13:39:38.968] [SSE] === SSE CONNECTION ATTEMPT ===
+[2025-10-24 13:39:38.968] [SSE] Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:38.968] [SSE] URL:
+"/mcp"
+[2025-10-24 13:39:38.968] [SSE] SSE headers set, adding to connections...
+[2025-10-24 13:39:38.968] [HTTP] Added SSE connection. Total connections: 3
+[2025-10-24 13:39:38.968] [SSE] SSE connection added. Total: 3
+[2025-10-24 13:39:38.968] [SSE] Sent initial SSE message:
+"data: {\"type\":\"connection\",\"status\":\"established\"}"
+[2025-10-24 13:39:38.982] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:38.982] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:39.625] [HTTP] GET /HumanAgent
+[2025-10-24 13:39:39.625] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "cache-control": "max-age=0",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "upgrade-insecure-requests": "1",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+  "sec-fetch-site": "none",
+  "sec-fetch-mode": "navigate",
+  "sec-fetch-user": "?1",
+  "sec-fetch-dest": "document",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:39.625] [HTTP] Serving web interface at /HumanAgent
+[2025-10-24 13:39:39.629] [HTTP] SSE connection closed
+[2025-10-24 13:39:39.629] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:39.629] [HTTP] SSE connection closed
+[2025-10-24 13:39:39.629] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:39.640] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:39.640] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:39.647] [HTTP] GET /mcp
+[2025-10-24 13:39:39.647] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:39.647] [HTTP] Handling GET request to /mcp
+[2025-10-24 13:39:39.647] [HTTP] Setting up SSE stream for GET request
+[2025-10-24 13:39:39.647] [SSE] === SSE CONNECTION ATTEMPT ===
+[2025-10-24 13:39:39.647] [SSE] Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:39.647] [SSE] URL:
+"/mcp"
+[2025-10-24 13:39:39.647] [SSE] SSE headers set, adding to connections...
+[2025-10-24 13:39:39.647] [HTTP] Added SSE connection. Total connections: 3
+[2025-10-24 13:39:39.647] [SSE] SSE connection added. Total: 3
+[2025-10-24 13:39:39.647] [SSE] Sent initial SSE message:
+"data: {\"type\":\"connection\",\"status\":\"established\"}"
+[2025-10-24 13:39:39.650] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:39.651] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:39.786] [HTTP] GET /HumanAgent
+[2025-10-24 13:39:39.787] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "cache-control": "max-age=0",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "upgrade-insecure-requests": "1",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+  "sec-fetch-site": "none",
+  "sec-fetch-mode": "navigate",
+  "sec-fetch-user": "?1",
+  "sec-fetch-dest": "document",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:39.787] [HTTP] Serving web interface at /HumanAgent
+[2025-10-24 13:39:39.788] [HTTP] SSE connection closed
+[2025-10-24 13:39:39.788] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:39.788] [HTTP] SSE connection closed
+[2025-10-24 13:39:39.788] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:39.796] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:39.796] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:39.801] [HTTP] GET /mcp
+[2025-10-24 13:39:39.801] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:39.801] [HTTP] Handling GET request to /mcp
+[2025-10-24 13:39:39.801] [HTTP] Setting up SSE stream for GET request
+[2025-10-24 13:39:39.801] [SSE] === SSE CONNECTION ATTEMPT ===
+[2025-10-24 13:39:39.801] [SSE] Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:39.801] [SSE] URL:
+"/mcp"
+[2025-10-24 13:39:39.801] [SSE] SSE headers set, adding to connections...
+[2025-10-24 13:39:39.801] [HTTP] Added SSE connection. Total connections: 3
+[2025-10-24 13:39:39.801] [SSE] SSE connection added. Total: 3
+[2025-10-24 13:39:39.801] [SSE] Sent initial SSE message:
+"data: {\"type\":\"connection\",\"status\":\"established\"}"
+[2025-10-24 13:39:39.803] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:39.803] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:40.359] [HTTP] GET /HumanAgent
+[2025-10-24 13:39:40.359] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "cache-control": "max-age=0",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "upgrade-insecure-requests": "1",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+  "sec-fetch-site": "none",
+  "sec-fetch-mode": "navigate",
+  "sec-fetch-user": "?1",
+  "sec-fetch-dest": "document",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:40.359] [HTTP] Serving web interface at /HumanAgent
+[2025-10-24 13:39:40.362] [HTTP] SSE connection closed
+[2025-10-24 13:39:40.362] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:40.362] [HTTP] SSE connection closed
+[2025-10-24 13:39:40.362] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:40.371] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:40.372] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:40.381] [HTTP] GET /mcp
+[2025-10-24 13:39:40.381] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:40.381] [HTTP] Handling GET request to /mcp
+[2025-10-24 13:39:40.381] [HTTP] Setting up SSE stream for GET request
+[2025-10-24 13:39:40.381] [SSE] === SSE CONNECTION ATTEMPT ===
+[2025-10-24 13:39:40.381] [SSE] Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:40.381] [SSE] URL:
+"/mcp"
+[2025-10-24 13:39:40.381] [SSE] SSE headers set, adding to connections...
+[2025-10-24 13:39:40.381] [HTTP] Added SSE connection. Total connections: 3
+[2025-10-24 13:39:40.381] [SSE] SSE connection added. Total: 3
+[2025-10-24 13:39:40.381] [SSE] Sent initial SSE message:
+"data: {\"type\":\"connection\",\"status\":\"established\"}"
+[2025-10-24 13:39:40.384] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:40.384] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:40.512] [HTTP] GET /HumanAgent
+[2025-10-24 13:39:40.512] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "cache-control": "max-age=0",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "upgrade-insecure-requests": "1",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+  "sec-fetch-site": "none",
+  "sec-fetch-mode": "navigate",
+  "sec-fetch-user": "?1",
+  "sec-fetch-dest": "document",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:40.512] [HTTP] Serving web interface at /HumanAgent
+[2025-10-24 13:39:40.514] [HTTP] SSE connection closed
+[2025-10-24 13:39:40.514] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:40.514] [HTTP] SSE connection closed
+[2025-10-24 13:39:40.514] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:40.520] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:40.520] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:40.529] [HTTP] GET /mcp
+[2025-10-24 13:39:40.529] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:40.529] [HTTP] Handling GET request to /mcp
+[2025-10-24 13:39:40.529] [HTTP] Setting up SSE stream for GET request
+[2025-10-24 13:39:40.529] [SSE] === SSE CONNECTION ATTEMPT ===
+[2025-10-24 13:39:40.529] [SSE] Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:40.529] [SSE] URL:
+"/mcp"
+[2025-10-24 13:39:40.529] [SSE] SSE headers set, adding to connections...
+[2025-10-24 13:39:40.529] [HTTP] Added SSE connection. Total connections: 3
+[2025-10-24 13:39:40.529] [SSE] SSE connection added. Total: 3
+[2025-10-24 13:39:40.529] [SSE] Sent initial SSE message:
+"data: {\"type\":\"connection\",\"status\":\"established\"}"
+[2025-10-24 13:39:40.531] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:40.531] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:49.241] [HTTP] GET /HumanAgent
+[2025-10-24 13:39:49.241] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "cache-control": "max-age=0",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "upgrade-insecure-requests": "1",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+  "sec-fetch-site": "none",
+  "sec-fetch-mode": "navigate",
+  "sec-fetch-user": "?1",
+  "sec-fetch-dest": "document",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:49.241] [HTTP] Serving web interface at /HumanAgent
+[2025-10-24 13:39:49.244] [HTTP] SSE connection closed
+[2025-10-24 13:39:49.244] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:49.244] [HTTP] SSE connection closed
+[2025-10-24 13:39:49.244] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:49.259] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:49.259] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:49.267] [HTTP] GET /mcp
+[2025-10-24 13:39:49.267] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:49.267] [HTTP] Handling GET request to /mcp
+[2025-10-24 13:39:49.267] [HTTP] Setting up SSE stream for GET request
+[2025-10-24 13:39:49.267] [SSE] === SSE CONNECTION ATTEMPT ===
+[2025-10-24 13:39:49.267] [SSE] Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:49.267] [SSE] URL:
+"/mcp"
+[2025-10-24 13:39:49.267] [SSE] SSE headers set, adding to connections...
+[2025-10-24 13:39:49.267] [HTTP] Added SSE connection. Total connections: 3
+[2025-10-24 13:39:49.267] [SSE] SSE connection added. Total: 3
+[2025-10-24 13:39:49.267] [SSE] Sent initial SSE message:
+"data: {\"type\":\"connection\",\"status\":\"established\"}"
+[2025-10-24 13:39:49.270] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:49.270] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:49.714] [HTTP] GET /HumanAgent
+[2025-10-24 13:39:49.714] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "cache-control": "max-age=0",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "upgrade-insecure-requests": "1",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+  "sec-fetch-site": "none",
+  "sec-fetch-mode": "navigate",
+  "sec-fetch-user": "?1",
+  "sec-fetch-dest": "document",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:49.714] [HTTP] Serving web interface at /HumanAgent
+[2025-10-24 13:39:49.717] [HTTP] SSE connection closed
+[2025-10-24 13:39:49.717] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:49.717] [HTTP] SSE connection closed
+[2025-10-24 13:39:49.717] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:49.727] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:49.727] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:49.736] [HTTP] GET /mcp
+[2025-10-24 13:39:49.736] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:49.736] [HTTP] Handling GET request to /mcp
+[2025-10-24 13:39:49.736] [HTTP] Setting up SSE stream for GET request
+[2025-10-24 13:39:49.736] [SSE] === SSE CONNECTION ATTEMPT ===
+[2025-10-24 13:39:49.736] [SSE] Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:49.736] [SSE] URL:
+"/mcp"
+[2025-10-24 13:39:49.736] [SSE] SSE headers set, adding to connections...
+[2025-10-24 13:39:49.736] [HTTP] Added SSE connection. Total connections: 3
+[2025-10-24 13:39:49.736] [SSE] SSE connection added. Total: 3
+[2025-10-24 13:39:49.736] [SSE] Sent initial SSE message:
+"data: {\"type\":\"connection\",\"status\":\"established\"}"
+[2025-10-24 13:39:49.741] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:49.741] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:49.883] [HTTP] GET /HumanAgent
+[2025-10-24 13:39:49.883] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "cache-control": "max-age=0",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "upgrade-insecure-requests": "1",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+  "sec-fetch-site": "none",
+  "sec-fetch-mode": "navigate",
+  "sec-fetch-user": "?1",
+  "sec-fetch-dest": "document",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:49.883] [HTTP] Serving web interface at /HumanAgent
+[2025-10-24 13:39:49.886] [HTTP] SSE connection closed
+[2025-10-24 13:39:49.886] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:49.886] [HTTP] SSE connection closed
+[2025-10-24 13:39:49.886] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:49.892] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:49.892] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:49.898] [HTTP] GET /mcp
+[2025-10-24 13:39:49.898] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:49.898] [HTTP] Handling GET request to /mcp
+[2025-10-24 13:39:49.898] [HTTP] Setting up SSE stream for GET request
+[2025-10-24 13:39:49.898] [SSE] === SSE CONNECTION ATTEMPT ===
+[2025-10-24 13:39:49.898] [SSE] Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:49.898] [SSE] URL:
+"/mcp"
+[2025-10-24 13:39:49.898] [SSE] SSE headers set, adding to connections...
+[2025-10-24 13:39:49.898] [HTTP] Added SSE connection. Total connections: 3
+[2025-10-24 13:39:49.898] [SSE] SSE connection added. Total: 3
+[2025-10-24 13:39:49.898] [SSE] Sent initial SSE message:
+"data: {\"type\":\"connection\",\"status\":\"established\"}"
+[2025-10-24 13:39:49.901] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:49.902] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:51.150] [HTTP] GET /HumanAgent
+[2025-10-24 13:39:51.150] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "cache-control": "max-age=0",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "upgrade-insecure-requests": "1",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+  "sec-fetch-site": "none",
+  "sec-fetch-mode": "navigate",
+  "sec-fetch-user": "?1",
+  "sec-fetch-dest": "document",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:51.150] [HTTP] Serving web interface at /HumanAgent
+[2025-10-24 13:39:51.153] [HTTP] SSE connection closed
+[2025-10-24 13:39:51.153] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:51.153] [HTTP] SSE connection closed
+[2025-10-24 13:39:51.153] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:51.163] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:51.163] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:51.171] [HTTP] GET /mcp
+[2025-10-24 13:39:51.171] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:51.171] [HTTP] Handling GET request to /mcp
+[2025-10-24 13:39:51.171] [HTTP] Setting up SSE stream for GET request
+[2025-10-24 13:39:51.171] [SSE] === SSE CONNECTION ATTEMPT ===
+[2025-10-24 13:39:51.171] [SSE] Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:51.171] [SSE] URL:
+"/mcp"
+[2025-10-24 13:39:51.171] [SSE] SSE headers set, adding to connections...
+[2025-10-24 13:39:51.171] [HTTP] Added SSE connection. Total connections: 3
+[2025-10-24 13:39:51.171] [SSE] SSE connection added. Total: 3
+[2025-10-24 13:39:51.171] [SSE] Sent initial SSE message:
+"data: {\"type\":\"connection\",\"status\":\"established\"}"
+[2025-10-24 13:39:51.173] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:51.174] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:51.325] [HTTP] GET /HumanAgent
+[2025-10-24 13:39:51.325] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "cache-control": "max-age=0",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "upgrade-insecure-requests": "1",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+  "sec-fetch-site": "none",
+  "sec-fetch-mode": "navigate",
+  "sec-fetch-user": "?1",
+  "sec-fetch-dest": "document",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:51.325] [HTTP] Serving web interface at /HumanAgent
+[2025-10-24 13:39:51.327] [HTTP] SSE connection closed
+[2025-10-24 13:39:51.327] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:51.327] [HTTP] SSE connection closed
+[2025-10-24 13:39:51.327] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:51.334] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:51.334] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:51.340] [HTTP] GET /mcp
+[2025-10-24 13:39:51.340] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:51.340] [HTTP] Handling GET request to /mcp
+[2025-10-24 13:39:51.340] [HTTP] Setting up SSE stream for GET request
+[2025-10-24 13:39:51.340] [SSE] === SSE CONNECTION ATTEMPT ===
+[2025-10-24 13:39:51.340] [SSE] Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:51.340] [SSE] URL:
+"/mcp"
+[2025-10-24 13:39:51.340] [SSE] SSE headers set, adding to connections...
+[2025-10-24 13:39:51.340] [HTTP] Added SSE connection. Total connections: 3
+[2025-10-24 13:39:51.340] [SSE] SSE connection added. Total: 3
+[2025-10-24 13:39:51.340] [SSE] Sent initial SSE message:
+"data: {\"type\":\"connection\",\"status\":\"established\"}"
+[2025-10-24 13:39:51.342] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:51.343] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:52.008] [HTTP] GET /HumanAgent
+[2025-10-24 13:39:52.008] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "cache-control": "max-age=0",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "upgrade-insecure-requests": "1",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+  "sec-fetch-site": "none",
+  "sec-fetch-mode": "navigate",
+  "sec-fetch-user": "?1",
+  "sec-fetch-dest": "document",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:52.008] [HTTP] Serving web interface at /HumanAgent
+[2025-10-24 13:39:52.011] [HTTP] SSE connection closed
+[2025-10-24 13:39:52.011] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:52.011] [HTTP] SSE connection closed
+[2025-10-24 13:39:52.011] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:52.027] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:52.027] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:52.032] [HTTP] GET /mcp
+[2025-10-24 13:39:52.032] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:52.032] [HTTP] Handling GET request to /mcp
+[2025-10-24 13:39:52.032] [HTTP] Setting up SSE stream for GET request
+[2025-10-24 13:39:52.032] [SSE] === SSE CONNECTION ATTEMPT ===
+[2025-10-24 13:39:52.032] [SSE] Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:52.032] [SSE] URL:
+"/mcp"
+[2025-10-24 13:39:52.033] [SSE] SSE headers set, adding to connections...
+[2025-10-24 13:39:52.033] [HTTP] Added SSE connection. Total connections: 3
+[2025-10-24 13:39:52.033] [SSE] SSE connection added. Total: 3
+[2025-10-24 13:39:52.033] [SSE] Sent initial SSE message:
+"data: {\"type\":\"connection\",\"status\":\"established\"}"
+[2025-10-24 13:39:52.036] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:52.036] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:52.177] [HTTP] GET /HumanAgent
+[2025-10-24 13:39:52.177] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "cache-control": "max-age=0",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "upgrade-insecure-requests": "1",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+  "sec-fetch-site": "none",
+  "sec-fetch-mode": "navigate",
+  "sec-fetch-user": "?1",
+  "sec-fetch-dest": "document",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:52.177] [HTTP] Serving web interface at /HumanAgent
+[2025-10-24 13:39:52.179] [HTTP] SSE connection closed
+[2025-10-24 13:39:52.179] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:52.179] [HTTP] SSE connection closed
+[2025-10-24 13:39:52.179] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:39:52.187] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:52.187] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:52.192] [HTTP] GET /mcp
+[2025-10-24 13:39:52.192] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:52.192] [HTTP] Handling GET request to /mcp
+[2025-10-24 13:39:52.192] [HTTP] Setting up SSE stream for GET request
+[2025-10-24 13:39:52.192] [SSE] === SSE CONNECTION ATTEMPT ===
+[2025-10-24 13:39:52.192] [SSE] Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:39:52.192] [SSE] URL:
+"/mcp"
+[2025-10-24 13:39:52.192] [SSE] SSE headers set, adding to connections...
+[2025-10-24 13:39:52.192] [HTTP] Added SSE connection. Total connections: 3
+[2025-10-24 13:39:52.192] [SSE] SSE connection added. Total: 3
+[2025-10-24 13:39:52.192] [SSE] Sent initial SSE message:
+"data: {\"type\":\"connection\",\"status\":\"established\"}"
+[2025-10-24 13:39:52.194] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:39:52.194] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
 }

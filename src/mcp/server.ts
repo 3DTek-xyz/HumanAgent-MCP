@@ -138,9 +138,9 @@ export class McpServer extends EventEmitter {
   }
 
   private setupEventForwarding(): void {
-    this.on('human-agent-request', (data) => {
-      this.debugLogger.log('SSE', 'Forwarding human-agent-request to SSE connections');
-      this.broadcastToSSE('human-agent-request', data);
+    this.on('request-state-change', (data) => {
+      this.debugLogger.log('SSE', 'Forwarding request-state-change to SSE connections');
+      this.broadcastToSSE('request-state-change', data);
     });
   }
 
@@ -1261,14 +1261,12 @@ export class McpServer extends EventEmitter {
                         addMessageToUI(data.sessionId, data.message.sender, data.message.content, data.message.source);
                     } else if (data.type === 'message' && data.sessionId) {
                         addMessageToUI(data.sessionId, data.role || 'assistant', data.content);
-                    } else if (data.type === 'human-agent-request' && data.data) {
-                        // Handle human-agent-request messages (AI questions to user)
-                        console.log('Web interface received human-agent-request:', data.data);
+                    } else if (data.type === 'request-state-change' && data.data) {
+                        // Handle request state changes for input control
+                        console.log('Web interface received request-state-change:', data.data);
                         
-                        // Add AI message to current session (no need to track requestId - we get it from server state)
-                        const sessionId = activeSessionId || 'default'; 
-                        const displayMessage = data.data.context ? \`\${data.data.context}\\n\\n\${data.data.message}\` : data.data.message;
-                        addMessageToUI(sessionId, 'agent', displayMessage);
+                        // No message display here - messages are handled via chat_message SSE
+                        // This event only manages input state and waiting indicators
                     } else if (data.type === 'session_update') {
                         // Refresh the page to show new sessions
                         window.location.reload();
@@ -1406,15 +1404,6 @@ export class McpServer extends EventEmitter {
     const displayMessage = params.context ? `${params.context}\n\n${params.message}` : params.message;
     this.debugLogger.log('TOOL', 'Displaying message in chat UI:', displayMessage);
     
-    // Emit event to show message in chat UI immediately
-    this.emit('human-agent-request', {
-      requestId,
-      message: params.message,
-      context: params.context,
-      priority: params.priority || 'normal',
-      timestamp: new Date().toISOString()
-    });
-    
     // Wait for human response
     return new Promise((resolve) => {
       // Set up timeout
@@ -1451,12 +1440,31 @@ export class McpServer extends EventEmitter {
       this.debugLogger.log('CHAT', `Stored AI message in ChatManager for session ${sessionToUse}: ${aiMessage.content.substring(0, 50)}...`);
       this.broadcastMessageToClients(sessionToUse, aiMessage);
       
+      // Emit request state to enable input controls and show waiting indicator
+      this.emit('request-state-change', {
+        requestId,
+        sessionId: sessionToUse,
+        state: 'waiting_for_response',
+        message: params.message,
+        context: params.context,
+        timestamp: new Date().toISOString()
+      });
+      
       this.chatManager.addPendingRequest(sessionToUse, requestId, params);
       this.requestResolvers.set(requestId, {
         resolve: (response: string) => {
           clearTimeout(timeoutHandle);
           const responseTime = Date.now() - startTime;
           this.debugLogger.log('TOOL', `Request ${requestId} completed with response:`, response);
+          
+          // Emit request completed state to disable input controls and hide waiting indicator
+          this.emit('request-state-change', {
+            requestId,
+            sessionId: sessionToUse,
+            state: 'completed',
+            response: response,
+            timestamp: new Date().toISOString()
+          });
           
           // Don't store human response as assistant message
           // The 'response' here is the human's answer to AI's question
