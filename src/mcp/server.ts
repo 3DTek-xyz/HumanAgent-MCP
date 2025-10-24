@@ -403,7 +403,7 @@ export class McpServer extends EventEmitter {
       // Web interface for multi-session chat
       await this.handleWebInterface(req, res);
       return;
-    } else if (req.url?.startsWith('/sessions') || req.url === '/response' || req.url?.startsWith('/tools') || req.url === '/reload' || req.url?.startsWith('/messages/') || req.url?.startsWith('/chat/')) {
+    } else if (req.url?.startsWith('/sessions') || req.url === '/response' || req.url?.startsWith('/tools') || req.url === '/reload' || req.url?.startsWith('/messages/')) {
       // Session management, response, tools, reload, messages, and chat endpoints
       await this.handleSessionEndpoint(req, res);
       return;
@@ -650,50 +650,6 @@ export class McpServer extends EventEmitter {
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify(state));
-    } else if (req.method === 'POST' && url.pathname.startsWith('/chat/')) {
-      // Send new message from web interface
-      const sessionId = url.pathname.split('/')[2];
-      if (!sessionId) {
-        res.statusCode = 400;
-        res.end(JSON.stringify({ success: false, error: 'Session ID required' }));
-        return;
-      }
-      
-      let body = '';
-      req.on('data', (chunk) => { body += chunk.toString(); });
-      req.on('end', () => {
-        try {
-          const { message, sender = 'user' } = JSON.parse(body);
-          if (!message) {
-            res.statusCode = 400;
-            res.end(JSON.stringify({ success: false, error: 'Message content required' }));
-            return;
-          }
-          
-          // Create and store the message
-          const chatMessage: ChatMessage = {
-            id: Date.now().toString(),
-            content: message,
-            sender: sender as 'user' | 'agent',
-            timestamp: new Date(),
-            type: 'text',
-            source: sender === 'user' ? 'vscode' : undefined
-          };
-          
-          this.chatManager.addMessage(sessionId, chatMessage);
-          this.debugLogger.log('CHAT', `Stored message in ChatManager for session ${sessionId}: ${chatMessage.sender} - ${chatMessage.content.substring(0, 50)}...`);
-          this.broadcastMessageToClients(sessionId, chatMessage);
-          
-          // Auto-forwarding removed - both interfaces now use /response endpoint directly
-          
-          res.statusCode = 200;
-          res.setHeader('Content-Type', 'application/json');
-          res.end(JSON.stringify({ success: true, message: chatMessage }));
-        } catch (error) {
-          res.statusCode = 400;
-          res.end(JSON.stringify({ success: false, error: 'Invalid request body' }));
-        }
-      });
     } else if (req.method === 'POST' && url.pathname === '/response') {
       // Handle human response to pending request
       let body = '';
@@ -1482,6 +1438,19 @@ export class McpServer extends EventEmitter {
       // Store the pending request using the extracted session ID
       const sessionToUse = sessionId || params.sessionId || 'default';
       this.debugLogger.log('TOOL', `Adding pending request ${requestId} to session: ${sessionToUse}`);
+      
+      // Store the AI's message (this IS the AI communication - it talks by calling the tool)
+      const aiMessage: ChatMessage = {
+        id: requestId, // Use request ID to link with pending request
+        content: displayMessage,
+        sender: 'agent',
+        timestamp: new Date(),
+        type: 'text'
+      };
+      this.chatManager.addMessage(sessionToUse, aiMessage);
+      this.debugLogger.log('CHAT', `Stored AI message in ChatManager for session ${sessionToUse}: ${aiMessage.content.substring(0, 50)}...`);
+      this.broadcastMessageToClients(sessionToUse, aiMessage);
+      
       this.chatManager.addPendingRequest(sessionToUse, requestId, params);
       this.requestResolvers.set(requestId, {
         resolve: (response: string) => {
