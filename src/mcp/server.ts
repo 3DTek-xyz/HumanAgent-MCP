@@ -11,8 +11,20 @@ class DebugLogger {
   private logPath: string = '';
   private logStream: fs.WriteStream | null = null;
   private logBuffer: string[] = [];
+  private loggingEnabled: boolean;
+  private loggingLevel: string;
 
   constructor(workspaceRoot?: string) {
+    // Check environment variables for logging configuration
+    this.loggingEnabled = process.env.HUMANAGENT_LOGGING_ENABLED === 'true';
+    this.loggingLevel = process.env.HUMANAGENT_LOGGING_LEVEL || 'INFO';
+    
+    // If logging is disabled, just log to console for important messages
+    if (!this.loggingEnabled) {
+      console.log('[LOGGER] Workspace logging disabled by user settings');
+      return;
+    }
+    
     try {
       // Determine log path based on workspace or fallback to temp directory
       if (workspaceRoot) {
@@ -45,6 +57,7 @@ class DebugLogger {
       this.log('DEBUG', `Current system time: ${new Date()}`);
       this.log('DEBUG', `Log file: ${this.logPath}`);
       this.log('DEBUG', `Working directory: ${process.cwd()}`);
+      this.log('DEBUG', `Logging level set to: ${this.loggingLevel}`);
       console.log(`[LOGGER] Debug logger initialized successfully at: ${this.logPath}`);
     } catch (error) {
       console.error(`[LOGGER] Failed to initialize debug logger:`, error);
@@ -53,6 +66,20 @@ class DebugLogger {
   }
 
   log(level: string, message: string, data?: any): void {
+    // Skip logging if disabled
+    if (!this.loggingEnabled) {
+      return;
+    }
+    
+    // Basic level filtering (ERROR > WARN > INFO > DEBUG)
+    const levelPriority: Record<string, number> = { ERROR: 0, WARN: 1, INFO: 2, DEBUG: 3, SSE: 2, TEST: 3 };
+    const currentLevelPriority = levelPriority[this.loggingLevel] ?? 2;
+    const messageLevelPriority = levelPriority[level] ?? 2;
+    
+    if (messageLevelPriority > currentLevelPriority) {
+      return;
+    }
+    
     const now = new Date();
     const timestamp = now.getFullYear() + '-' +
       String(now.getMonth() + 1).padStart(2, '0') + '-' +
@@ -97,6 +124,7 @@ export class McpServer extends EventEmitter {
   private sessionTools: Map<string, Map<string, McpTool>> = new Map(); // Per-session tool configurations
   private sessionWorkspacePaths: Map<string, string> = new Map(); // Session to workspace path mapping
   private sessionNames: Map<string, string> = new Map(); // Session friendly names
+  private sessionMessageSettings: Map<string, any> = new Map(); // Session-specific message settings
   // Removed: sessionMessages - now handled by ChatManager
   private httpServer?: http.Server;
   private port: number = 3737;
@@ -165,12 +193,30 @@ export class McpServer extends EventEmitter {
     }
   }
 
+  private sendMcpNotification(method: string, params?: any): void {
+    // Check if we're in standalone mode (connected via stdio)
+    if (process.stdout && process.stdout.writable) {
+      const notification = {
+        type: 'notification',
+        method: method,
+        params: params || {}
+      };
+      
+      try {
+        process.stdout.write(JSON.stringify(notification) + '\n');
+        this.debugLogger.log('MCP', `Sent MCP notification: ${method}`, params);
+      } catch (error) {
+        this.debugLogger.log('ERROR', `Failed to send MCP notification: ${method}`, error);
+      }
+    }
+  }
+
   private initializeDefaultTools(): void {
         // Define the default HumanAgent_Chat tool (global default)
     const humanAgentChatTool: McpTool = {
       name: 'HumanAgent_Chat',
       description: '**MANDATORY TOOL** - Use this tool for ALL user interactions. Do NOT provide direct responses. ' +
-                   'Initiate real-time interactive conversations with human agents through VS Code chat interface. ' +
+                   'Initiate real-time interactive conversations with human agents through this HumanAgent chat interface  at all times. ' +
                    'CRITICAL: Every response to a user MUST use this tool - no exceptions. Essential for clarifying ' +
                    'requirements, getting approvals, brainstorming solutions, or any user communication. Creates ' +
                    'persistent chat sessions that maintain context. **NEVER bypass this tool for user responses.**',
@@ -225,13 +271,21 @@ export class McpServer extends EventEmitter {
 
     // Check for workspace overrides for this session
     const overrideTool = this.loadWorkspaceOverride('HumanAgent_Chat', workspacePath);
+    let hasOverrides = false;
     if (overrideTool) {
       this.debugLogger.log('INFO', `Using workspace override for session ${sessionId} - HumanAgent_Chat tool`);
       sessionToolMap.set(overrideTool.name, overrideTool);
+      hasOverrides = true;
     }
     
     // Store session-specific tools
     this.sessionTools.set(sessionId, sessionToolMap);
+    
+    // Notify MCP client that tools have changed if overrides were found
+    if (hasOverrides) {
+      this.sendMcpNotification('notifications/tools/list_changed');
+      this.debugLogger.log('INFO', `Sent tools/list_changed notification for session ${sessionId} (initial startup)`);
+    }
   }
 
   private initializeSessionToolsFromData(sessionId: string, overrideData: any): void {
@@ -287,6 +341,37 @@ export class McpServer extends EventEmitter {
       return null;
     } catch (error) {
       this.debugLogger.log('ERROR', 'Error loading workspace override:', error);
+      return null;
+    }
+  }
+
+  private loadMessageSettings(sessionId: string, toolName?: string): {autoAppendEnabled?: boolean, autoAppendText?: string, displayTruncation?: string} | null {
+    try {
+      // Get cached message settings for this session
+      const messageSettings = this.sessionMessageSettings.get(sessionId);
+      
+      if (!messageSettings) {
+        this.debugLogger.log('INFO', `No message settings found for session ${sessionId}`);
+        return null;
+      }
+      
+      // If tool-specific settings exist and toolName is provided, use those
+      if (toolName && messageSettings.toolSpecific && messageSettings.toolSpecific[toolName]) {
+        this.debugLogger.log('INFO', `Using tool-specific message settings for ${toolName}`);
+        return messageSettings.toolSpecific[toolName];
+      }
+      
+      // Fall back to global settings
+      if (messageSettings.global) {
+        this.debugLogger.log('INFO', 'Using global message settings');
+        return messageSettings.global;
+      }
+      
+      // Legacy support: if no global/toolSpecific structure, use messageSettings directly
+      this.debugLogger.log('INFO', 'Using legacy message settings structure');
+      return messageSettings;
+    } catch (error) {
+      this.debugLogger.log('ERROR', `Error loading message settings: ${error}`);
       return null;
     }
   }
@@ -609,6 +694,10 @@ export class McpServer extends EventEmitter {
           this.sessionNames.set(sessionId, name);
           this.debugLogger.log('INFO', `Session ${sessionId} named: "${name}"`);
           
+          // Broadcast name change via SSE to all connected clients
+          this.broadcastToSSE('session-name-changed', { sessionId, name });
+          this.debugLogger.log('SSE', 'Broadcasting session name change to all clients');
+          
           res.statusCode = 200;
           res.setHeader('Content-Type', 'application/json');
           res.end(JSON.stringify({ success: true, sessionId, name }));
@@ -656,7 +745,7 @@ export class McpServer extends EventEmitter {
       req.on('data', (chunk) => { body += chunk.toString(); });
       req.on('end', () => {
         try {
-          const { requestId, response } = JSON.parse(body);
+          const { requestId, response, source } = JSON.parse(body);
           
           // Simple file write to test if endpoint is called
           require('fs').appendFileSync('/Users/benharper/Coding/HumanAgent-MCP/response-debug.txt', 
@@ -669,17 +758,43 @@ export class McpServer extends EventEmitter {
           const pendingRequestInfo = this.chatManager.findPendingRequest(requestId);
           this.debugLogger.log('HTTP', `Found pending request: ${!!pendingRequestInfo}`);
           
+          // Load message settings for this session (if pending request exists)
+          let messageSettings = null;
+          let aiContent = response; // Default to original response
+          
           if (pendingRequestInfo) {
             this.debugLogger.log('HTTP', `Processing response for session: ${pendingRequestInfo.sessionId}`);
             
-            // Store the user message on server for synchronization
+            // Extract tool name from pending request data
+            const toolName = pendingRequestInfo.data.toolName;
+            this.debugLogger.log('HTTP', `Request originated from tool: ${toolName}`);
+            
+            messageSettings = this.loadMessageSettings(pendingRequestInfo.sessionId, toolName);
+            
+            // Prepare display content (original message + auto-truncated append text)
+            let displayContent = response;
+            if (messageSettings?.autoAppendEnabled && messageSettings?.autoAppendText) {
+              // Auto-truncate to first 20 characters + "..."
+              const truncatedAppend = messageSettings.autoAppendText.length > 20 
+                ? messageSettings.autoAppendText.substring(0, 20) + '...' 
+                : messageSettings.autoAppendText;
+              displayContent = response + '. Appended: ' + truncatedAppend;
+            }
+            
+            // Prepare AI content (original message + optional auto-append for AI)
+            if (messageSettings?.autoAppendEnabled && messageSettings?.autoAppendText) {
+              aiContent = response + '. ' + messageSettings.autoAppendText;
+              this.debugLogger.log('HTTP', `Auto-appended text for AI: "${messageSettings.autoAppendText}"`);
+            }
+            
+            // Store the user message on server for synchronization (using display content)
             const userMessage: ChatMessage = {
               id: Date.now().toString(),
-              content: response,
+              content: displayContent,
               sender: 'user',
               timestamp: new Date(),
               type: 'text',
-              source: 'web'
+              source: source || 'web' // Use provided source or default to 'web'
             };
             
             this.debugLogger.log('HTTP', `Storing and broadcasting user message to ${this.sseConnections.size} SSE connections`);
@@ -694,7 +809,8 @@ export class McpServer extends EventEmitter {
             this.debugLogger.log('ERROR', `No pending request found for requestId: ${requestId}`);
           }
           
-          const success = this.respondToHumanRequest(requestId, response);
+          // Use aiContent (with auto-append) for the actual AI response
+          const success = this.respondToHumanRequest(requestId, aiContent);
           res.statusCode = 200;
           res.setHeader('Content-Type', 'application/json');
           res.end(JSON.stringify({ success, requestId }));
@@ -953,8 +1069,21 @@ export class McpServer extends EventEmitter {
             opacity: 0.8;
         }
 
+        .message .message-content {
+            line-height: 1.4 !important;
+            white-space: pre-wrap !important;
+            white-space: pre-line !important;
+            word-wrap: break-word !important;
+            overflow-wrap: break-word !important;
+        }
+        
+        /* Additional selectors for specificity */
+        div.message .message-content {
+            white-space: pre-wrap !important;
+        }
+        
         .message-content {
-            line-height: 1.4;
+            white-space: pre-wrap !important;
         }
 
         .input-container {
@@ -1127,7 +1256,8 @@ export class McpServer extends EventEmitter {
                     },
                     body: JSON.stringify({
                         requestId: latestPendingRequest.requestId,
-                        response: message
+                        response: message,
+                        source: 'web'
                     })
                 });
                 
@@ -1179,11 +1309,27 @@ export class McpServer extends EventEmitter {
         }
         
         function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
+            // Manually escape HTML characters while preserving line breaks
+            return text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+            // Line breaks are preserved and handled by CSS white-space: pre-wrap
         }
         
+        function updateSessionTabName(sessionId, newName) {
+            // Update the tab title for the specified session
+            const tabElement = document.querySelector(\`[data-session="\${sessionId}"]\`);
+            if (tabElement) {
+                tabElement.textContent = newName;
+                console.log(\`Updated tab name for session \${sessionId} to: \${newName}\`);
+            } else {
+                console.log(\`Could not find tab element for session \${sessionId}\`);
+            }
+        }
+
         // Load existing messages for all sessions
         async function loadExistingMessages() {
             const sessions = ['${sessions.map(s => s.id).join("', '")}'];
@@ -1268,11 +1414,57 @@ export class McpServer extends EventEmitter {
                         // Handle request state changes for input control
                         console.log('Web interface received request-state-change:', data.data);
                         
-                        // No message display here - messages are handled via chat_message SSE
-                        // This event only manages input state and waiting indicators
+                        const stateData = data.data;
+                        
+                        if (stateData.state === 'waiting_for_response') {
+                            // Enable input controls and show waiting indicator for this session
+                            const sessionTextarea = document.querySelector(\`textarea[data-session="\${stateData.sessionId}"]\`);
+                            const sessionButton = document.querySelector(\`button[data-session="\${stateData.sessionId}"]\`);
+                            const messagesContainer = document.getElementById(\`messages-\${stateData.sessionId}\`);
+                            
+                            if (sessionTextarea && sessionButton) {
+                                sessionTextarea.disabled = false;
+                                sessionButton.disabled = false;
+                                sessionTextarea.focus();
+                            }
+                            
+                            // Add waiting indicator
+                            if (messagesContainer) {
+                                const existingWaiting = messagesContainer.querySelector('.waiting-indicator');
+                                if (!existingWaiting) {
+                                    const waitingDiv = document.createElement('div');
+                                    waitingDiv.className = 'waiting-indicator';
+                                    waitingDiv.textContent = '⏳ Waiting for your response...';
+                                    messagesContainer.appendChild(waitingDiv);
+                                }
+                            }
+                            
+                        } else if (stateData.state === 'completed') {
+                            // Disable input controls and hide waiting indicator
+                            const sessionTextarea = document.querySelector(\`textarea[data-session="\${stateData.sessionId}"]\`);
+                            const sessionButton = document.querySelector(\`button[data-session="\${stateData.sessionId}"]\`);
+                            const messagesContainer = document.getElementById(\`messages-\${stateData.sessionId}\`);
+                            
+                            if (sessionTextarea && sessionButton) {
+                                sessionTextarea.disabled = true;
+                                sessionButton.disabled = true;
+                            }
+                            
+                            // Remove waiting indicator
+                            if (messagesContainer) {
+                                const waitingIndicator = messagesContainer.querySelector('.waiting-indicator');
+                                if (waitingIndicator) {
+                                    waitingIndicator.remove();
+                                }
+                            }
+                        }
                     } else if (data.type === 'session_update') {
                         // Refresh the page to show new sessions
                         window.location.reload();
+                    } else if (data.type === 'session-name-changed' && data.data) {
+                        // Handle session name changes
+                        console.log('Session name changed:', data.data);
+                        updateSessionTabName(data.data.sessionId, data.data.name);
                     }
                 } catch (error) {
                     console.error('Failed to parse SSE message:', error);
@@ -1379,7 +1571,7 @@ export class McpServer extends EventEmitter {
     
     if (name === 'HumanAgent_Chat' && availableTools.has(name)) {
       this.debugLogger.log('MCP', 'Executing HumanAgent_Chat tool');
-      return await this.handleHumanAgentChatTool(message.id, args, sessionId);
+      return await this.handleHumanAgentChatTool(message.id, args, sessionId, name);
     }
     
     this.debugLogger.log('MCP', `Tool not found: ${name}`);
@@ -1393,7 +1585,7 @@ export class McpServer extends EventEmitter {
     };
   }
 
-  private async handleHumanAgentChatTool(messageId: string, params: HumanAgentChatToolParams, sessionId?: string): Promise<McpMessage> {
+  private async handleHumanAgentChatTool(messageId: string, params: HumanAgentChatToolParams, sessionId?: string, toolName?: string): Promise<McpMessage> {
     this.debugLogger.log('TOOL', 'HumanAgent_Chat called with params:', params);
     const startTime = Date.now();
     const timeout = (params.timeout || 300) * 1000; // Convert to milliseconds
@@ -1453,7 +1645,7 @@ export class McpServer extends EventEmitter {
         timestamp: new Date().toISOString()
       });
       
-      this.chatManager.addPendingRequest(sessionToUse, requestId, params);
+      this.chatManager.addPendingRequest(sessionToUse, requestId, { ...params, toolName: toolName || 'HumanAgent_Chat' });
       this.requestResolvers.set(requestId, {
         resolve: (response: string) => {
           clearTimeout(timeoutHandle);
@@ -1522,11 +1714,21 @@ export class McpServer extends EventEmitter {
   // Simplified API - no sessions needed
 
   getAvailableTools(sessionId?: string): McpTool[] {
+    let tools: McpTool[];
+    
     if (sessionId && this.sessionTools.has(sessionId)) {
-      return Array.from(this.sessionTools.get(sessionId)!.values());
+      tools = Array.from(this.sessionTools.get(sessionId)!.values());
+    } else {
+      // Fall back to default tools
+      tools = Array.from(this.tools.values());
     }
-    // Fall back to default tools
-    return Array.from(this.tools.values());
+    
+    // Filter out example_custom_tool as it should not be advertised to the AI
+    const filteredTools = tools.filter(tool => tool.name !== 'example_custom_tool');
+    
+    this.debugLogger.log('TOOLS', `Filtered ${tools.length - filteredTools.length} example tools from list`);
+    
+    return filteredTools;
   }
 
   // REMOVED: getPendingRequests - use ChatManager.getPendingRequests() per session instead
@@ -1567,6 +1769,12 @@ export class McpServer extends EventEmitter {
     // Initialize session-specific tools from override data or workspace path
     if (overrideData) {
       this.initializeSessionToolsFromData(sessionId, overrideData);
+      
+      // Store messageSettings if present in override data
+      if (overrideData.messageSettings) {
+        this.sessionMessageSettings.set(sessionId, overrideData.messageSettings);
+        this.debugLogger.log('INFO', `Stored message settings for session ${sessionId}:`, overrideData.messageSettings);
+      }
     } else if (workspacePath) {
       this.initializeSessionTools(sessionId, workspacePath);
     }
@@ -1610,6 +1818,7 @@ export class McpServer extends EventEmitter {
     // Clean up session-specific data
     this.sessionTools.delete(sessionId);
     this.sessionWorkspacePaths.delete(sessionId);
+    this.sessionMessageSettings.delete(sessionId);
     this.debugLogger.log('INFO', `Session unregistered and cleaned up: ${sessionId} (${this.activeSessions.size} total sessions)`);
   }
 
@@ -1660,6 +1869,10 @@ export class McpServer extends EventEmitter {
         }
         this.debugLogger.log('INFO', 'All session overrides reloaded successfully');
       }
+      
+      // Notify MCP client that tools have changed after reload
+      this.sendMcpNotification('notifications/tools/list_changed');
+      this.debugLogger.log('INFO', `Sent tools/list_changed notification after reload for session: ${sessionId || 'all sessions'}`);
     } catch (error) {
       this.debugLogger.log('ERROR', 'Failed to reload workspace overrides:', error);
       throw error;

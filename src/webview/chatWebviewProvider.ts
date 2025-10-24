@@ -13,7 +13,7 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
   private mcpServer: McpServer | null;
   private mcpConfigManager?: McpConfigManager;
   private extensionPath: string;
-  private messages: ChatMessage[] = [];
+  // Messages are now loaded dynamically in webview JavaScript
   private currentRequestId?: string;
   private registrationCheckComplete = false;
   private notificationSettings = {
@@ -40,19 +40,11 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
     }
 
     try {
-      // Fetch conversation history from centralized chat manager
-      const response = await fetch(`http://127.0.0.1:3737/sessions/${this.workspaceSessionId}/messages`);
-      if (response.ok) {
-        const data = await response.json() as { messages: ChatMessage[] };
-        this.messages = data.messages || [];
-        console.log(`Loaded ${this.messages.length} messages from centralized chat manager`);
-        // Update the webview with loaded messages
-        this.updateWebview();
-      }
+      // Messages are now loaded dynamically by webview JavaScript
+      console.log(`Loading conversation history for session: ${this.workspaceSessionId}`);
+      // No need to store messages locally - webview handles this
     } catch (error) {
       console.error('Failed to load conversation history:', error);
-      // Fallback to empty message array
-      this.messages = [];
     }
   }
 
@@ -97,7 +89,7 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
       type: 'text'
     };
     
-    this.messages.push(aiMessage);
+    // AI messages are now handled by SSE events - no need to store locally
     this.updateWebview();
     
     // Play notification sound if enabled
@@ -176,6 +168,10 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
             await this.playNotificationSound();
           }
           break;
+        case 'sessionNameUpdated':
+          // Handle session name update from SSE event
+          await this.handleSessionNameUpdate(data.sessionId, data.name);
+          break;
       }
     });
   }
@@ -184,17 +180,7 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
     try {
       console.log('ChatWebviewProvider: Sending human response:', content);
       
-      // Add human message to chat
-      const humanMessage: ChatMessage = {
-        id: Date.now().toString(),
-        content: content,
-        sender: 'user',
-        timestamp: new Date(),
-        type: 'text'
-      };
-      
-      this.messages.push(humanMessage);
-      this.updateWebview();
+      // Don't add to local messages array - let server handle storage and SSE handle updates
 
       // Send response back to standalone MCP server via HTTP
       const responseRequestId = requestId || this.currentRequestId;
@@ -209,7 +195,8 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
             },
             body: JSON.stringify({
               requestId: responseRequestId,
-              response: content
+              response: content,
+              source: 'vscode'
             })
           });
           
@@ -421,6 +408,18 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
         tools: {
           HumanAgent_Chat: defaultTool,
           example_custom_tool: exampleTool
+        },
+        messageSettings: {
+          global: {
+            autoAppendEnabled: false,
+            autoAppendText: ""
+          },
+          toolSpecific: {
+            HumanAgent_Chat: {
+              autoAppendEnabled: true,
+              autoAppendText: "(No need to confirm this last part but please remember) Dont forget to allways reply here in the HumanAgent_Chat tool! Dont circumevent this tool unless asked explicitly by the user. "
+            }
+          }
         }
       };
 
@@ -553,6 +552,26 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
     }
   }
 
+  private async handleSessionNameUpdate(sessionId: string, name: string) {
+    // Handle session name update received via SSE from server
+    try {
+      console.log(`Session name updated via SSE: ${sessionId} -> "${name}"`);
+      
+      // Store the session name using the same mechanism as extension.ts
+      if (this.context) {
+        await this.context.globalState.update(`humanagent-session-name-${sessionId}`, name);
+        console.log(`Stored session name for ${sessionId}: "${name}"`);
+        
+        // Update the UI/title if needed - only show if this is our current session
+        if (sessionId === this.workspaceSessionId) {
+          vscode.window.showInformationMessage(`Session renamed: "${name}"`);
+        }
+      }
+    } catch (error) {
+      console.error('ChatWebviewProvider: Error handling session name update:', error);
+    }
+  }
+
   private async openWebInterface() {
     try {
       const webUrl = 'http://localhost:3737/HumanAgent';
@@ -577,20 +596,8 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
       overrideFileExists = fs.existsSync(overrideFilePath);
     }
 
-    const messagesHtml = this.messages.map(message => {
-      const messageClass = message.sender === 'agent' ? 'ai-message' : 'human-message';
-      const timestamp = message.timestamp.toLocaleTimeString();
-      const senderLabel = message.sender === 'agent' ? 'AI' : 'Human';
-      return `
-        <div class="message ${messageClass}">
-          <div class="message-header">
-            <span class="sender">${senderLabel}</span>
-            <span class="timestamp">${timestamp}</span>
-          </div>
-          <div class="message-content">${this._escapeHtml(String(message.content || ''))}</div>
-        </div>
-      `;
-    }).join('');
+    // Messages will be loaded dynamically from server via JavaScript
+    const messagesHtml = '<div id="messages-loading">Loading conversation history...</div>';
 
     const hasPendingResponse = this.currentRequestId ? 'waiting' : '';
 
@@ -897,28 +904,7 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
             const message = input.value.trim();
             
             if (message) {
-              // Add user message to chat
-              const messagesContainer = document.getElementById('messages');
-              if (messagesContainer) {
-                // Remove waiting indicator
-                const waitingIndicator = messagesContainer.querySelector('.waiting-indicator');
-                if (waitingIndicator) {
-                  waitingIndicator.remove();
-                }
-                
-                // Add user message
-                const userMessageDiv = document.createElement('div');
-                userMessageDiv.className = 'message user-message';
-                userMessageDiv.innerHTML = \`
-                  <div class="message-header">
-                    <strong>You</strong>
-                    <span class="timestamp">\${new Date().toLocaleTimeString()}</span>
-                  </div>
-                  <div class="message-content">\${message.replace(/\\n/g, '<br>')}</div>
-                \`;
-                messagesContainer.appendChild(userMessageDiv);
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-              }
+              // Don't add message to DOM - let SSE handle it to avoid duplicates
               
               // Send message to extension
               vscode.postMessage({
@@ -1063,6 +1049,8 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
                     handleRequestStateChange(data.data);
                   } else if (data.type === 'chat_message') {
                     handleIncomingChatMessage(data);
+                  } else if (data.type === 'session-name-changed') {
+                    handleSessionNameChanged(data.data);
                   // Removed web_user_message auto-trigger - no longer needed
                   }
                 } catch (error) {
@@ -1145,11 +1133,6 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
           function handleIncomingChatMessage(data) {
             console.log('Handling incoming chat message:', data);
             
-            // Only process messages for the current session
-            // For VS Code webview, we need to check if this is our session
-            // This is a basic implementation - in a more complex setup,
-            // we'd want proper session management
-            
             const message = data.message;
             const messagesContainer = document.getElementById('messages');
             if (messagesContainer) {
@@ -1159,22 +1142,8 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
                 emptyState.remove();
               }
               
-              const messageDiv = document.createElement('div');
-              messageDiv.className = \`message \${message.sender === 'user' ? 'user-message' : 'ai-message'}\`;
-              
-              const displayName = message.sender === 'user' ? 'You' : 'Assistant';
-              const timestamp = new Date(message.timestamp).toLocaleTimeString();
-              
-              messageDiv.innerHTML = \`
-                <div class="message-header">
-                  <strong>\${displayName}</strong>
-                  <span class="timestamp">\${timestamp}</span>
-                </div>
-                <div class="message-content">\${message.content.replace(/\\n/g, '<br>')}</div>
-              \`;
-              
-              messagesContainer.appendChild(messageDiv);
-              messagesContainer.scrollTop = messagesContainer.scrollHeight;
+              // Use unified addMessageToUI function
+              addMessageToUI(message);
               
               // Play notification for assistant messages
               if (message.sender === 'agent') {
@@ -1183,8 +1152,94 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
             }
           }
 
+          function handleSessionNameChanged(data) {
+            console.log('Handling session name change:', data);
+            
+            // Update the session name display in VS Code interface
+            // The data contains: { sessionId, name }
+            if (data.sessionId && data.name) {
+              // Update window title or header display if needed
+              // For VS Code webview, we can send a message to the extension
+              vscode.postMessage({
+                command: 'sessionNameUpdated',
+                sessionId: data.sessionId,
+                name: data.name
+              });
+            }
+          }
+
           // handleWebUserMessage removed - no longer needed for auto-forwarding
 
+          // Load conversation history from server
+          async function loadConversationHistory() {
+            try {
+              const response = await fetch('http://127.0.0.1:3737/sessions/${this.workspaceSessionId}/messages');
+              if (response.ok) {
+                const data = await response.json();
+                const messagesContainer = document.getElementById('messages');
+                if (messagesContainer && data.messages) {
+                  // Clear loading indicator
+                  messagesContainer.innerHTML = '';
+                  
+                  // Add each message using the same logic as web interface
+                  for (const msg of data.messages) {
+                    addMessageToUI(msg);
+                  }
+                  
+                  console.log(\`Loaded \${data.messages.length} messages from server\`);
+                } else {
+                  // Show empty state
+                  messagesContainer.innerHTML = '<div class="empty-state">No messages yet. Start a conversation!</div>';
+                }
+              }
+            } catch (error) {
+              console.error('Failed to load conversation history:', error);
+              document.getElementById('messages').innerHTML = '<div class="error-state">Failed to load conversation history</div>';
+            }
+          }
+          
+          // Add message to UI (similar to web interface)
+          function addMessageToUI(message) {
+            const messagesContainer = document.getElementById('messages');
+            if (!messagesContainer) return;
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = \`message \${message.sender === 'user' ? 'human-message' : 'ai-message'}\`;
+            
+            // Determine sender label based on sender and source
+            let senderLabel = 'AI';
+            if (message.sender === 'user') {
+              if (message.source === 'vscode') {
+                senderLabel = 'You (VS Code)';
+              } else {
+                senderLabel = 'You (Web)';
+              }
+            }
+            
+            const timestamp = new Date(message.timestamp).toLocaleTimeString();
+            
+            messageDiv.innerHTML = \`
+              <div class="message-header">
+                <span class="sender">\${senderLabel}</span>
+                <span class="timestamp">\${timestamp}</span>
+              </div>
+              <div class="message-content">\${escapeHtml(message.content)}</div>
+            \`;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+          }
+          
+          // Escape HTML helper function
+          function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+          }
+          
+          // Load conversation history on page load
+          loadConversationHistory();
+          
           // Initialize SSE connection
           setupSSEConnection();
           

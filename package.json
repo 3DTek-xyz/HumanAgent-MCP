@@ -107,6 +107,22 @@
           "group": "navigation"
         }
       ]
+    },
+    "configuration": {
+      "title": "HumanAgent MCP",
+      "properties": {
+        "humanagent-mcp.logging.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable logging to .vscode directory in workspace. Logs MCP server activity and debugging information."
+        },
+        "humanagent-mcp.logging.level": {
+          "type": "string",
+          "enum": ["ERROR", "WARN", "INFO", "DEBUG"],
+          "default": "INFO",
+          "description": "Set the logging level for HumanAgent MCP server"
+        }
+      }
     }
   },
   "scripts": {

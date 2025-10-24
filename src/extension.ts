@@ -81,12 +81,27 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	// Initialize Server Manager
 	const serverPath = path.join(context.extensionPath, 'dist', 'mcpStandalone.js');
-	serverManager = ServerManager.getInstance({
+	
+	// Check if logging is enabled via user settings
+	const config = vscode.workspace.getConfiguration('humanagent-mcp');
+	const loggingEnabled = config.get<boolean>('logging.enabled', false);
+	const loggingLevel = config.get<string>('logging.level', 'INFO');
+	
+	const serverOptions: any = {
 		serverPath: serverPath,
 		port: 3737,
 		host: '127.0.0.1',
-		logFile: path.join(vscode.workspace.workspaceFolders?.[0]?.uri.fsPath || context.extensionPath, '.vscode', 'HumanAgent-server.log')
-	});
+		loggingEnabled: loggingEnabled,
+		loggingLevel: loggingLevel
+	};
+	
+	// Only add logFile if logging is enabled
+	if (loggingEnabled && vscode.workspace.workspaceFolders?.[0]) {
+		serverOptions.logFile = path.join(vscode.workspace.workspaceFolders[0].uri.fsPath, '.vscode', 'HumanAgent-server.log');
+		console.log('HumanAgent MCP: Logging enabled to .vscode directory');
+	}
+	
+	serverManager = ServerManager.getInstance(serverOptions);
 
 	// Auto-detect and start standalone MCP server if already configured
 	await autoStartMcpServer(mcpConfigManager, workspaceSessionId);

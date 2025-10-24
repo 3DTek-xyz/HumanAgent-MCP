@@ -9,6 +9,8 @@ export interface ServerManagerOptions {
     port: number;
     host?: string;
     logFile?: string;
+    loggingEnabled?: boolean;
+    loggingLevel?: string;
 }
 
 export class ServerManager {
@@ -180,7 +182,9 @@ export class ServerManager {
                 cwd: path.dirname(this.options.serverPath),
                 env: {
                     ...process.env,
-                    // Add any environment variables needed by the server
+                    // Pass logging configuration from extension settings
+                    HUMANAGENT_LOGGING_ENABLED: this.options.loggingEnabled ? 'true' : 'false',
+                    HUMANAGENT_LOGGING_LEVEL: this.options.loggingLevel || 'INFO'
                 }
             });
 
