@@ -12,7 +12,10 @@ class StandaloneMcpServer {
   private server: McpServer;
 
   constructor() {
-    this.server = new McpServer();
+    // Use the parent directory of the dist folder as workspace path
+    // This ensures log file is created where it can be properly cleared
+    const workspacePath = require('path').resolve(__dirname, '..');
+    this.server = new McpServer(undefined, workspacePath);
     this.setupProcessHandlers();
   }
 
@@ -82,10 +85,11 @@ class StandaloneMcpServer {
       process.stdout.write(JSON.stringify(notification) + '\n');
     });
 
-    // Graceful shutdown
-    process.on('SIGINT', () => this.shutdown());
-    process.on('SIGTERM', () => this.shutdown());
-    process.on('exit', () => this.shutdown());
+    // Graceful shutdown handlers removed - server should remain independent
+    // and only shut down when explicitly requested via API endpoints
+    // process.on('SIGINT', () => this.shutdown());
+    // process.on('SIGTERM', () => this.shutdown());
+    // process.on('exit', () => this.shutdown());
   }
 
   async start(): Promise<void> {

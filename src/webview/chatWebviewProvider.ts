@@ -33,6 +33,28 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
     this.loadNotificationSettings();
   }
 
+  private async loadConversationHistory() {
+    if (!this.mcpServer || !this.workspaceSessionId) {
+      return;
+    }
+
+    try {
+      // Fetch conversation history from centralized chat manager
+      const response = await fetch(`http://127.0.0.1:3737/sessions/${this.workspaceSessionId}/messages`);
+      if (response.ok) {
+        const data = await response.json() as { messages: ChatMessage[] };
+        this.messages = data.messages || [];
+        console.log(`Loaded ${this.messages.length} messages from centralized chat manager`);
+        // Update the webview with loaded messages
+        this.updateWebview();
+      }
+    } catch (error) {
+      console.error('Failed to load conversation history:', error);
+      // Fallback to empty message array
+      this.messages = [];
+    }
+  }
+
   private loadNotificationSettings() {
     try {
       // Try to load settings from mcp.json
@@ -127,6 +149,9 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
       ]
     };
 
+    // Load conversation history from centralized chat manager
+    this.loadConversationHistory();
+    
     // Only update webview if registration check is complete, otherwise it will be updated when notifyRegistrationComplete is called
     if (this.registrationCheckComplete) {
       this.updateWebview();
@@ -143,6 +168,12 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
         case 'requestServerStatus':
           // Call the dedicated status command from extension.ts
           vscode.commands.executeCommand('humanagent-mcp.showStatus');
+          break;
+        case 'playNotificationSound':
+          // Play sound from extension side (Node.js) when webview requests it
+          if (this.notificationSettings.enableSound) {
+            await this.playNotificationSound();
+          }
           break;
       }
     });
@@ -448,12 +479,84 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
         case 'reloadOverride':
           await this.reloadOverrideFile();
           break;
+        case 'nameSession':
+          await this.nameCurrentSession();
+          break;
+        case 'openWebView':
+          await this.openWebInterface();
+          break;
       }
       
       // Update status after action
       this.updateServerStatus();
     } catch (error) {
       vscode.window.showErrorMessage(`MCP action failed: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+
+  private async nameCurrentSession() {
+    try {
+      const sessionId = this.workspaceSessionId;
+      if (!sessionId) {
+        vscode.window.showErrorMessage('No active session to name.');
+        return;
+      }
+
+      // Prompt user for session name
+      const sessionName = await vscode.window.showInputBox({
+        prompt: 'Enter a friendly name for this chat session',
+        placeHolder: 'e.g., "Project Debugging", "Feature Discussion"',
+        validateInput: (text) => {
+          if (!text || text.trim().length === 0) {
+            return 'Session name cannot be empty';
+          }
+          if (text.length > 50) {
+            return 'Session name must be 50 characters or less';
+          }
+          return null;
+        }
+      });
+
+      if (!sessionName) {
+        return; // User cancelled
+      }
+
+      // Send session name to server
+      const response = await fetch('http://localhost:3737/sessions/name', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          sessionId: sessionId,
+          name: sessionName.trim()
+        })
+      });
+
+      if (response.ok) {
+        vscode.window.showInformationMessage(`Session named: "${sessionName}"`);
+      } else {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+    } catch (error) {
+      console.error('ChatWebviewProvider: Error naming session:', error);
+      vscode.window.showErrorMessage(`Failed to name session: ${error}`);
+    }
+  }
+
+  private async openWebInterface() {
+    try {
+      const webUrl = 'http://localhost:3737/HumanAgent';
+      
+      // Open in external browser
+      await vscode.env.openExternal(vscode.Uri.parse(webUrl));
+      
+      vscode.window.showInformationMessage('Web interface opened in browser');
+      
+    } catch (error) {
+      console.error('ChatWebviewProvider: Error opening web interface:', error);
+      vscode.window.showErrorMessage(`Failed to open web interface: ${error}`);
     }
   }
 
@@ -707,97 +810,19 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
           // Set global flag for override file existence
           window.overrideFileExists = ${overrideFileExists};
           
-          // Audio context for notifications
-          let audioContext = null;
-          let preloadedAudio = null;
-          
-          // Initialize audio on first user interaction
-          function initAudio() {
-            if (!audioContext) {
-              try {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                // Resume in case it's in suspended state
-                if (audioContext.state === 'suspended') {
-                  audioContext.resume();
-                }
-              } catch (error) {
-                console.error('Failed to create audio context:', error);
-              }
-            }
-            
-            // Pre-load and test audio
-            if (!preloadedAudio) {
-              try {
-                preloadedAudio = new Audio();
-                preloadedAudio.src = "data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMaBSGI0PTVnhY=";
-                preloadedAudio.volume = 0.3;
-                preloadedAudio.preload = 'auto';
-                // Play and immediately pause to establish permission
-                preloadedAudio.play().then(() => {
-                  preloadedAudio.pause();
-                  preloadedAudio.currentTime = 0;
-                  console.log('Audio initialized successfully');
-                }).catch(e => {
-                  console.log('Audio initialization failed:', e);
-                  preloadedAudio = null;
-                });
-              } catch (error) {
-                console.error('Failed to create audio element:', error);
-              }
-            }
-          }
-          
           // Play notification beep sound
           function playNotificationBeep() {
+            // Request sound from extension (Node.js side) instead of browser
             try {
-              if (preloadedAudio) {
-                console.log('Playing preloaded audio');
-                preloadedAudio.currentTime = 0;
-                preloadedAudio.play().then(() => {
-                  console.log('Audio played successfully');
-                }).catch(e => {
-                  console.log('Preloaded audio play failed:', e);
-                  // Try to re-initialize if failed
-                  initAudio();
-                });
-              } else {
-                console.log('Audio not initialized - trying to initialize now');
-                initAudio();
-                // Try Web Audio API fallback
-                try {
-                  if (audioContext && audioContext.state === 'running') {
-                    const oscillator = audioContext.createOscillator();
-                    const gainNode = audioContext.createGain();
-                    
-                    oscillator.connect(gainNode);
-                    gainNode.connect(audioContext.destination);
-                    
-                    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-                    
-                    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-                    gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.01);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-                    
-                    oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + 0.2);
-                    console.log('Web Audio fallback played');
-                  } else {
-                    console.log('Web Audio context not available');
-                  }
-                } catch (e2) {
-                  console.error('Fallback audio also failed:', e2);
-                }
-              }
+              vscode.postMessage({
+                type: 'playNotificationSound'
+              });
+              console.log('Sound notification requested from extension');
             } catch (error) {
-              console.error('Error playing notification sound:', error);
+              console.error('Failed to request sound notification:', error);
             }
           }
           
-          // Initialize audio on any user interaction
-          document.addEventListener('click', initAudio, { once: true });
-          document.addEventListener('keypress', initAudio, { once: true });
-          document.addEventListener('touchstart', initAudio, { once: true });
-
           document.getElementById('messageInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
               e.preventDefault();
@@ -916,7 +941,9 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
                 { text: '📦 Install Globally', action: 'register' },
                 { text: '📁 Install in Workspace', action: 'register' },
                 { text: '📊 Show Status', action: 'requestServerStatus' },
-                { text: window.overrideFileExists ? '📁 Recreate Override File' : '📁 Create Override File', action: 'overridePrompt' }
+                { text: window.overrideFileExists ? '📁 Recreate Override File' : '📁 Create Override File', action: 'overridePrompt' },
+                { text: '📝 Name This Chat', action: 'nameSession' },
+                { text: '🌐 Open Web View', action: 'openWebView' }
               ];
               
               // Check for override file existence even when status unknown
@@ -943,6 +970,8 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
             
             options.push({ text: '📊 Show Status', action: 'requestServerStatus' });
             options.push({ text: window.overrideFileExists ? '📁 Recreate Override File' : '📁 Create Override File', action: 'overridePrompt' });
+            options.push({ text: '📝 Name This Chat', action: 'nameSession' });
+            options.push({ text: '🌐 Open Web View', action: 'openWebView' });
             
             // Check for HumanAgentOverride.json file existence (passed from extension)
             if (window.overrideFileExists) {
@@ -1024,6 +1053,9 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
                   
                   if (data.type === 'human-agent-request') {
                     handleHumanAgentRequest(data.data);
+                  } else if (data.type === 'chat_message') {
+                    handleIncomingChatMessage(data);
+                  // Removed web_user_message auto-trigger - no longer needed
                   }
                 } catch (error) {
                   console.error('Error parsing SSE data:', error);
@@ -1102,6 +1134,49 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
               }, 2000);
             }
           }
+
+          function handleIncomingChatMessage(data) {
+            console.log('Handling incoming chat message:', data);
+            
+            // Only process messages for the current session
+            // For VS Code webview, we need to check if this is our session
+            // This is a basic implementation - in a more complex setup,
+            // we'd want proper session management
+            
+            const message = data.message;
+            const messagesContainer = document.getElementById('messages');
+            if (messagesContainer) {
+              // Remove empty state if it exists
+              const emptyState = messagesContainer.querySelector('.empty-state');
+              if (emptyState) {
+                emptyState.remove();
+              }
+              
+              const messageDiv = document.createElement('div');
+              messageDiv.className = \`message \${message.sender === 'user' ? 'user-message' : 'ai-message'}\`;
+              
+              const displayName = message.sender === 'user' ? 'You' : 'Assistant';
+              const timestamp = new Date(message.timestamp).toLocaleTimeString();
+              
+              messageDiv.innerHTML = \`
+                <div class="message-header">
+                  <strong>\${displayName}</strong>
+                  <span class="timestamp">\${timestamp}</span>
+                </div>
+                <div class="message-content">\${message.content.replace(/\\n/g, '<br>')}</div>
+              \`;
+              
+              messagesContainer.appendChild(messageDiv);
+              messagesContainer.scrollTop = messagesContainer.scrollHeight;
+              
+              // Play notification for assistant messages
+              if (message.sender === 'agent') {
+                playNotificationBeep();
+              }
+            }
+          }
+
+          // handleWebUserMessage removed - no longer needed for auto-forwarding
 
           // Initialize SSE connection
           setupSSEConnection();

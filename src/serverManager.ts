@@ -15,7 +15,7 @@ export class ServerManager {
     private static instance: ServerManager | undefined;
     private options: ServerManagerOptions;
     private readonly pidFile: string;
-    private readonly logFile: string;
+    private readonly logFile?: string;
 
     private constructor(options: ServerManagerOptions) {
         this.options = {
@@ -23,7 +23,7 @@ export class ServerManager {
             ...options
         };
         this.pidFile = path.join(path.dirname(options.serverPath), '.humanagent-mcp-server.pid');
-        this.logFile = options.logFile || path.join(path.dirname(options.serverPath), '.humanagent-mcp-server.log');
+        this.logFile = options.logFile;
     }
 
     public static getInstance(options?: ServerManagerOptions): ServerManager {
@@ -122,10 +122,12 @@ export class ServerManager {
         const timestamp = new Date().toISOString();
         const logMessage = `[${timestamp}] ${message}\n`;
         
-        try {
-            fs.appendFileSync(this.logFile, logMessage);
-        } catch (error) {
-            console.error('Error writing to log file:', error);
+        if (this.logFile) {
+            try {
+                fs.appendFileSync(this.logFile, logMessage);
+            } catch (error) {
+                console.error('Error writing to log file:', error);
+            }
         }
     }
 
@@ -170,59 +172,40 @@ export class ServerManager {
      * Start the server as a truly independent detached process
      */
     private async startServer(): Promise<boolean> {
-        return new Promise((resolve) => {
-            try {
-                // Spawn the server as a completely detached process
-                const serverProcess = spawn('node', [this.options.serverPath], {
-                    detached: true,
-                    stdio: 'ignore', // Completely disconnect stdio to make it independent
-                    cwd: path.dirname(this.options.serverPath),
-                    env: {
-                        ...process.env,
-                        // Add any environment variables needed by the server
-                    }
-                });
-
-                // Store the PID but don't keep a reference to the process
-                if (serverProcess.pid) {
-                    this.storePid(serverProcess.pid);
-                    this.log(`Started independent server with PID ${serverProcess.pid}`);
+        try {
+            // Spawn the server as a completely detached process
+            const serverProcess = spawn('node', [this.options.serverPath], {
+                detached: true,
+                stdio: 'ignore', // Completely disconnect stdio to make it independent
+                cwd: path.dirname(this.options.serverPath),
+                env: {
+                    ...process.env,
+                    // Add any environment variables needed by the server
                 }
+            });
 
-                // Immediately detach and unreference the process
-                serverProcess.unref();
-                
-                // Don't keep a reference to the process object to ensure complete detachment
-                // this.serverProcess = undefined;
-
-                this.log('Server process started as independent background process');
-
-                // Wait for server to start listening
-                setTimeout(async () => {
-                    if (await this.isServerRunning()) {
-                        this.log('Independent server started successfully and is responding');
-                        resolve(true);
-                    } else {
-                        this.log('Independent server started but is not responding on the expected port yet');
-                        // Give it a bit more time
-                        setTimeout(async () => {
-                            if (await this.isServerRunning()) {
-                                this.log('Independent server is now responding');
-                                resolve(true);
-                            } else {
-                                this.log('Independent server failed to start or is not responding');
-                                this.cleanupPidFile();
-                                resolve(false);
-                            }
-                        }, 2000);
-                    }
-                }, 3000);
-
-            } catch (error) {
-                this.log(`Failed to start server: ${error}`);
-                resolve(false);
+            // Store the PID but don't keep a reference to the process
+            if (serverProcess.pid) {
+                this.storePid(serverProcess.pid);
+                this.log(`Started independent server with PID ${serverProcess.pid}`);
+            } else {
+                this.log('Failed to get server process PID');
+                return false;
             }
-        });
+
+            // Immediately detach and unreference the process for complete independence
+            serverProcess.unref();
+            
+            this.log('Server process started as independent background process and immediately detached');
+
+            // Return true immediately - the server will start independently
+            // Actual server health will be verified by separate health checks later
+            return true;
+
+        } catch (error) {
+            this.log(`Failed to start server: ${error}`);
+            return false;
+        }
     }
 
     /**

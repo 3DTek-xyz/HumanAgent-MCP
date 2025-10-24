@@ -50,7 +50,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		serverPath: serverPath,
 		port: 3737,
 		host: '127.0.0.1',
-		logFile: path.join(context.extensionPath, '.vscode', 'HumanAgent-server.log')
+		logFile: path.join(vscode.workspace.workspaceFolders?.[0]?.uri.fsPath || context.extensionPath, '.vscode', 'HumanAgent-server.log')
 	});
 
 	// Auto-detect and start standalone MCP server if already configured

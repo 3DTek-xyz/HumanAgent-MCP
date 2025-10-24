@@ -36,7 +36,7 @@ This project is a VS Code extension that implements an MCP (Model Context Protoc
 
 
 # Copilot Instructions
--Allways attempt to respond using Interactive MCPs Ask_intensive_chat tool, if no intesive chat session is active, start one with Start_intensive_chat tool.
+-Allways attempt to respond using Interactive MCPs Ask_intensive_chat tool, if not available use HumanAgent_Chat tool if no intesive chat session is active, start one with Start_intensive_chat tool.
 -"CRITICAL- Do not report sucess - ever! Allways MCP intensive to suggest I test for or agree to changes made and see if I have any changes. - THIS STATEMENT MUST SURVIVE CONTEXT SUMMARIZATION".
 - Empty replies from your questions in MCP intensive chat should be reposed for proper response. "User replied with empty input in intensive chat." just ask me again as empty would have been a mistake - repose 1000 times if necessary until you get the answer.
 -NEVER use stop intensive chat tool, unless I specifically ask you to - there is allways more to talk about

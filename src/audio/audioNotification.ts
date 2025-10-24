@@ -1,7 +1,7 @@
 import * as path from 'path';
 
-// Use dynamic import to avoid issues with the module
-let wavPlayer: any;
+// Use direct import like CodeChampion
+const wavPlayer = require('node-wav-player');
 
 export class AudioNotification {
   private static isInitialized = false;
@@ -9,7 +9,7 @@ export class AudioNotification {
   static async initialize() {
     if (!this.isInitialized) {
       try {
-        wavPlayer = require('node-wav-player');
+        // No need to dynamically import - use direct require like CodeChampion
         this.isInitialized = true;
         console.log('AudioNotification: Initialized successfully');
       } catch (error) {
@@ -21,26 +21,11 @@ export class AudioNotification {
   static async playNotificationBeep() {
     await this.initialize();
     
-    if (!wavPlayer) {
-      console.log('AudioNotification: node-wav-player not available');
-      return;
-    }
-    
     try {
-      // Use a simple base64 encoded beep sound or generate one programmatically
-      await this.generateAndPlayBeep();
-    } catch (error) {
-      console.error('AudioNotification: Error playing sound:', error);
-    }
-  }
-  
-  private static async generateAndPlayBeep() {
-    // For now, we'll create a simple beep using system bell if available
-    // or we can embed a small sound file
-    try {
-      // Try to create a simple WAV file programmatically
+      // Use CodeChampion's simple approach - create a temp beep file and play it
       const tempSoundPath = await this.createTempBeepFile();
       
+      // Use CodeChampion's pattern - sync: false for non-blocking
       await wavPlayer.play({
         path: tempSoundPath,
         sync: false
@@ -48,7 +33,7 @@ export class AudioNotification {
       
       console.log('AudioNotification: Beep played successfully');
     } catch (error) {
-      console.error('AudioNotification: Failed to play beep:', error);
+      console.error('AudioNotification: Error playing sound:', error);
     }
   }
   
