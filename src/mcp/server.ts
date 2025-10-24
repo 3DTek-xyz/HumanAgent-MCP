@@ -1222,7 +1222,7 @@ export class McpServer extends EventEmitter {
             
             for (const sessionId of sessions) {
                 try {
-                    const response = await fetch(\`/messages/\${sessionId}\`);
+                    const response = await fetch(\`/sessions/\${sessionId}/messages\`);
                     if (response.ok) {
                         const data = await response.json();
                         const messagesContainer = document.getElementById(\`messages-\${sessionId}\`);
