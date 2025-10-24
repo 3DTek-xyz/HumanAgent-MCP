@@ -676,7 +676,8 @@ export class McpServer extends EventEmitter {
             content: message,
             sender: sender as 'user' | 'agent',
             timestamp: new Date(),
-            type: 'text'
+            type: 'text',
+            source: sender === 'user' ? 'vscode' : undefined
           };
           
           this.chatManager.addMessage(sessionId, chatMessage);
@@ -721,7 +722,8 @@ export class McpServer extends EventEmitter {
               content: response,
               sender: 'user',
               timestamp: new Date(),
-              type: 'text'
+              type: 'text',
+              source: 'web'
             };
             
             this.debugLogger.log('HTTP', `Storing and broadcasting user message to ${this.sseConnections.size} SSE connections`);
@@ -1195,14 +1197,21 @@ export class McpServer extends EventEmitter {
             }
         }
         
-        function addMessageToUI(sessionId, role, content) {
+        function addMessageToUI(sessionId, role, content, source) {
             const messagesContainer = document.getElementById(\`messages-\${sessionId}\`);
             if (!messagesContainer) return;
             
             const messageDiv = document.createElement('div');
             messageDiv.className = \`message \${role}\`;
+            
+            // Create header with source info
+            let header = role === 'user' ? 'You' : 'Assistant';
+            if (role === 'user' && source) {
+                header += \` (\${source === 'web' ? 'Web' : 'VS Code'})\`;
+            }
+            
             messageDiv.innerHTML = \`
-                <div class="message-header">\${role === 'user' ? 'You' : 'Assistant'} • \${new Date().toLocaleTimeString()}</div>
+                <div class="message-header">\${header} • \${new Date().toLocaleTimeString()}</div>
                 <div class="message-content">\${escapeHtml(content)}</div>
             \`;
             
@@ -1232,7 +1241,7 @@ export class McpServer extends EventEmitter {
                             
                             // Add each message
                             for (const msg of data.messages) {
-                                addMessageToUI(sessionId, msg.sender, msg.content);
+                                addMessageToUI(sessionId, msg.sender, msg.content, msg.source);
                             }
                         }
                     }
@@ -1262,7 +1271,7 @@ export class McpServer extends EventEmitter {
                             
                             // Add each message from chat manager
                             for (const msg of data.messages) {
-                                addMessageToUI(sessionId, msg.sender, msg.content);
+                                addMessageToUI(sessionId, msg.sender, msg.content, msg.source);
                             }
                             
                             console.log(\`Loaded \${data.messages.length} messages for session \${sessionId}\`);
@@ -1293,7 +1302,7 @@ export class McpServer extends EventEmitter {
                     
                     // Handle different types of updates
                     if (data.type === 'chat_message' && data.sessionId && data.message) {
-                        addMessageToUI(data.sessionId, data.message.sender, data.message.content);
+                        addMessageToUI(data.sessionId, data.message.sender, data.message.content, data.message.source);
                     } else if (data.type === 'message' && data.sessionId) {
                         addMessageToUI(data.sessionId, data.role || 'assistant', data.content);
                     } else if (data.type === 'human-agent-request' && data.data) {
@@ -1480,19 +1489,9 @@ export class McpServer extends EventEmitter {
           const responseTime = Date.now() - startTime;
           this.debugLogger.log('TOOL', `Request ${requestId} completed with response:`, response);
           
-          // Store the assistant response message for synchronization
-          if (params.sessionId) {
-            const assistantMessage: ChatMessage = {
-              id: (Date.now() + 1).toString(), // Slightly different timestamp
-              content: response,
-              sender: 'agent',
-              timestamp: new Date(),
-              type: 'text'
-            };
-            this.chatManager.addMessage(params.sessionId, assistantMessage);
-            this.debugLogger.log('CHAT', `Stored assistant message in ChatManager for session ${params.sessionId}: ${assistantMessage.content.substring(0, 50)}...`);
-            this.broadcastMessageToClients(params.sessionId, assistantMessage);
-          }
+          // Don't store human response as assistant message
+          // The 'response' here is the human's answer to AI's question
+          // The AI will generate its own response separately after receiving this
           
           const result: HumanAgentChatToolResult = {
             content: [{

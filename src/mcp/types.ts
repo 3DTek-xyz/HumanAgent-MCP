@@ -17,6 +17,7 @@ export interface ChatMessage {
   content: string;
   timestamp: Date;
   type: 'text' | 'system';
+  source?: 'web' | 'vscode'; // Track message source for user messages
 }
 
 export interface McpServerConfig {

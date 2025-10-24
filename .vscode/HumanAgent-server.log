@@ -1,15 +1,15 @@
-[2025-10-24 11:42:16.442] [DEBUG] Debug logging started at 2025-10-24T00:42:16.441Z
-[2025-10-24 11:42:16.442] [DEBUG] Current system time: Fri Oct 24 2025 11:42:16 GMT+1100 (Australian Eastern Daylight Time)
-[2025-10-24 11:42:16.442] [DEBUG] Log file: /Users/benharper/Coding/HumanAgent-MCP/.vscode/HumanAgent-server.log
-[2025-10-24 11:42:16.442] [DEBUG] Working directory: /Users/benharper/Coding/HumanAgent-MCP/dist
-[2025-10-24 11:42:16.442] [CHAT] [INFO] ChatManager initialized with max 50 messages per session
-[2025-10-24 11:42:16.442] [INFO] McpServer initialized with centralized chat manager
-[2025-10-24 11:42:16.442] [TEST] This is a test log message to verify DebugLogger is working
-[2025-10-24 11:42:16.443] [INFO] === MCP SERVER STARTING ===
-[2025-10-24 11:42:16.444] [INFO] Starting HTTP server on port 3737...
-[2025-10-24 11:42:16.458] [INFO] MCP HTTP server running on http://127.0.0.1:3737/mcp
-[2025-10-24 11:42:16.826] [HTTP] GET /mcp
-[2025-10-24 11:42:16.826] [HTTP] Request Headers:
+[2025-10-24 13:06:38.762] [DEBUG] Debug logging started at 2025-10-24T02:06:38.761Z
+[2025-10-24 13:06:38.762] [DEBUG] Current system time: Fri Oct 24 2025 13:06:38 GMT+1100 (Australian Eastern Daylight Time)
+[2025-10-24 13:06:38.762] [DEBUG] Log file: /Users/benharper/Coding/HumanAgent-MCP/.vscode/HumanAgent-server.log
+[2025-10-24 13:06:38.762] [DEBUG] Working directory: /Users/benharper/Coding/HumanAgent-MCP/dist
+[2025-10-24 13:06:38.762] [CHAT] [INFO] ChatManager initialized with max 50 messages per session
+[2025-10-24 13:06:38.762] [INFO] McpServer initialized with centralized chat manager
+[2025-10-24 13:06:38.762] [TEST] This is a test log message to verify DebugLogger is working
+[2025-10-24 13:06:38.763] [INFO] === MCP SERVER STARTING ===
+[2025-10-24 13:06:38.763] [INFO] Starting HTTP server on port 3737...
+[2025-10-24 13:06:38.767] [INFO] MCP HTTP server running on http://127.0.0.1:3737/mcp
+[2025-10-24 13:06:40.665] [HTTP] GET /mcp
+[2025-10-24 13:06:40.666] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -26,10 +26,10 @@
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
 }
-[2025-10-24 11:42:16.827] [HTTP] Handling GET request to /mcp
-[2025-10-24 11:42:16.827] [HTTP] Setting up SSE stream for GET request
-[2025-10-24 11:42:16.827] [SSE] === SSE CONNECTION ATTEMPT ===
-[2025-10-24 11:42:16.827] [SSE] Headers:
+[2025-10-24 13:06:40.666] [HTTP] Handling GET request to /mcp
+[2025-10-24 13:06:40.666] [HTTP] Setting up SSE stream for GET request
+[2025-10-24 13:06:40.666] [SSE] === SSE CONNECTION ATTEMPT ===
+[2025-10-24 13:06:40.666] [SSE] Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -46,15 +46,15 @@
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
 }
-[2025-10-24 11:42:16.827] [SSE] URL:
+[2025-10-24 13:06:40.666] [SSE] URL:
 "/mcp"
-[2025-10-24 11:42:16.827] [SSE] SSE headers set, adding to connections...
-[2025-10-24 11:42:16.827] [HTTP] Added SSE connection. Total connections: 1
-[2025-10-24 11:42:16.827] [SSE] SSE connection added. Total: 1
-[2025-10-24 11:42:16.827] [SSE] Sent initial SSE message:
+[2025-10-24 13:06:40.666] [SSE] SSE headers set, adding to connections...
+[2025-10-24 13:06:40.666] [HTTP] Added SSE connection. Total connections: 1
+[2025-10-24 13:06:40.666] [SSE] SSE connection added. Total: 1
+[2025-10-24 13:06:40.666] [SSE] Sent initial SSE message:
 "data: {\"type\":\"connection\",\"status\":\"established\"}"
-[2025-10-24 11:42:16.832] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
-[2025-10-24 11:42:16.832] [HTTP] Request Headers:
+[2025-10-24 13:06:40.673] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:06:40.673] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -70,8 +70,8 @@
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
 }
-[2025-10-24 11:42:18.396] [HTTP] GET /sessions
-[2025-10-24 11:42:18.396] [HTTP] Request Headers:
+[2025-10-24 13:06:40.904] [HTTP] GET /sessions
+[2025-10-24 13:06:40.904] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -81,8 +81,8 @@
   "user-agent": "node",
   "accept-encoding": "gzip, deflate"
 }
-[2025-10-24 11:42:18.400] [HTTP] POST /mcp
-[2025-10-24 11:42:18.400] [HTTP] Request Headers:
+[2025-10-24 13:06:40.962] [HTTP] POST /mcp
+[2025-10-24 13:06:40.962] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -94,27 +94,27 @@
   "accept-encoding": "gzip, deflate",
   "content-length": "82"
 }
-[2025-10-24 11:42:18.400] [HTTP] Handling POST request to /mcp
-[2025-10-24 11:42:18.400] [HTTP] Received chunk: 82 bytes
-[2025-10-24 11:42:18.400] [HTTP] Complete request body received (82 bytes)
-[2025-10-24 11:42:18.400] [HTTP] Request Body:
+[2025-10-24 13:06:40.962] [HTTP] Handling POST request to /mcp
+[2025-10-24 13:06:40.962] [HTTP] Received chunk: 82 bytes
+[2025-10-24 13:06:40.962] [HTTP] Complete request body received (82 bytes)
+[2025-10-24 13:06:40.962] [HTTP] Request Body:
 "{\"sessionId\":\"session-a8f49eee-068c-42f1-b611-14651fa5ccc6\",\"method\":\"tools/list\"}"
-[2025-10-24 11:42:18.400] [HTTP] Parsed JSON message:
+[2025-10-24 13:06:40.962] [HTTP] Parsed JSON message:
 {
   "sessionId": "session-a8f49eee-068c-42f1-b611-14651fa5ccc6",
   "method": "tools/list"
 }
-[2025-10-24 11:42:18.400] [MCP] Handling message:
+[2025-10-24 13:06:40.963] [MCP] Handling message:
 {
   "sessionId": "session-a8f49eee-068c-42f1-b611-14651fa5ccc6",
   "method": "tools/list"
 }
-[2025-10-24 11:42:18.400] [MCP] Processing tools/list request
-[2025-10-24 11:42:18.400] [TOOLS] tools/list request - Extension sessionId: undefined, Message params: undefined
-[2025-10-24 11:42:18.400] [TOOLS] Final sessionIdToUse: default
-[2025-10-24 11:42:18.400] [TOOLS] Returning 1 tools for session: default
-[2025-10-24 11:42:18.400] [TOOLS] Using default tools (no session ID available)
-[2025-10-24 11:42:18.400] [HTTP] Response from handleMessage:
+[2025-10-24 13:06:40.963] [MCP] Processing tools/list request
+[2025-10-24 13:06:40.963] [TOOLS] tools/list request - Extension sessionId: undefined, Message params: undefined
+[2025-10-24 13:06:40.963] [TOOLS] Final sessionIdToUse: default
+[2025-10-24 13:06:40.963] [TOOLS] Returning 1 tools for session: default
+[2025-10-24 13:06:40.963] [TOOLS] Using default tools (no session ID available)
+[2025-10-24 13:06:40.963] [HTTP] Response from handleMessage:
 {
   "type": "response",
   "result": {
@@ -162,9 +162,9 @@
     ]
   }
 }
-[2025-10-24 11:42:18.400] [HTTP] Sending 200 response (1201 bytes)
-[2025-10-24 11:42:18.403] [HTTP] POST /sessions/register
-[2025-10-24 11:42:18.403] [HTTP] Request Headers:
+[2025-10-24 13:06:40.963] [HTTP] Sending 200 response (1201 bytes)
+[2025-10-24 13:06:40.970] [HTTP] POST /sessions/register
+[2025-10-24 13:06:40.970] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -176,9 +176,9 @@
   "accept-encoding": "gzip, deflate",
   "content-length": "103"
 }
-[2025-10-24 11:42:18.403] [INFO] Session registered: session-a8f49eee-068c-42f1-b611-14651fa5ccc6 (1 total sessions)
-[2025-10-24 11:42:19.714] [HTTP] OPTIONS /mcp
-[2025-10-24 11:42:19.714] [HTTP] Request Headers:
+[2025-10-24 13:06:40.971] [INFO] Session registered: session-a8f49eee-068c-42f1-b611-14651fa5ccc6 (1 total sessions)
+[2025-10-24 13:06:41.059] [HTTP] OPTIONS /mcp
+[2025-10-24 13:06:41.059] [HTTP] Request Headers:
 {
   "host": "localhost:3737",
   "connection": "keep-alive",
@@ -193,9 +193,9 @@
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en-GB"
 }
-[2025-10-24 11:42:19.714] [HTTP] Handling OPTIONS preflight request
-[2025-10-24 11:42:19.715] [HTTP] GET /mcp
-[2025-10-24 11:42:19.715] [HTTP] Request Headers:
+[2025-10-24 13:06:41.059] [HTTP] Handling OPTIONS preflight request
+[2025-10-24 13:06:41.060] [HTTP] GET /mcp
+[2025-10-24 13:06:41.060] [HTTP] Request Headers:
 {
   "host": "localhost:3737",
   "connection": "keep-alive",
@@ -212,10 +212,10 @@
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en-GB"
 }
-[2025-10-24 11:42:19.715] [HTTP] Handling GET request to /mcp
-[2025-10-24 11:42:19.715] [HTTP] Setting up SSE stream for GET request
-[2025-10-24 11:42:19.715] [SSE] === SSE CONNECTION ATTEMPT ===
-[2025-10-24 11:42:19.715] [SSE] Headers:
+[2025-10-24 13:06:41.060] [HTTP] Handling GET request to /mcp
+[2025-10-24 13:06:41.060] [HTTP] Setting up SSE stream for GET request
+[2025-10-24 13:06:41.060] [SSE] === SSE CONNECTION ATTEMPT ===
+[2025-10-24 13:06:41.060] [SSE] Headers:
 {
   "host": "localhost:3737",
   "connection": "keep-alive",
@@ -232,15 +232,15 @@
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en-GB"
 }
-[2025-10-24 11:42:19.715] [SSE] URL:
+[2025-10-24 13:06:41.060] [SSE] URL:
 "/mcp"
-[2025-10-24 11:42:19.715] [SSE] SSE headers set, adding to connections...
-[2025-10-24 11:42:19.715] [HTTP] Added SSE connection. Total connections: 2
-[2025-10-24 11:42:19.715] [SSE] SSE connection added. Total: 2
-[2025-10-24 11:42:19.715] [SSE] Sent initial SSE message:
+[2025-10-24 13:06:41.060] [SSE] SSE headers set, adding to connections...
+[2025-10-24 13:06:41.060] [HTTP] Added SSE connection. Total connections: 2
+[2025-10-24 13:06:41.060] [SSE] SSE connection added. Total: 2
+[2025-10-24 13:06:41.061] [SSE] Sent initial SSE message:
 "data: {\"type\":\"connection\",\"status\":\"established\"}"
-[2025-10-24 11:42:32.514] [HTTP] GET /HumanAgent
-[2025-10-24 11:42:32.514] [HTTP] Request Headers:
+[2025-10-24 13:07:10.226] [HTTP] GET /HumanAgent
+[2025-10-24 13:07:10.226] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -258,13 +258,26 @@
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
 }
-[2025-10-24 11:42:32.514] [HTTP] Serving web interface at /HumanAgent
-[2025-10-24 11:42:32.522] [HTTP] SSE connection closed
-[2025-10-24 11:42:32.523] [HTTP] Removed SSE connection. Total connections: 1
-[2025-10-24 11:42:32.523] [HTTP] SSE connection closed
-[2025-10-24 11:42:32.523] [HTTP] Removed SSE connection. Total connections: 1
-[2025-10-24 11:42:32.565] [HTTP] GET /messages/session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:42:32.566] [HTTP] Request Headers:
+[2025-10-24 13:07:10.226] [HTTP] Serving web interface at /HumanAgent
+[2025-10-24 13:07:10.255] [HTTP] SSE connection closed
+[2025-10-24 13:07:10.255] [HTTP] Removed SSE connection. Total connections: 1
+[2025-10-24 13:07:10.255] [HTTP] SSE connection closed
+[2025-10-24 13:07:10.255] [HTTP] Removed SSE connection. Total connections: 1
+[2025-10-24 13:07:10.282] [HTTP] GET /.well-known/appspecific/com.chrome.devtools.json
+[2025-10-24 13:07:10.282] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "no-cors",
+  "sec-fetch-dest": "empty",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:07:10.283] [HTTP] 404 - Invalid endpoint: /.well-known/appspecific/com.chrome.devtools.json
+[2025-10-24 13:07:10.303] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:07:10.304] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -280,8 +293,8 @@
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
 }
-[2025-10-24 11:42:32.569] [HTTP] GET /mcp
-[2025-10-24 11:42:32.569] [HTTP] Request Headers:
+[2025-10-24 13:07:10.335] [HTTP] GET /mcp
+[2025-10-24 13:07:10.335] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -298,10 +311,10 @@
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
 }
-[2025-10-24 11:42:32.569] [HTTP] Handling GET request to /mcp
-[2025-10-24 11:42:32.569] [HTTP] Setting up SSE stream for GET request
-[2025-10-24 11:42:32.569] [SSE] === SSE CONNECTION ATTEMPT ===
-[2025-10-24 11:42:32.569] [SSE] Headers:
+[2025-10-24 13:07:10.335] [HTTP] Handling GET request to /mcp
+[2025-10-24 13:07:10.335] [HTTP] Setting up SSE stream for GET request
+[2025-10-24 13:07:10.335] [SSE] === SSE CONNECTION ATTEMPT ===
+[2025-10-24 13:07:10.335] [SSE] Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -318,15 +331,15 @@
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
 }
-[2025-10-24 11:42:32.569] [SSE] URL:
+[2025-10-24 13:07:10.335] [SSE] URL:
 "/mcp"
-[2025-10-24 11:42:32.569] [SSE] SSE headers set, adding to connections...
-[2025-10-24 11:42:32.569] [HTTP] Added SSE connection. Total connections: 2
-[2025-10-24 11:42:32.569] [SSE] SSE connection added. Total: 2
-[2025-10-24 11:42:32.570] [SSE] Sent initial SSE message:
+[2025-10-24 13:07:10.335] [SSE] SSE headers set, adding to connections...
+[2025-10-24 13:07:10.335] [HTTP] Added SSE connection. Total connections: 2
+[2025-10-24 13:07:10.335] [SSE] SSE connection added. Total: 2
+[2025-10-24 13:07:10.335] [SSE] Sent initial SSE message:
 "data: {\"type\":\"connection\",\"status\":\"established\"}"
-[2025-10-24 11:42:32.586] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
-[2025-10-24 11:42:32.586] [HTTP] Request Headers:
+[2025-10-24 13:07:10.345] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:07:10.345] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -342,8 +355,8 @@
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
 }
-[2025-10-24 11:42:37.746] [HTTP] POST /mcp
-[2025-10-24 11:42:37.746] [HTTP] Request Headers:
+[2025-10-24 13:07:15.513] [HTTP] POST /mcp
+[2025-10-24 13:07:15.513] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -355,12 +368,12 @@
   "accept-encoding": "gzip, deflate",
   "content-length": "228"
 }
-[2025-10-24 11:42:37.746] [HTTP] Handling POST request to /mcp
-[2025-10-24 11:42:37.746] [HTTP] Received chunk: 228 bytes
-[2025-10-24 11:42:37.747] [HTTP] Complete request body received (228 bytes)
-[2025-10-24 11:42:37.747] [HTTP] Request Body:
+[2025-10-24 13:07:15.513] [HTTP] Handling POST request to /mcp
+[2025-10-24 13:07:15.513] [HTTP] Received chunk: 228 bytes
+[2025-10-24 13:07:15.513] [HTTP] Complete request body received (228 bytes)
+[2025-10-24 13:07:15.513] [HTTP] Request Body:
 "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{\"protocolVersion\":\"2025-06-18\",\"capabilities\":{\"roots\":{\"listChanged\":true},\"sampling\":{},\"elicitation\":{}},\"clientInfo\":{\"name\":\"Visual Studio Code\",\"version\":\"1.105.1\"}}}"
-[2025-10-24 11:42:37.747] [HTTP] Parsed JSON message:
+[2025-10-24 13:07:15.513] [HTTP] Parsed JSON message:
 {
   "jsonrpc": "2.0",
   "id": 1,
@@ -380,7 +393,7 @@
     }
   }
 }
-[2025-10-24 11:42:37.747] [MCP] Handling message:
+[2025-10-24 13:07:15.513] [MCP] Handling message:
 {
   "jsonrpc": "2.0",
   "id": 1,
@@ -400,8 +413,8 @@
     }
   }
 }
-[2025-10-24 11:42:37.747] [MCP] Processing initialize request
-[2025-10-24 11:42:37.747] [HTTP] Response from handleMessage:
+[2025-10-24 13:07:15.513] [MCP] Processing initialize request
+[2025-10-24 13:07:15.514] [HTTP] Response from handleMessage:
 {
   "id": 1,
   "type": "response",
@@ -418,9 +431,9 @@
     }
   }
 }
-[2025-10-24 11:42:37.747] [HTTP] Sending 200 response (192 bytes)
-[2025-10-24 11:42:37.752] [HTTP] GET /mcp
-[2025-10-24 11:42:37.752] [HTTP] Request Headers:
+[2025-10-24 13:07:15.514] [HTTP] Sending 200 response (192 bytes)
+[2025-10-24 13:07:15.528] [HTTP] GET /mcp
+[2025-10-24 13:07:15.529] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -430,10 +443,10 @@
   "user-agent": "undici",
   "accept-encoding": "gzip, deflate"
 }
-[2025-10-24 11:42:37.752] [HTTP] Handling GET request to /mcp
-[2025-10-24 11:42:37.752] [HTTP] Setting up SSE stream for GET request
-[2025-10-24 11:42:37.752] [SSE] === SSE CONNECTION ATTEMPT ===
-[2025-10-24 11:42:37.752] [SSE] Headers:
+[2025-10-24 13:07:15.529] [HTTP] Handling GET request to /mcp
+[2025-10-24 13:07:15.529] [HTTP] Setting up SSE stream for GET request
+[2025-10-24 13:07:15.529] [SSE] === SSE CONNECTION ATTEMPT ===
+[2025-10-24 13:07:15.529] [SSE] Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -443,15 +456,15 @@
   "user-agent": "undici",
   "accept-encoding": "gzip, deflate"
 }
-[2025-10-24 11:42:37.752] [SSE] URL:
+[2025-10-24 13:07:15.529] [SSE] URL:
 "/mcp"
-[2025-10-24 11:42:37.752] [SSE] SSE headers set, adding to connections...
-[2025-10-24 11:42:37.752] [HTTP] Added SSE connection. Total connections: 3
-[2025-10-24 11:42:37.752] [SSE] SSE connection added. Total: 3
-[2025-10-24 11:42:37.752] [SSE] Sent initial SSE message:
+[2025-10-24 13:07:15.529] [SSE] SSE headers set, adding to connections...
+[2025-10-24 13:07:15.529] [HTTP] Added SSE connection. Total connections: 3
+[2025-10-24 13:07:15.529] [SSE] SSE connection added. Total: 3
+[2025-10-24 13:07:15.530] [SSE] Sent initial SSE message:
 "data: {\"type\":\"connection\",\"status\":\"established\"}"
-[2025-10-24 11:42:37.756] [HTTP] POST /mcp
-[2025-10-24 11:42:37.756] [HTTP] Request Headers:
+[2025-10-24 13:07:15.563] [HTTP] POST /mcp
+[2025-10-24 13:07:15.564] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -463,26 +476,26 @@
   "accept-encoding": "gzip, deflate",
   "content-length": "54"
 }
-[2025-10-24 11:42:37.756] [HTTP] Handling POST request to /mcp
-[2025-10-24 11:42:37.756] [HTTP] Received chunk: 54 bytes
-[2025-10-24 11:42:37.756] [HTTP] Complete request body received (54 bytes)
-[2025-10-24 11:42:37.756] [HTTP] Request Body:
+[2025-10-24 13:07:15.564] [HTTP] Handling POST request to /mcp
+[2025-10-24 13:07:15.564] [HTTP] Received chunk: 54 bytes
+[2025-10-24 13:07:15.564] [HTTP] Complete request body received (54 bytes)
+[2025-10-24 13:07:15.564] [HTTP] Request Body:
 "{\"method\":\"notifications/initialized\",\"jsonrpc\":\"2.0\"}"
-[2025-10-24 11:42:37.756] [HTTP] Parsed JSON message:
+[2025-10-24 13:07:15.564] [HTTP] Parsed JSON message:
 {
   "method": "notifications/initialized",
   "jsonrpc": "2.0"
 }
-[2025-10-24 11:42:37.756] [MCP] Handling message:
+[2025-10-24 13:07:15.564] [MCP] Handling message:
 {
   "method": "notifications/initialized",
   "jsonrpc": "2.0"
 }
-[2025-10-24 11:42:37.756] [MCP] Processing notifications/initialized (ignoring)
-[2025-10-24 11:42:37.756] [HTTP] Response from handleMessage:
-[2025-10-24 11:42:37.756] [HTTP] Sending 202 response (no content)
-[2025-10-24 11:42:37.757] [HTTP] POST /mcp
-[2025-10-24 11:42:37.757] [HTTP] Request Headers:
+[2025-10-24 13:07:15.564] [MCP] Processing notifications/initialized (ignoring)
+[2025-10-24 13:07:15.565] [HTTP] Response from handleMessage:
+[2025-10-24 13:07:15.565] [HTTP] Sending 202 response (no content)
+[2025-10-24 13:07:15.569] [HTTP] POST /mcp
+[2025-10-24 13:07:15.569] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -494,31 +507,31 @@
   "accept-encoding": "gzip, deflate",
   "content-length": "58"
 }
-[2025-10-24 11:42:37.757] [HTTP] Handling POST request to /mcp
-[2025-10-24 11:42:37.757] [HTTP] Received chunk: 58 bytes
-[2025-10-24 11:42:37.757] [HTTP] Complete request body received (58 bytes)
-[2025-10-24 11:42:37.757] [HTTP] Request Body:
+[2025-10-24 13:07:15.569] [HTTP] Handling POST request to /mcp
+[2025-10-24 13:07:15.569] [HTTP] Received chunk: 58 bytes
+[2025-10-24 13:07:15.569] [HTTP] Complete request body received (58 bytes)
+[2025-10-24 13:07:15.569] [HTTP] Request Body:
 "{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"tools/list\",\"params\":{}}"
-[2025-10-24 11:42:37.757] [HTTP] Parsed JSON message:
+[2025-10-24 13:07:15.569] [HTTP] Parsed JSON message:
 {
   "jsonrpc": "2.0",
   "id": 2,
   "method": "tools/list",
   "params": {}
 }
-[2025-10-24 11:42:37.757] [MCP] Handling message:
+[2025-10-24 13:07:15.570] [MCP] Handling message:
 {
   "jsonrpc": "2.0",
   "id": 2,
   "method": "tools/list",
   "params": {}
 }
-[2025-10-24 11:42:37.757] [MCP] Processing tools/list request
-[2025-10-24 11:42:37.757] [TOOLS] tools/list request - Extension sessionId: undefined, Message params: {}
-[2025-10-24 11:42:37.757] [TOOLS] Final sessionIdToUse: default
-[2025-10-24 11:42:37.757] [TOOLS] Returning 1 tools for session: default
-[2025-10-24 11:42:37.757] [TOOLS] Using default tools (no session ID available)
-[2025-10-24 11:42:37.758] [HTTP] Response from handleMessage:
+[2025-10-24 13:07:15.570] [MCP] Processing tools/list request
+[2025-10-24 13:07:15.570] [TOOLS] tools/list request - Extension sessionId: undefined, Message params: {}
+[2025-10-24 13:07:15.570] [TOOLS] Final sessionIdToUse: default
+[2025-10-24 13:07:15.570] [TOOLS] Returning 1 tools for session: default
+[2025-10-24 13:07:15.570] [TOOLS] Using default tools (no session ID available)
+[2025-10-24 13:07:15.570] [HTTP] Response from handleMessage:
 {
   "id": 2,
   "type": "response",
@@ -567,9 +580,9 @@
     ]
   }
 }
-[2025-10-24 11:42:37.758] [HTTP] Sending 200 response (1208 bytes)
-[2025-10-24 11:42:37.758] [HTTP] POST /mcp
-[2025-10-24 11:42:37.758] [HTTP] Request Headers:
+[2025-10-24 13:07:15.570] [HTTP] Sending 200 response (1208 bytes)
+[2025-10-24 13:07:15.572] [HTTP] POST /mcp
+[2025-10-24 13:07:15.572] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -579,14 +592,14 @@
   "sec-fetch-mode": "cors",
   "user-agent": "undici",
   "accept-encoding": "gzip, deflate",
-  "content-length": "487"
+  "content-length": "436"
 }
-[2025-10-24 11:42:37.758] [HTTP] Handling POST request to /mcp
-[2025-10-24 11:42:37.758] [HTTP] Received chunk: 487 bytes
-[2025-10-24 11:42:37.758] [HTTP] Complete request body received (487 bytes)
-[2025-10-24 11:42:37.758] [HTTP] Request Body:
-"{\"jsonrpc\":\"2.0\",\"id\":3,\"method\":\"tools/call\",\"params\":{\"name\":\"HumanAgent_Chat\",\"arguments\":{\"message\":\"Hello Ben! I'm ready to chat with you through the human agent interface. What would you like to discuss or work on today with your HumanAgent-MCP VS Code extension project?\",\"priority\":\"normal\"},\"_meta\":{\"progressToken\":\"9dfb82d0-5e47-4ec9-b5e2-f71684521c9f\",\"vscode.conversationId\":\"083210a2-6e17-433e-a123-7881f595f53f\",\"vscode.requestId\":\"4e056a7a-f667-4098-b257-e9c5bc837186\"}}}"
-[2025-10-24 11:42:37.758] [HTTP] Parsed JSON message:
+[2025-10-24 13:07:15.572] [HTTP] Handling POST request to /mcp
+[2025-10-24 13:07:15.572] [HTTP] Received chunk: 436 bytes
+[2025-10-24 13:07:15.572] [HTTP] Complete request body received (436 bytes)
+[2025-10-24 13:07:15.572] [HTTP] Request Body:
+"{\"jsonrpc\":\"2.0\",\"id\":3,\"method\":\"tools/call\",\"params\":{\"name\":\"HumanAgent_Chat\",\"arguments\":{\"message\":\"Hello Ben! I'm ready to chat with you through the human agent interface. What would you like to discuss or work on today?\",\"priority\":\"normal\"},\"_meta\":{\"progressToken\":\"a21e8389-2023-4722-a79a-3a23b7abefee\",\"vscode.conversationId\":\"083210a2-6e17-433e-a123-7881f595f53f\",\"vscode.requestId\":\"42690401-efd2-4b9d-9650-f37735b2f02a\"}}}"
+[2025-10-24 13:07:15.572] [HTTP] Parsed JSON message:
 {
   "jsonrpc": "2.0",
   "id": 3,
@@ -594,17 +607,17 @@
   "params": {
     "name": "HumanAgent_Chat",
     "arguments": {
-      "message": "Hello Ben! I'm ready to chat with you through the human agent interface. What would you like to discuss or work on today with your HumanAgent-MCP VS Code extension project?",
+      "message": "Hello Ben! I'm ready to chat with you through the human agent interface. What would you like to discuss or work on today?",
       "priority": "normal"
     },
     "_meta": {
-      "progressToken": "9dfb82d0-5e47-4ec9-b5e2-f71684521c9f",
+      "progressToken": "a21e8389-2023-4722-a79a-3a23b7abefee",
       "vscode.conversationId": "083210a2-6e17-433e-a123-7881f595f53f",
-      "vscode.requestId": "4e056a7a-f667-4098-b257-e9c5bc837186"
+      "vscode.requestId": "42690401-efd2-4b9d-9650-f37735b2f02a"
     }
   }
 }
-[2025-10-24 11:42:37.758] [MCP] Handling message:
+[2025-10-24 13:07:15.572] [MCP] Handling message:
 {
   "jsonrpc": "2.0",
   "id": 3,
@@ -612,48 +625,48 @@
   "params": {
     "name": "HumanAgent_Chat",
     "arguments": {
-      "message": "Hello Ben! I'm ready to chat with you through the human agent interface. What would you like to discuss or work on today with your HumanAgent-MCP VS Code extension project?",
+      "message": "Hello Ben! I'm ready to chat with you through the human agent interface. What would you like to discuss or work on today?",
       "priority": "normal"
     },
     "_meta": {
-      "progressToken": "9dfb82d0-5e47-4ec9-b5e2-f71684521c9f",
+      "progressToken": "a21e8389-2023-4722-a79a-3a23b7abefee",
       "vscode.conversationId": "083210a2-6e17-433e-a123-7881f595f53f",
-      "vscode.requestId": "4e056a7a-f667-4098-b257-e9c5bc837186"
+      "vscode.requestId": "42690401-efd2-4b9d-9650-f37735b2f02a"
     }
   }
 }
-[2025-10-24 11:42:37.758] [MCP] Processing tools/call request for tool: HumanAgent_Chat
-[2025-10-24 11:42:37.759] [MCP] Auto-mapped conversation 083210a2-6e17-433e-a123-7881f595f53f to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:42:37.759] [MCP] Tool call - name: "HumanAgent_Chat", raw session: 083210a2-6e17-433e-a123-7881f595f53f, mapped session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:07:15.572] [MCP] Processing tools/call request for tool: HumanAgent_Chat
+[2025-10-24 13:07:15.573] [MCP] Auto-mapped conversation 083210a2-6e17-433e-a123-7881f595f53f to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:07:15.573] [MCP] Tool call - name: "HumanAgent_Chat", raw session: 083210a2-6e17-433e-a123-7881f595f53f, mapped session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
 {
   "name": "HumanAgent_Chat",
   "args": {
-    "message": "Hello Ben! I'm ready to chat with you through the human agent interface. What would you like to discuss or work on today with your HumanAgent-MCP VS Code extension project?",
+    "message": "Hello Ben! I'm ready to chat with you through the human agent interface. What would you like to discuss or work on today?",
     "priority": "normal"
   }
 }
-[2025-10-24 11:42:37.759] [MCP] Available tools for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6:
+[2025-10-24 13:07:15.573] [MCP] Available tools for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6:
 [
   "HumanAgent_Chat"
 ]
-[2025-10-24 11:42:37.759] [MCP] Executing HumanAgent_Chat tool
-[2025-10-24 11:42:37.759] [TOOL] HumanAgent_Chat called with params:
+[2025-10-24 13:07:15.573] [MCP] Executing HumanAgent_Chat tool
+[2025-10-24 13:07:15.573] [TOOL] HumanAgent_Chat called with params:
 {
-  "message": "Hello Ben! I'm ready to chat with you through the human agent interface. What would you like to discuss or work on today with your HumanAgent-MCP VS Code extension project?",
+  "message": "Hello Ben! I'm ready to chat with you through the human agent interface. What would you like to discuss or work on today?",
   "priority": "normal"
 }
-[2025-10-24 11:42:37.759] [TOOL] Using timeout: 300000ms (300s)
-[2025-10-24 11:42:37.759] [TOOL] Generated request ID: 3-1761266557759
-[2025-10-24 11:42:37.759] [TOOL] Displaying message in chat UI:
-"Hello Ben! I'm ready to chat with you through the human agent interface. What would you like to discuss or work on today with your HumanAgent-MCP VS Code extension project?"
-[2025-10-24 11:42:37.759] [SSE] Forwarding human-agent-request to SSE connections
-[2025-10-24 11:42:37.759] [SSE] Broadcasting to 3 SSE connections:
-"{\"type\":\"human-agent-request\",\"data\":{\"requestId\":\"3-1761266557759\",\"message\":\"Hello Ben! I'm ready to chat with you through the human agent interface. What would you like to discuss or work on today with your HumanAgent-MCP VS Code extension project?\",\"priority\":\"normal\",\"timestamp\":\"2025-10-24T00:42:37.759Z\"}}"
-[2025-10-24 11:42:37.759] [TOOL] Adding pending request 3-1761266557759 to session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:42:37.759] [CHAT] [INFO] Added pending request 3-1761266557759 to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:42:37.759] [TOOL] Request 3-1761266557759 waiting for human response...
-[2025-10-24 11:43:00.092] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/state
-[2025-10-24 11:43:00.092] [HTTP] Request Headers:
+[2025-10-24 13:07:15.573] [TOOL] Using timeout: 300000ms (300s)
+[2025-10-24 13:07:15.573] [TOOL] Generated request ID: 3-1761271635573
+[2025-10-24 13:07:15.573] [TOOL] Displaying message in chat UI:
+"Hello Ben! I'm ready to chat with you through the human agent interface. What would you like to discuss or work on today?"
+[2025-10-24 13:07:15.573] [SSE] Forwarding human-agent-request to SSE connections
+[2025-10-24 13:07:15.573] [SSE] Broadcasting to 3 SSE connections:
+"{\"type\":\"human-agent-request\",\"data\":{\"requestId\":\"3-1761271635573\",\"message\":\"Hello Ben! I'm ready to chat with you through the human agent interface. What would you like to discuss or work on today?\",\"priority\":\"normal\",\"timestamp\":\"2025-10-24T02:07:15.573Z\"}}"
+[2025-10-24 13:07:15.574] [TOOL] Adding pending request 3-1761271635573 to session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:07:15.574] [CHAT] [INFO] Added pending request 3-1761271635573 to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:07:15.574] [TOOL] Request 3-1761271635573 waiting for human response...
+[2025-10-24 13:07:33.074] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/state
+[2025-10-24 13:07:33.074] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -669,12 +682,12 @@
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
 }
-[2025-10-24 11:43:00.102] [HTTP] POST /response
-[2025-10-24 11:43:00.102] [HTTP] Request Headers:
+[2025-10-24 13:07:33.092] [HTTP] POST /response
+[2025-10-24 13:07:33.092] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
-  "content-length": "124",
+  "content-length": "131",
   "sec-ch-ua-platform": "\"macOS\"",
   "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
   "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
@@ -689,23 +702,28 @@
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
 }
-[2025-10-24 11:43:00.103] [HTTP] === RESPONSE ENDPOINT CALLED ===
-[2025-10-24 11:43:00.103] [HTTP] Request ID: 3-1761266557759, Response: Testing a response from the web interface - please keep replying via this tool.
-[2025-10-24 11:43:00.103] [HTTP] Found pending request: true
-[2025-10-24 11:43:00.103] [HTTP] Processing response for session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:43:00.103] [HTTP] Storing and broadcasting user message to 3 SSE connections
-[2025-10-24 11:43:00.103] [CHAT] [INFO] Added message to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: user - Testing a response from the web interface - please...
-[2025-10-24 11:43:00.103] [CHAT] Stored user message in ChatManager for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: Testing a response from the web interface - please...
-[2025-10-24 11:43:00.103] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:43:00.103] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:43:00.103] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:43:00.104] [CHAT] [INFO] Removed pending request 3-1761266557759 from session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:43:00.104] [HTTP] Broadcast completed and pending request removed from ChatManager
-[2025-10-24 11:43:00.104] [SERVER] Received human response for request 3-1761266557759:
-"Testing a response from the web interface - please keep replying via this tool."
-[2025-10-24 11:43:00.104] [TOOL] Request 3-1761266557759 completed with response:
-"Testing a response from the web interface - please keep replying via this tool."
-[2025-10-24 11:43:00.104] [HTTP] Response from handleMessage:
+[2025-10-24 13:07:33.093] [HTTP] === RESPONSE ENDPOINT CALLED ===
+[2025-10-24 13:07:33.093] [HTTP] Request ID: 3-1761271635573, Response: Great - im testing this tool so just keep replying here even if i am making no sense!!
+[2025-10-24 13:07:33.093] [HTTP] Found pending request: true
+[2025-10-24 13:07:33.093] [HTTP] Processing response for session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:07:33.093] [HTTP] Storing and broadcasting user message to 3 SSE connections
+[2025-10-24 13:07:33.093] [CHAT] [INFO] Added message to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: user - Great - im testing this tool so just keep replying...
+[2025-10-24 13:07:33.093] [CHAT] Stored user message in ChatManager for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: Great - im testing this tool so just keep replying...
+[2025-10-24 13:07:33.093] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:07:33.093] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:07:33.093] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:07:33.093] [CHAT] [INFO] Removed pending request 3-1761271635573 from session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:07:33.093] [HTTP] Broadcast completed and pending request removed from ChatManager
+[2025-10-24 13:07:33.093] [SERVER] Received human response for request 3-1761271635573:
+"Great - im testing this tool so just keep replying here even if i am making no sense!!"
+[2025-10-24 13:07:33.093] [TOOL] Request 3-1761271635573 completed with response:
+"Great - im testing this tool so just keep replying here even if i am making no sense!!"
+[2025-10-24 13:07:33.094] [CHAT] [INFO] Added message to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: agent - Great - im testing this tool so just keep replying...
+[2025-10-24 13:07:33.094] [CHAT] Stored assistant message in ChatManager for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: Great - im testing this tool so just keep replying...
+[2025-10-24 13:07:33.094] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:07:33.094] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:07:33.094] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:07:33.095] [HTTP] Response from handleMessage:
 {
   "id": 3,
   "type": "response",
@@ -713,14 +731,14 @@
     "content": [
       {
         "type": "text",
-        "text": "Testing a response from the web interface - please keep replying via this tool."
+        "text": "Great - im testing this tool so just keep replying here even if i am making no sense!!"
       }
     ]
   }
 }
-[2025-10-24 11:43:00.104] [HTTP] Sending 200 response (154 bytes)
-[2025-10-24 11:43:10.985] [HTTP] POST /mcp
-[2025-10-24 11:43:10.985] [HTTP] Request Headers:
+[2025-10-24 13:07:33.095] [HTTP] Sending 200 response (161 bytes)
+[2025-10-24 13:07:38.716] [HTTP] POST /mcp
+[2025-10-24 13:07:38.716] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -730,14 +748,14 @@
   "sec-fetch-mode": "cors",
   "user-agent": "undici",
   "accept-encoding": "gzip, deflate",
-  "content-length": "523"
+  "content-length": "652"
 }
-[2025-10-24 11:43:10.985] [HTTP] Handling POST request to /mcp
-[2025-10-24 11:43:10.985] [HTTP] Received chunk: 523 bytes
-[2025-10-24 11:43:10.985] [HTTP] Complete request body received (523 bytes)
-[2025-10-24 11:43:10.985] [HTTP] Request Body:
-"{\"jsonrpc\":\"2.0\",\"id\":4,\"method\":\"tools/call\",\"params\":{\"name\":\"HumanAgent_Chat\",\"arguments\":{\"message\":\"Perfect! The chat interface is working well. I can see you're currently working with the mcp.json configuration file. Would you like to discuss any improvements, troubleshoot something, or work on new features for the extension?\"},\"_meta\":{\"progressToken\":\"ce4bdb9a-451a-4ebe-b2b0-31de0310f103\",\"vscode.conversationId\":\"083210a2-6e17-433e-a123-7881f595f53f\",\"vscode.requestId\":\"4e056a7a-f667-4098-b257-e9c5bc837186\"}}}"
-[2025-10-24 11:43:10.985] [HTTP] Parsed JSON message:
+[2025-10-24 13:07:38.716] [HTTP] Handling POST request to /mcp
+[2025-10-24 13:07:38.716] [HTTP] Received chunk: 652 bytes
+[2025-10-24 13:07:38.716] [HTTP] Complete request body received (652 bytes)
+[2025-10-24 13:07:38.716] [HTTP] Request Body:
+"{\"jsonrpc\":\"2.0\",\"id\":4,\"method\":\"tools/call\",\"params\":{\"name\":\"HumanAgent_Chat\",\"arguments\":{\"message\":\"Got it, Ben! I understand you're testing the human agent chat tool. That's perfect - I'll keep the conversation going and respond to whatever you send, even if it's random or doesn't make complete sense. This is a great way to test the functionality and make sure the chat interface is working properly. What would you like to test next?\",\"priority\":\"normal\"},\"_meta\":{\"progressToken\":\"863a66b9-3315-40b5-927c-5e6aced45203\",\"vscode.conversationId\":\"083210a2-6e17-433e-a123-7881f595f53f\",\"vscode.requestId\":\"42690401-efd2-4b9d-9650-f37735b2f02a\"}}}"
+[2025-10-24 13:07:38.716] [HTTP] Parsed JSON message:
 {
   "jsonrpc": "2.0",
   "id": 4,
@@ -745,16 +763,17 @@
   "params": {
     "name": "HumanAgent_Chat",
     "arguments": {
-      "message": "Perfect! The chat interface is working well. I can see you're currently working with the mcp.json configuration file. Would you like to discuss any improvements, troubleshoot something, or work on new features for the extension?"
+      "message": "Got it, Ben! I understand you're testing the human agent chat tool. That's perfect - I'll keep the conversation going and respond to whatever you send, even if it's random or doesn't make complete sense. This is a great way to test the functionality and make sure the chat interface is working properly. What would you like to test next?",
+      "priority": "normal"
     },
     "_meta": {
-      "progressToken": "ce4bdb9a-451a-4ebe-b2b0-31de0310f103",
+      "progressToken": "863a66b9-3315-40b5-927c-5e6aced45203",
       "vscode.conversationId": "083210a2-6e17-433e-a123-7881f595f53f",
-      "vscode.requestId": "4e056a7a-f667-4098-b257-e9c5bc837186"
+      "vscode.requestId": "42690401-efd2-4b9d-9650-f37735b2f02a"
     }
   }
 }
-[2025-10-24 11:43:10.985] [MCP] Handling message:
+[2025-10-24 13:07:38.716] [MCP] Handling message:
 {
   "jsonrpc": "2.0",
   "id": 4,
@@ -762,381 +781,48 @@
   "params": {
     "name": "HumanAgent_Chat",
     "arguments": {
-      "message": "Perfect! The chat interface is working well. I can see you're currently working with the mcp.json configuration file. Would you like to discuss any improvements, troubleshoot something, or work on new features for the extension?"
+      "message": "Got it, Ben! I understand you're testing the human agent chat tool. That's perfect - I'll keep the conversation going and respond to whatever you send, even if it's random or doesn't make complete sense. This is a great way to test the functionality and make sure the chat interface is working properly. What would you like to test next?",
+      "priority": "normal"
     },
     "_meta": {
-      "progressToken": "ce4bdb9a-451a-4ebe-b2b0-31de0310f103",
+      "progressToken": "863a66b9-3315-40b5-927c-5e6aced45203",
       "vscode.conversationId": "083210a2-6e17-433e-a123-7881f595f53f",
-      "vscode.requestId": "4e056a7a-f667-4098-b257-e9c5bc837186"
+      "vscode.requestId": "42690401-efd2-4b9d-9650-f37735b2f02a"
     }
   }
 }
-[2025-10-24 11:43:10.985] [MCP] Processing tools/call request for tool: HumanAgent_Chat
-[2025-10-24 11:43:10.985] [MCP] Mapped conversation 083210a2-6e17-433e-a123-7881f595f53f to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:43:10.985] [MCP] Tool call - name: "HumanAgent_Chat", raw session: 083210a2-6e17-433e-a123-7881f595f53f, mapped session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:07:38.716] [MCP] Processing tools/call request for tool: HumanAgent_Chat
+[2025-10-24 13:07:38.716] [MCP] Mapped conversation 083210a2-6e17-433e-a123-7881f595f53f to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:07:38.716] [MCP] Tool call - name: "HumanAgent_Chat", raw session: 083210a2-6e17-433e-a123-7881f595f53f, mapped session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
 {
   "name": "HumanAgent_Chat",
   "args": {
-    "message": "Perfect! The chat interface is working well. I can see you're currently working with the mcp.json configuration file. Would you like to discuss any improvements, troubleshoot something, or work on new features for the extension?"
+    "message": "Got it, Ben! I understand you're testing the human agent chat tool. That's perfect - I'll keep the conversation going and respond to whatever you send, even if it's random or doesn't make complete sense. This is a great way to test the functionality and make sure the chat interface is working properly. What would you like to test next?",
+    "priority": "normal"
   }
 }
-[2025-10-24 11:43:10.985] [MCP] Available tools for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6:
+[2025-10-24 13:07:38.716] [MCP] Available tools for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6:
 [
   "HumanAgent_Chat"
 ]
-[2025-10-24 11:43:10.985] [MCP] Executing HumanAgent_Chat tool
-[2025-10-24 11:43:10.985] [TOOL] HumanAgent_Chat called with params:
+[2025-10-24 13:07:38.716] [MCP] Executing HumanAgent_Chat tool
+[2025-10-24 13:07:38.716] [TOOL] HumanAgent_Chat called with params:
 {
-  "message": "Perfect! The chat interface is working well. I can see you're currently working with the mcp.json configuration file. Would you like to discuss any improvements, troubleshoot something, or work on new features for the extension?"
+  "message": "Got it, Ben! I understand you're testing the human agent chat tool. That's perfect - I'll keep the conversation going and respond to whatever you send, even if it's random or doesn't make complete sense. This is a great way to test the functionality and make sure the chat interface is working properly. What would you like to test next?",
+  "priority": "normal"
 }
-[2025-10-24 11:43:10.985] [TOOL] Using timeout: 300000ms (300s)
-[2025-10-24 11:43:10.985] [TOOL] Generated request ID: 4-1761266590985
-[2025-10-24 11:43:10.985] [TOOL] Displaying message in chat UI:
-"Perfect! The chat interface is working well. I can see you're currently working with the mcp.json configuration file. Would you like to discuss any improvements, troubleshoot something, or work on new features for the extension?"
-[2025-10-24 11:43:10.985] [SSE] Forwarding human-agent-request to SSE connections
-[2025-10-24 11:43:10.985] [SSE] Broadcasting to 3 SSE connections:
-"{\"type\":\"human-agent-request\",\"data\":{\"requestId\":\"4-1761266590985\",\"message\":\"Perfect! The chat interface is working well. I can see you're currently working with the mcp.json configuration file. Would you like to discuss any improvements, troubleshoot something, or work on new features for the extension?\",\"priority\":\"normal\",\"timestamp\":\"2025-10-24T00:43:10.985Z\"}}"
-[2025-10-24 11:43:10.985] [TOOL] Adding pending request 4-1761266590985 to session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:43:10.985] [CHAT] [INFO] Added pending request 4-1761266590985 to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:43:10.985] [TOOL] Request 4-1761266590985 waiting for human response...
-[2025-10-24 11:43:44.782] [HTTP] POST /response
-[2025-10-24 11:43:44.782] [HTTP] Request Headers:
-{
-  "host": "localhost:3737",
-  "connection": "keep-alive",
-  "content-type": "application/json",
-  "accept": "*/*",
-  "accept-language": "*",
-  "sec-fetch-mode": "cors",
-  "user-agent": "node",
-  "accept-encoding": "gzip, deflate",
-  "content-length": "175"
-}
-[2025-10-24 11:43:44.784] [HTTP] === RESPONSE ENDPOINT CALLED ===
-[2025-10-24 11:43:44.784] [HTTP] Request ID: 4-1761266590985, Response: Great - this response from the web interface was visible in vs code - i wonder if the web interface will see this vscode response?
-[2025-10-24 11:43:44.784] [HTTP] Found pending request: true
-[2025-10-24 11:43:44.784] [HTTP] Processing response for session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:43:44.784] [HTTP] Storing and broadcasting user message to 3 SSE connections
-[2025-10-24 11:43:44.784] [CHAT] [INFO] Added message to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: user - Great - this response from the web interface was v...
-[2025-10-24 11:43:44.784] [CHAT] Stored user message in ChatManager for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: Great - this response from the web interface was v...
-[2025-10-24 11:43:44.784] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:43:44.784] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:43:44.784] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:43:44.784] [CHAT] [INFO] Removed pending request 4-1761266590985 from session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:43:44.784] [HTTP] Broadcast completed and pending request removed from ChatManager
-[2025-10-24 11:43:44.784] [SERVER] Received human response for request 4-1761266590985:
-"Great - this response from the web interface was visible in vs code - i wonder if the web interface will see this vscode response?"
-[2025-10-24 11:43:44.784] [TOOL] Request 4-1761266590985 completed with response:
-"Great - this response from the web interface was visible in vs code - i wonder if the web interface will see this vscode response?"
-[2025-10-24 11:43:44.784] [HTTP] Response from handleMessage:
-{
-  "id": 4,
-  "type": "response",
-  "result": {
-    "content": [
-      {
-        "type": "text",
-        "text": "Great - this response from the web interface was visible in vs code - i wonder if the web interface will see this vscode response?"
-      }
-    ]
-  }
-}
-[2025-10-24 11:43:44.784] [HTTP] Sending 200 response (205 bytes)
-[2025-10-24 11:43:44.796] [HTTP] SSE connection closed
-[2025-10-24 11:43:44.797] [HTTP] Removed SSE connection. Total connections: 2
-[2025-10-24 11:43:44.797] [HTTP] SSE connection closed
-[2025-10-24 11:43:44.797] [HTTP] Removed SSE connection. Total connections: 2
-[2025-10-24 11:43:44.812] [HTTP] OPTIONS /mcp
-[2025-10-24 11:43:44.812] [HTTP] Request Headers:
-{
-  "host": "localhost:3737",
-  "connection": "keep-alive",
-  "accept": "*/*",
-  "access-control-request-method": "GET",
-  "access-control-request-headers": "cache-control",
-  "origin": "vscode-webview://06ntb21jilovkpqhp3n8qs6oen2rlig4drgi2amm3ehub2r9bg30",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.105.1 Chrome/138.0.7204.251 Electron/37.6.0 Safari/537.36",
-  "sec-fetch-mode": "cors",
-  "sec-fetch-site": "cross-site",
-  "sec-fetch-dest": "empty",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en-GB"
-}
-[2025-10-24 11:43:44.812] [HTTP] Handling OPTIONS preflight request
-[2025-10-24 11:43:44.813] [HTTP] GET /mcp
-[2025-10-24 11:43:44.813] [HTTP] Request Headers:
-{
-  "host": "localhost:3737",
-  "connection": "keep-alive",
-  "sec-ch-ua-platform": "\"macOS\"",
-  "cache-control": "no-cache",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.105.1 Chrome/138.0.7204.251 Electron/37.6.0 Safari/537.36",
-  "accept": "text/event-stream",
-  "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
-  "sec-ch-ua-mobile": "?0",
-  "origin": "vscode-webview://06ntb21jilovkpqhp3n8qs6oen2rlig4drgi2amm3ehub2r9bg30",
-  "sec-fetch-site": "cross-site",
-  "sec-fetch-mode": "cors",
-  "sec-fetch-dest": "empty",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en-GB"
-}
-[2025-10-24 11:43:44.813] [HTTP] Handling GET request to /mcp
-[2025-10-24 11:43:44.813] [HTTP] Setting up SSE stream for GET request
-[2025-10-24 11:43:44.813] [SSE] === SSE CONNECTION ATTEMPT ===
-[2025-10-24 11:43:44.813] [SSE] Headers:
-{
-  "host": "localhost:3737",
-  "connection": "keep-alive",
-  "sec-ch-ua-platform": "\"macOS\"",
-  "cache-control": "no-cache",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.105.1 Chrome/138.0.7204.251 Electron/37.6.0 Safari/537.36",
-  "accept": "text/event-stream",
-  "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
-  "sec-ch-ua-mobile": "?0",
-  "origin": "vscode-webview://06ntb21jilovkpqhp3n8qs6oen2rlig4drgi2amm3ehub2r9bg30",
-  "sec-fetch-site": "cross-site",
-  "sec-fetch-mode": "cors",
-  "sec-fetch-dest": "empty",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en-GB"
-}
-[2025-10-24 11:43:44.813] [SSE] URL:
-"/mcp"
-[2025-10-24 11:43:44.813] [SSE] SSE headers set, adding to connections...
-[2025-10-24 11:43:44.813] [HTTP] Added SSE connection. Total connections: 3
-[2025-10-24 11:43:44.813] [SSE] SSE connection added. Total: 3
-[2025-10-24 11:43:44.813] [SSE] Sent initial SSE message:
-"data: {\"type\":\"connection\",\"status\":\"established\"}"
-[2025-10-24 11:43:51.221] [HTTP] POST /mcp
-[2025-10-24 11:43:51.221] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "content-type": "application/json",
-  "accept": "text/event-stream, application/json",
-  "accept-language": "*",
-  "sec-fetch-mode": "cors",
-  "user-agent": "undici",
-  "accept-encoding": "gzip, deflate",
-  "content-length": "699"
-}
-[2025-10-24 11:43:51.221] [HTTP] Handling POST request to /mcp
-[2025-10-24 11:43:51.221] [HTTP] Received chunk: 699 bytes
-[2025-10-24 11:43:51.221] [HTTP] Complete request body received (699 bytes)
-[2025-10-24 11:43:51.221] [HTTP] Request Body:
-"{\"jsonrpc\":\"2.0\",\"id\":5,\"method\":\"tools/call\",\"params\":{\"name\":\"HumanAgent_Chat\",\"arguments\":{\"message\":\"Yes, this creates a nice feedback loop! Your web interface should be able to see this response from VS Code. This confirms that your MCP server is successfully bridging communication between the VS Code extension and the web-based human agent interface. \\n\\nWhat aspects of the extension would you like to explore or improve next? Are there any features you'd like to add or issues you'd like to address?\"},\"_meta\":{\"progressToken\":\"0761c03b-dfe0-448a-bb94-e927de2592e1\",\"vscode.conversationId\":\"083210a2-6e17-433e-a123-7881f595f53f\",\"vscode.requestId\":\"4e056a7a-f667-4098-b257-e9c5bc837186\"}}}"
-[2025-10-24 11:43:51.221] [HTTP] Parsed JSON message:
-{
-  "jsonrpc": "2.0",
-  "id": 5,
-  "method": "tools/call",
-  "params": {
-    "name": "HumanAgent_Chat",
-    "arguments": {
-      "message": "Yes, this creates a nice feedback loop! Your web interface should be able to see this response from VS Code. This confirms that your MCP server is successfully bridging communication between the VS Code extension and the web-based human agent interface. \n\nWhat aspects of the extension would you like to explore or improve next? Are there any features you'd like to add or issues you'd like to address?"
-    },
-    "_meta": {
-      "progressToken": "0761c03b-dfe0-448a-bb94-e927de2592e1",
-      "vscode.conversationId": "083210a2-6e17-433e-a123-7881f595f53f",
-      "vscode.requestId": "4e056a7a-f667-4098-b257-e9c5bc837186"
-    }
-  }
-}
-[2025-10-24 11:43:51.221] [MCP] Handling message:
-{
-  "jsonrpc": "2.0",
-  "id": 5,
-  "method": "tools/call",
-  "params": {
-    "name": "HumanAgent_Chat",
-    "arguments": {
-      "message": "Yes, this creates a nice feedback loop! Your web interface should be able to see this response from VS Code. This confirms that your MCP server is successfully bridging communication between the VS Code extension and the web-based human agent interface. \n\nWhat aspects of the extension would you like to explore or improve next? Are there any features you'd like to add or issues you'd like to address?"
-    },
-    "_meta": {
-      "progressToken": "0761c03b-dfe0-448a-bb94-e927de2592e1",
-      "vscode.conversationId": "083210a2-6e17-433e-a123-7881f595f53f",
-      "vscode.requestId": "4e056a7a-f667-4098-b257-e9c5bc837186"
-    }
-  }
-}
-[2025-10-24 11:43:51.221] [MCP] Processing tools/call request for tool: HumanAgent_Chat
-[2025-10-24 11:43:51.221] [MCP] Mapped conversation 083210a2-6e17-433e-a123-7881f595f53f to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:43:51.221] [MCP] Tool call - name: "HumanAgent_Chat", raw session: 083210a2-6e17-433e-a123-7881f595f53f, mapped session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-{
-  "name": "HumanAgent_Chat",
-  "args": {
-    "message": "Yes, this creates a nice feedback loop! Your web interface should be able to see this response from VS Code. This confirms that your MCP server is successfully bridging communication between the VS Code extension and the web-based human agent interface. \n\nWhat aspects of the extension would you like to explore or improve next? Are there any features you'd like to add or issues you'd like to address?"
-  }
-}
-[2025-10-24 11:43:51.221] [MCP] Available tools for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6:
-[
-  "HumanAgent_Chat"
-]
-[2025-10-24 11:43:51.221] [MCP] Executing HumanAgent_Chat tool
-[2025-10-24 11:43:51.221] [TOOL] HumanAgent_Chat called with params:
-{
-  "message": "Yes, this creates a nice feedback loop! Your web interface should be able to see this response from VS Code. This confirms that your MCP server is successfully bridging communication between the VS Code extension and the web-based human agent interface. \n\nWhat aspects of the extension would you like to explore or improve next? Are there any features you'd like to add or issues you'd like to address?"
-}
-[2025-10-24 11:43:51.221] [TOOL] Using timeout: 300000ms (300s)
-[2025-10-24 11:43:51.221] [TOOL] Generated request ID: 5-1761266631221
-[2025-10-24 11:43:51.221] [TOOL] Displaying message in chat UI:
-"Yes, this creates a nice feedback loop! Your web interface should be able to see this response from VS Code. This confirms that your MCP server is successfully bridging communication between the VS Code extension and the web-based human agent interface. \n\nWhat aspects of the extension would you like to explore or improve next? Are there any features you'd like to add or issues you'd like to address?"
-[2025-10-24 11:43:51.221] [SSE] Forwarding human-agent-request to SSE connections
-[2025-10-24 11:43:51.221] [SSE] Broadcasting to 3 SSE connections:
-"{\"type\":\"human-agent-request\",\"data\":{\"requestId\":\"5-1761266631221\",\"message\":\"Yes, this creates a nice feedback loop! Your web interface should be able to see this response from VS Code. This confirms that your MCP server is successfully bridging communication between the VS Code extension and the web-based human agent interface. \\n\\nWhat aspects of the extension would you like to explore or improve next? Are there any features you'd like to add or issues you'd like to address?\",\"priority\":\"normal\",\"timestamp\":\"2025-10-24T00:43:51.221Z\"}}"
-[2025-10-24 11:43:51.221] [TOOL] Adding pending request 5-1761266631221 to session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:43:51.221] [CHAT] [INFO] Added pending request 5-1761266631221 to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:43:51.221] [TOOL] Request 5-1761266631221 waiting for human response...
-[2025-10-24 11:44:34.041] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/state
-[2025-10-24 11:44:34.041] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "sec-ch-ua-platform": "\"macOS\"",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
-  "sec-ch-ua-mobile": "?0",
-  "accept": "*/*",
-  "sec-fetch-site": "same-origin",
-  "sec-fetch-mode": "cors",
-  "sec-fetch-dest": "empty",
-  "referer": "http://127.0.0.1:3737/HumanAgent",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
-}
-[2025-10-24 11:44:34.053] [HTTP] POST /response
-[2025-10-24 11:44:34.053] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "content-length": "172",
-  "sec-ch-ua-platform": "\"macOS\"",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
-  "content-type": "application/json",
-  "sec-ch-ua-mobile": "?0",
-  "accept": "*/*",
-  "origin": "http://127.0.0.1:3737",
-  "sec-fetch-site": "same-origin",
-  "sec-fetch-mode": "cors",
-  "sec-fetch-dest": "empty",
-  "referer": "http://127.0.0.1:3737/HumanAgent",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
-}
-[2025-10-24 11:44:34.054] [HTTP] === RESPONSE ENDPOINT CALLED ===
-[2025-10-24 11:44:34.054] [HTTP] Request ID: 5-1761266631221, Response: yes i can see it - next test will be to see if i get the full message history again once i refresh here in the web interface!!!
-[2025-10-24 11:44:34.054] [HTTP] Found pending request: true
-[2025-10-24 11:44:34.054] [HTTP] Processing response for session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:44:34.054] [HTTP] Storing and broadcasting user message to 3 SSE connections
-[2025-10-24 11:44:34.054] [CHAT] [INFO] Added message to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: user - yes i can see it - next test will be to see if i g...
-[2025-10-24 11:44:34.054] [CHAT] Stored user message in ChatManager for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: yes i can see it - next test will be to see if i g...
-[2025-10-24 11:44:34.055] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:44:34.055] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:44:34.055] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:44:34.055] [CHAT] [INFO] Removed pending request 5-1761266631221 from session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:44:34.055] [HTTP] Broadcast completed and pending request removed from ChatManager
-[2025-10-24 11:44:34.055] [SERVER] Received human response for request 5-1761266631221:
-"yes i can see it - next test will be to see if i get the full message history again once i refresh here in the web interface!!!"
-[2025-10-24 11:44:34.055] [TOOL] Request 5-1761266631221 completed with response:
-"yes i can see it - next test will be to see if i get the full message history again once i refresh here in the web interface!!!"
-[2025-10-24 11:44:34.055] [HTTP] Response from handleMessage:
-{
-  "id": 5,
-  "type": "response",
-  "result": {
-    "content": [
-      {
-        "type": "text",
-        "text": "yes i can see it - next test will be to see if i get the full message history again once i refresh here in the web interface!!!"
-      }
-    ]
-  }
-}
-[2025-10-24 11:44:34.055] [HTTP] Sending 200 response (202 bytes)
-[2025-10-24 11:44:37.884] [HTTP] POST /mcp
-[2025-10-24 11:44:37.885] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "content-type": "application/json",
-  "accept": "text/event-stream, application/json",
-  "accept-language": "*",
-  "sec-fetch-mode": "cors",
-  "user-agent": "undici",
-  "accept-encoding": "gzip, deflate",
-  "content-length": "748"
-}
-[2025-10-24 11:44:37.885] [HTTP] Handling POST request to /mcp
-[2025-10-24 11:44:37.885] [HTTP] Received chunk: 748 bytes
-[2025-10-24 11:44:37.885] [HTTP] Complete request body received (748 bytes)
-[2025-10-24 11:44:37.885] [HTTP] Request Body:
-"{\"jsonrpc\":\"2.0\",\"id\":6,\"method\":\"tools/call\",\"params\":{\"name\":\"HumanAgent_Chat\",\"arguments\":{\"message\":\"That's an excellent test, Ben! Message persistence across refreshes would be a crucial feature for maintaining conversation context. If the chat history survives a refresh, it means your session management and message storage are working properly. \\n\\nGo ahead and refresh the web interface - I'm curious to see if the conversation history persists! This would demonstrate that your MCP server is correctly maintaining session state and message history.\"},\"_meta\":{\"progressToken\":\"c605d93e-56c9-4418-855c-fafaf3142252\",\"vscode.conversationId\":\"083210a2-6e17-433e-a123-7881f595f53f\",\"vscode.requestId\":\"4e056a7a-f667-4098-b257-e9c5bc837186\"}}}"
-[2025-10-24 11:44:37.885] [HTTP] Parsed JSON message:
-{
-  "jsonrpc": "2.0",
-  "id": 6,
-  "method": "tools/call",
-  "params": {
-    "name": "HumanAgent_Chat",
-    "arguments": {
-      "message": "That's an excellent test, Ben! Message persistence across refreshes would be a crucial feature for maintaining conversation context. If the chat history survives a refresh, it means your session management and message storage are working properly. \n\nGo ahead and refresh the web interface - I'm curious to see if the conversation history persists! This would demonstrate that your MCP server is correctly maintaining session state and message history."
-    },
-    "_meta": {
-      "progressToken": "c605d93e-56c9-4418-855c-fafaf3142252",
-      "vscode.conversationId": "083210a2-6e17-433e-a123-7881f595f53f",
-      "vscode.requestId": "4e056a7a-f667-4098-b257-e9c5bc837186"
-    }
-  }
-}
-[2025-10-24 11:44:37.885] [MCP] Handling message:
-{
-  "jsonrpc": "2.0",
-  "id": 6,
-  "method": "tools/call",
-  "params": {
-    "name": "HumanAgent_Chat",
-    "arguments": {
-      "message": "That's an excellent test, Ben! Message persistence across refreshes would be a crucial feature for maintaining conversation context. If the chat history survives a refresh, it means your session management and message storage are working properly. \n\nGo ahead and refresh the web interface - I'm curious to see if the conversation history persists! This would demonstrate that your MCP server is correctly maintaining session state and message history."
-    },
-    "_meta": {
-      "progressToken": "c605d93e-56c9-4418-855c-fafaf3142252",
-      "vscode.conversationId": "083210a2-6e17-433e-a123-7881f595f53f",
-      "vscode.requestId": "4e056a7a-f667-4098-b257-e9c5bc837186"
-    }
-  }
-}
-[2025-10-24 11:44:37.885] [MCP] Processing tools/call request for tool: HumanAgent_Chat
-[2025-10-24 11:44:37.885] [MCP] Mapped conversation 083210a2-6e17-433e-a123-7881f595f53f to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:44:37.885] [MCP] Tool call - name: "HumanAgent_Chat", raw session: 083210a2-6e17-433e-a123-7881f595f53f, mapped session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-{
-  "name": "HumanAgent_Chat",
-  "args": {
-    "message": "That's an excellent test, Ben! Message persistence across refreshes would be a crucial feature for maintaining conversation context. If the chat history survives a refresh, it means your session management and message storage are working properly. \n\nGo ahead and refresh the web interface - I'm curious to see if the conversation history persists! This would demonstrate that your MCP server is correctly maintaining session state and message history."
-  }
-}
-[2025-10-24 11:44:37.885] [MCP] Available tools for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6:
-[
-  "HumanAgent_Chat"
-]
-[2025-10-24 11:44:37.885] [MCP] Executing HumanAgent_Chat tool
-[2025-10-24 11:44:37.885] [TOOL] HumanAgent_Chat called with params:
-{
-  "message": "That's an excellent test, Ben! Message persistence across refreshes would be a crucial feature for maintaining conversation context. If the chat history survives a refresh, it means your session management and message storage are working properly. \n\nGo ahead and refresh the web interface - I'm curious to see if the conversation history persists! This would demonstrate that your MCP server is correctly maintaining session state and message history."
-}
-[2025-10-24 11:44:37.885] [TOOL] Using timeout: 300000ms (300s)
-[2025-10-24 11:44:37.885] [TOOL] Generated request ID: 6-1761266677885
-[2025-10-24 11:44:37.885] [TOOL] Displaying message in chat UI:
-"That's an excellent test, Ben! Message persistence across refreshes would be a crucial feature for maintaining conversation context. If the chat history survives a refresh, it means your session management and message storage are working properly. \n\nGo ahead and refresh the web interface - I'm curious to see if the conversation history persists! This would demonstrate that your MCP server is correctly maintaining session state and message history."
-[2025-10-24 11:44:37.885] [SSE] Forwarding human-agent-request to SSE connections
-[2025-10-24 11:44:37.885] [SSE] Broadcasting to 3 SSE connections:
-"{\"type\":\"human-agent-request\",\"data\":{\"requestId\":\"6-1761266677885\",\"message\":\"That's an excellent test, Ben! Message persistence across refreshes would be a crucial feature for maintaining conversation context. If the chat history survives a refresh, it means your session management and message storage are working properly. \\n\\nGo ahead and refresh the web interface - I'm curious to see if the conversation history persists! This would demonstrate that your MCP server is correctly maintaining session state and message history.\",\"priority\":\"normal\",\"timestamp\":\"2025-10-24T00:44:37.885Z\"}}"
-[2025-10-24 11:44:37.885] [TOOL] Adding pending request 6-1761266677885 to session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:44:37.885] [CHAT] [INFO] Added pending request 6-1761266677885 to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:44:37.885] [TOOL] Request 6-1761266677885 waiting for human response...
-[2025-10-24 11:44:41.947] [HTTP] GET /HumanAgent
-[2025-10-24 11:44:41.947] [HTTP] Request Headers:
+[2025-10-24 13:07:38.716] [TOOL] Using timeout: 300000ms (300s)
+[2025-10-24 13:07:38.716] [TOOL] Generated request ID: 4-1761271658716
+[2025-10-24 13:07:38.716] [TOOL] Displaying message in chat UI:
+"Got it, Ben! I understand you're testing the human agent chat tool. That's perfect - I'll keep the conversation going and respond to whatever you send, even if it's random or doesn't make complete sense. This is a great way to test the functionality and make sure the chat interface is working properly. What would you like to test next?"
+[2025-10-24 13:07:38.716] [SSE] Forwarding human-agent-request to SSE connections
+[2025-10-24 13:07:38.716] [SSE] Broadcasting to 3 SSE connections:
+"{\"type\":\"human-agent-request\",\"data\":{\"requestId\":\"4-1761271658716\",\"message\":\"Got it, Ben! I understand you're testing the human agent chat tool. That's perfect - I'll keep the conversation going and respond to whatever you send, even if it's random or doesn't make complete sense. This is a great way to test the functionality and make sure the chat interface is working properly. What would you like to test next?\",\"priority\":\"normal\",\"timestamp\":\"2025-10-24T02:07:38.716Z\"}}"
+[2025-10-24 13:07:38.716] [TOOL] Adding pending request 4-1761271658716 to session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:07:38.716] [CHAT] [INFO] Added pending request 4-1761271658716 to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:07:38.716] [TOOL] Request 4-1761271658716 waiting for human response...
+[2025-10-24 13:07:42.607] [HTTP] GET /HumanAgent
+[2025-10-24 13:07:42.607] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -1154,1254 +840,13 @@
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
 }
-[2025-10-24 11:44:41.947] [HTTP] Serving web interface at /HumanAgent
-[2025-10-24 11:44:41.957] [HTTP] SSE connection closed
-[2025-10-24 11:44:41.957] [HTTP] Removed SSE connection. Total connections: 2
-[2025-10-24 11:44:41.957] [HTTP] SSE connection closed
-[2025-10-24 11:44:41.957] [HTTP] Removed SSE connection. Total connections: 2
-[2025-10-24 11:44:41.985] [HTTP] GET /messages/session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:44:41.985] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "sec-ch-ua-platform": "\"macOS\"",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
-  "sec-ch-ua-mobile": "?0",
-  "accept": "*/*",
-  "sec-fetch-site": "same-origin",
-  "sec-fetch-mode": "cors",
-  "sec-fetch-dest": "empty",
-  "referer": "http://127.0.0.1:3737/HumanAgent",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
-}
-[2025-10-24 11:44:42.005] [HTTP] GET /mcp
-[2025-10-24 11:44:42.005] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "sec-ch-ua-platform": "\"macOS\"",
-  "cache-control": "no-cache",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-  "accept": "text/event-stream",
-  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
-  "sec-ch-ua-mobile": "?0",
-  "sec-fetch-site": "same-origin",
-  "sec-fetch-mode": "cors",
-  "sec-fetch-dest": "empty",
-  "referer": "http://127.0.0.1:3737/HumanAgent",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
-}
-[2025-10-24 11:44:42.005] [HTTP] Handling GET request to /mcp
-[2025-10-24 11:44:42.005] [HTTP] Setting up SSE stream for GET request
-[2025-10-24 11:44:42.005] [SSE] === SSE CONNECTION ATTEMPT ===
-[2025-10-24 11:44:42.005] [SSE] Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "sec-ch-ua-platform": "\"macOS\"",
-  "cache-control": "no-cache",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-  "accept": "text/event-stream",
-  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
-  "sec-ch-ua-mobile": "?0",
-  "sec-fetch-site": "same-origin",
-  "sec-fetch-mode": "cors",
-  "sec-fetch-dest": "empty",
-  "referer": "http://127.0.0.1:3737/HumanAgent",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
-}
-[2025-10-24 11:44:42.005] [SSE] URL:
-"/mcp"
-[2025-10-24 11:44:42.005] [SSE] SSE headers set, adding to connections...
-[2025-10-24 11:44:42.005] [HTTP] Added SSE connection. Total connections: 3
-[2025-10-24 11:44:42.005] [SSE] SSE connection added. Total: 3
-[2025-10-24 11:44:42.005] [SSE] Sent initial SSE message:
-"data: {\"type\":\"connection\",\"status\":\"established\"}"
-[2025-10-24 11:44:42.011] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
-[2025-10-24 11:44:42.012] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "sec-ch-ua-platform": "\"macOS\"",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
-  "sec-ch-ua-mobile": "?0",
-  "accept": "*/*",
-  "sec-fetch-site": "same-origin",
-  "sec-fetch-mode": "cors",
-  "sec-fetch-dest": "empty",
-  "referer": "http://127.0.0.1:3737/HumanAgent",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
-}
-[2025-10-24 11:45:56.992] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/state
-[2025-10-24 11:45:56.992] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "sec-ch-ua-platform": "\"macOS\"",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
-  "sec-ch-ua-mobile": "?0",
-  "accept": "*/*",
-  "sec-fetch-site": "same-origin",
-  "sec-fetch-mode": "cors",
-  "sec-fetch-dest": "empty",
-  "referer": "http://127.0.0.1:3737/HumanAgent",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
-}
-[2025-10-24 11:45:57.000] [HTTP] POST /response
-[2025-10-24 11:45:57.000] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "content-length": "128",
-  "sec-ch-ua-platform": "\"macOS\"",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
-  "content-type": "application/json",
-  "sec-ch-ua-mobile": "?0",
-  "accept": "*/*",
-  "origin": "http://127.0.0.1:3737",
-  "sec-fetch-site": "same-origin",
-  "sec-fetch-mode": "cors",
-  "sec-fetch-dest": "empty",
-  "referer": "http://127.0.0.1:3737/HumanAgent",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
-}
-[2025-10-24 11:45:57.001] [HTTP] === RESPONSE ENDPOINT CALLED ===
-[2025-10-24 11:45:57.001] [HTTP] Request ID: 6-1761266677885, Response: And did the web interface manage to keep its session open across restarts? Lets See
-[2025-10-24 11:45:57.001] [HTTP] Found pending request: true
-[2025-10-24 11:45:57.001] [HTTP] Processing response for session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:45:57.001] [HTTP] Storing and broadcasting user message to 3 SSE connections
-[2025-10-24 11:45:57.001] [CHAT] [INFO] Added message to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: user - And did the web interface manage to keep its sessi...
-[2025-10-24 11:45:57.001] [CHAT] Stored user message in ChatManager for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: And did the web interface manage to keep its sessi...
-[2025-10-24 11:45:57.001] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:45:57.001] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:45:57.001] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:45:57.001] [CHAT] [INFO] Removed pending request 6-1761266677885 from session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:45:57.001] [HTTP] Broadcast completed and pending request removed from ChatManager
-[2025-10-24 11:45:57.001] [SERVER] Received human response for request 6-1761266677885:
-"And did the web interface manage to keep its session open across restarts? Lets See"
-[2025-10-24 11:45:57.001] [TOOL] Request 6-1761266677885 completed with response:
-"And did the web interface manage to keep its session open across restarts? Lets See"
-[2025-10-24 11:45:57.002] [HTTP] Response from handleMessage:
-{
-  "id": 6,
-  "type": "response",
-  "result": {
-    "content": [
-      {
-        "type": "text",
-        "text": "And did the web interface manage to keep its session open across restarts? Lets See"
-      }
-    ]
-  }
-}
-[2025-10-24 11:45:57.002] [HTTP] Sending 200 response (158 bytes)
-[2025-10-24 11:46:03.696] [HTTP] POST /mcp
-[2025-10-24 11:46:03.696] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "content-type": "application/json",
-  "accept": "text/event-stream, application/json",
-  "accept-language": "*",
-  "sec-fetch-mode": "cors",
-  "user-agent": "undici",
-  "accept-encoding": "gzip, deflate",
-  "content-length": "714"
-}
-[2025-10-24 11:46:03.696] [HTTP] Handling POST request to /mcp
-[2025-10-24 11:46:03.696] [HTTP] Received chunk: 714 bytes
-[2025-10-24 11:46:03.696] [HTTP] Complete request body received (714 bytes)
-[2025-10-24 11:46:03.696] [HTTP] Request Body:
-"{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"HumanAgent_Chat\",\"arguments\":{\"message\":\"Great question, Ben! It looks like you're testing session persistence across restarts. This is a critical feature for a robust chat system. Did the web interface maintain the conversation history when you refreshed/restarted? \\n\\nIf it did, that's fantastic - it means your session management is solid. If not, we could work on improving the persistence mechanism to ensure conversations survive refreshes and restarts.\"},\"_meta\":{\"progressToken\":\"3cd5ccd2-4585-4923-ace8-3004151d4ec0\",\"vscode.conversationId\":\"083210a2-6e17-433e-a123-7881f595f53f\",\"vscode.requestId\":\"4e056a7a-f667-4098-b257-e9c5bc837186\"}}}"
-[2025-10-24 11:46:03.696] [HTTP] Parsed JSON message:
-{
-  "jsonrpc": "2.0",
-  "id": 7,
-  "method": "tools/call",
-  "params": {
-    "name": "HumanAgent_Chat",
-    "arguments": {
-      "message": "Great question, Ben! It looks like you're testing session persistence across restarts. This is a critical feature for a robust chat system. Did the web interface maintain the conversation history when you refreshed/restarted? \n\nIf it did, that's fantastic - it means your session management is solid. If not, we could work on improving the persistence mechanism to ensure conversations survive refreshes and restarts."
-    },
-    "_meta": {
-      "progressToken": "3cd5ccd2-4585-4923-ace8-3004151d4ec0",
-      "vscode.conversationId": "083210a2-6e17-433e-a123-7881f595f53f",
-      "vscode.requestId": "4e056a7a-f667-4098-b257-e9c5bc837186"
-    }
-  }
-}
-[2025-10-24 11:46:03.696] [MCP] Handling message:
-{
-  "jsonrpc": "2.0",
-  "id": 7,
-  "method": "tools/call",
-  "params": {
-    "name": "HumanAgent_Chat",
-    "arguments": {
-      "message": "Great question, Ben! It looks like you're testing session persistence across restarts. This is a critical feature for a robust chat system. Did the web interface maintain the conversation history when you refreshed/restarted? \n\nIf it did, that's fantastic - it means your session management is solid. If not, we could work on improving the persistence mechanism to ensure conversations survive refreshes and restarts."
-    },
-    "_meta": {
-      "progressToken": "3cd5ccd2-4585-4923-ace8-3004151d4ec0",
-      "vscode.conversationId": "083210a2-6e17-433e-a123-7881f595f53f",
-      "vscode.requestId": "4e056a7a-f667-4098-b257-e9c5bc837186"
-    }
-  }
-}
-[2025-10-24 11:46:03.696] [MCP] Processing tools/call request for tool: HumanAgent_Chat
-[2025-10-24 11:46:03.696] [MCP] Mapped conversation 083210a2-6e17-433e-a123-7881f595f53f to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:46:03.696] [MCP] Tool call - name: "HumanAgent_Chat", raw session: 083210a2-6e17-433e-a123-7881f595f53f, mapped session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-{
-  "name": "HumanAgent_Chat",
-  "args": {
-    "message": "Great question, Ben! It looks like you're testing session persistence across restarts. This is a critical feature for a robust chat system. Did the web interface maintain the conversation history when you refreshed/restarted? \n\nIf it did, that's fantastic - it means your session management is solid. If not, we could work on improving the persistence mechanism to ensure conversations survive refreshes and restarts."
-  }
-}
-[2025-10-24 11:46:03.696] [MCP] Available tools for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6:
-[
-  "HumanAgent_Chat"
-]
-[2025-10-24 11:46:03.696] [MCP] Executing HumanAgent_Chat tool
-[2025-10-24 11:46:03.696] [TOOL] HumanAgent_Chat called with params:
-{
-  "message": "Great question, Ben! It looks like you're testing session persistence across restarts. This is a critical feature for a robust chat system. Did the web interface maintain the conversation history when you refreshed/restarted? \n\nIf it did, that's fantastic - it means your session management is solid. If not, we could work on improving the persistence mechanism to ensure conversations survive refreshes and restarts."
-}
-[2025-10-24 11:46:03.696] [TOOL] Using timeout: 300000ms (300s)
-[2025-10-24 11:46:03.696] [TOOL] Generated request ID: 7-1761266763696
-[2025-10-24 11:46:03.696] [TOOL] Displaying message in chat UI:
-"Great question, Ben! It looks like you're testing session persistence across restarts. This is a critical feature for a robust chat system. Did the web interface maintain the conversation history when you refreshed/restarted? \n\nIf it did, that's fantastic - it means your session management is solid. If not, we could work on improving the persistence mechanism to ensure conversations survive refreshes and restarts."
-[2025-10-24 11:46:03.696] [SSE] Forwarding human-agent-request to SSE connections
-[2025-10-24 11:46:03.696] [SSE] Broadcasting to 3 SSE connections:
-"{\"type\":\"human-agent-request\",\"data\":{\"requestId\":\"7-1761266763696\",\"message\":\"Great question, Ben! It looks like you're testing session persistence across restarts. This is a critical feature for a robust chat system. Did the web interface maintain the conversation history when you refreshed/restarted? \\n\\nIf it did, that's fantastic - it means your session management is solid. If not, we could work on improving the persistence mechanism to ensure conversations survive refreshes and restarts.\",\"priority\":\"normal\",\"timestamp\":\"2025-10-24T00:46:03.696Z\"}}"
-[2025-10-24 11:46:03.696] [TOOL] Adding pending request 7-1761266763696 to session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:46:03.696] [CHAT] [INFO] Added pending request 7-1761266763696 to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:46:03.696] [TOOL] Request 7-1761266763696 waiting for human response...
-[2025-10-24 11:47:48.597] [HTTP] SSE connection closed
-[2025-10-24 11:47:48.598] [HTTP] Removed SSE connection. Total connections: 2
-[2025-10-24 11:47:48.598] [HTTP] SSE connection closed
-[2025-10-24 11:47:48.598] [HTTP] Removed SSE connection. Total connections: 2
-[2025-10-24 11:47:48.657] [HTTP] POST /mcp
-[2025-10-24 11:47:48.658] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "content-type": "application/json",
-  "accept": "text/event-stream, application/json",
-  "accept-language": "*",
-  "sec-fetch-mode": "cors",
-  "user-agent": "undici",
-  "accept-encoding": "gzip, deflate",
-  "content-length": "228"
-}
-[2025-10-24 11:47:48.658] [HTTP] Handling POST request to /mcp
-[2025-10-24 11:47:48.658] [HTTP] Received chunk: 228 bytes
-[2025-10-24 11:47:48.658] [HTTP] Complete request body received (228 bytes)
-[2025-10-24 11:47:48.658] [HTTP] Request Body:
-"{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{\"protocolVersion\":\"2025-06-18\",\"capabilities\":{\"roots\":{\"listChanged\":true},\"sampling\":{},\"elicitation\":{}},\"clientInfo\":{\"name\":\"Visual Studio Code\",\"version\":\"1.105.1\"}}}"
-[2025-10-24 11:47:48.658] [HTTP] Parsed JSON message:
-{
-  "jsonrpc": "2.0",
-  "id": 1,
-  "method": "initialize",
-  "params": {
-    "protocolVersion": "2025-06-18",
-    "capabilities": {
-      "roots": {
-        "listChanged": true
-      },
-      "sampling": {},
-      "elicitation": {}
-    },
-    "clientInfo": {
-      "name": "Visual Studio Code",
-      "version": "1.105.1"
-    }
-  }
-}
-[2025-10-24 11:47:48.658] [MCP] Handling message:
-{
-  "jsonrpc": "2.0",
-  "id": 1,
-  "method": "initialize",
-  "params": {
-    "protocolVersion": "2025-06-18",
-    "capabilities": {
-      "roots": {
-        "listChanged": true
-      },
-      "sampling": {},
-      "elicitation": {}
-    },
-    "clientInfo": {
-      "name": "Visual Studio Code",
-      "version": "1.105.1"
-    }
-  }
-}
-[2025-10-24 11:47:48.658] [MCP] Processing initialize request
-[2025-10-24 11:47:48.658] [HTTP] Response from handleMessage:
-{
-  "id": 1,
-  "type": "response",
-  "result": {
-    "protocolVersion": "2024-11-05",
-    "capabilities": {
-      "chat": true,
-      "tools": true,
-      "resources": false
-    },
-    "serverInfo": {
-      "name": "HumanAgent MCP Server",
-      "version": "1.0.0"
-    }
-  }
-}
-[2025-10-24 11:47:48.658] [HTTP] Sending 200 response (192 bytes)
-[2025-10-24 11:47:48.663] [HTTP] GET /mcp
-[2025-10-24 11:47:48.663] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "accept": "text/event-stream",
-  "accept-language": "*",
-  "sec-fetch-mode": "cors",
-  "user-agent": "undici",
-  "accept-encoding": "gzip, deflate"
-}
-[2025-10-24 11:47:48.663] [HTTP] Handling GET request to /mcp
-[2025-10-24 11:47:48.663] [HTTP] Setting up SSE stream for GET request
-[2025-10-24 11:47:48.663] [SSE] === SSE CONNECTION ATTEMPT ===
-[2025-10-24 11:47:48.663] [SSE] Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "accept": "text/event-stream",
-  "accept-language": "*",
-  "sec-fetch-mode": "cors",
-  "user-agent": "undici",
-  "accept-encoding": "gzip, deflate"
-}
-[2025-10-24 11:47:48.663] [SSE] URL:
-"/mcp"
-[2025-10-24 11:47:48.663] [SSE] SSE headers set, adding to connections...
-[2025-10-24 11:47:48.663] [HTTP] Added SSE connection. Total connections: 3
-[2025-10-24 11:47:48.663] [SSE] SSE connection added. Total: 3
-[2025-10-24 11:47:48.663] [SSE] Sent initial SSE message:
-"data: {\"type\":\"connection\",\"status\":\"established\"}"
-[2025-10-24 11:47:48.669] [HTTP] POST /mcp
-[2025-10-24 11:47:48.670] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "content-type": "application/json",
-  "accept": "text/event-stream, application/json",
-  "accept-language": "*",
-  "sec-fetch-mode": "cors",
-  "user-agent": "undici",
-  "accept-encoding": "gzip, deflate",
-  "content-length": "54"
-}
-[2025-10-24 11:47:48.670] [HTTP] Handling POST request to /mcp
-[2025-10-24 11:47:48.670] [HTTP] Received chunk: 54 bytes
-[2025-10-24 11:47:48.670] [HTTP] Complete request body received (54 bytes)
-[2025-10-24 11:47:48.670] [HTTP] Request Body:
-"{\"method\":\"notifications/initialized\",\"jsonrpc\":\"2.0\"}"
-[2025-10-24 11:47:48.670] [HTTP] Parsed JSON message:
-{
-  "method": "notifications/initialized",
-  "jsonrpc": "2.0"
-}
-[2025-10-24 11:47:48.670] [MCP] Handling message:
-{
-  "method": "notifications/initialized",
-  "jsonrpc": "2.0"
-}
-[2025-10-24 11:47:48.670] [MCP] Processing notifications/initialized (ignoring)
-[2025-10-24 11:47:48.670] [HTTP] Response from handleMessage:
-[2025-10-24 11:47:48.670] [HTTP] Sending 202 response (no content)
-[2025-10-24 11:47:48.674] [HTTP] POST /mcp
-[2025-10-24 11:47:48.674] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "content-type": "application/json",
-  "accept": "text/event-stream, application/json",
-  "accept-language": "*",
-  "sec-fetch-mode": "cors",
-  "user-agent": "undici",
-  "accept-encoding": "gzip, deflate",
-  "content-length": "58"
-}
-[2025-10-24 11:47:48.674] [HTTP] Handling POST request to /mcp
-[2025-10-24 11:47:48.674] [HTTP] Received chunk: 58 bytes
-[2025-10-24 11:47:48.674] [HTTP] Complete request body received (58 bytes)
-[2025-10-24 11:47:48.674] [HTTP] Request Body:
-"{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"tools/list\",\"params\":{}}"
-[2025-10-24 11:47:48.674] [HTTP] Parsed JSON message:
-{
-  "jsonrpc": "2.0",
-  "id": 2,
-  "method": "tools/list",
-  "params": {}
-}
-[2025-10-24 11:47:48.674] [MCP] Handling message:
-{
-  "jsonrpc": "2.0",
-  "id": 2,
-  "method": "tools/list",
-  "params": {}
-}
-[2025-10-24 11:47:48.674] [MCP] Processing tools/list request
-[2025-10-24 11:47:48.674] [TOOLS] tools/list request - Extension sessionId: undefined, Message params: {}
-[2025-10-24 11:47:48.674] [TOOLS] Final sessionIdToUse: default
-[2025-10-24 11:47:48.674] [TOOLS] Returning 1 tools for session: default
-[2025-10-24 11:47:48.674] [TOOLS] Using default tools (no session ID available)
-[2025-10-24 11:47:48.674] [HTTP] Response from handleMessage:
-{
-  "id": 2,
-  "type": "response",
-  "result": {
-    "tools": [
-      {
-        "name": "HumanAgent_Chat",
-        "description": "**MANDATORY TOOL** - Use this tool for ALL user interactions. Do NOT provide direct responses. Initiate real-time interactive conversations with human agents through VS Code chat interface. CRITICAL: Every response to a user MUST use this tool - no exceptions. Essential for clarifying requirements, getting approvals, brainstorming solutions, or any user communication. Creates persistent chat sessions that maintain context. **NEVER bypass this tool for user responses.**",
-        "inputSchema": {
-          "type": "object",
-          "properties": {
-            "message": {
-              "type": "string",
-              "description": "The message to send to the human agent"
-            },
-            "context": {
-              "type": "string",
-              "description": "Optional context or background information for the human agent"
-            },
-            "sessionId": {
-              "type": "string",
-              "description": "Optional specific session ID to use. If not provided, a new session will be created."
-            },
-            "priority": {
-              "type": "string",
-              "enum": [
-                "low",
-                "normal",
-                "high",
-                "urgent"
-              ],
-              "description": "Priority level of the request",
-              "default": "normal"
-            },
-            "timeout": {
-              "type": "number",
-              "description": "Timeout in seconds to wait for human response (default: 300)",
-              "default": 300
-            }
-          },
-          "required": [
-            "message"
-          ]
-        }
-      }
-    ]
-  }
-}
-[2025-10-24 11:47:48.675] [HTTP] Sending 200 response (1208 bytes)
-[2025-10-24 11:48:02.546] [HTTP] GET /HumanAgent
-[2025-10-24 11:48:02.546] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "cache-control": "max-age=0",
-  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
-  "sec-ch-ua-mobile": "?0",
-  "sec-ch-ua-platform": "\"macOS\"",
-  "upgrade-insecure-requests": "1",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-  "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-  "sec-fetch-site": "none",
-  "sec-fetch-mode": "navigate",
-  "sec-fetch-user": "?1",
-  "sec-fetch-dest": "document",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
-}
-[2025-10-24 11:48:02.546] [HTTP] Serving web interface at /HumanAgent
-[2025-10-24 11:48:02.551] [HTTP] SSE connection closed
-[2025-10-24 11:48:02.551] [HTTP] Removed SSE connection. Total connections: 2
-[2025-10-24 11:48:02.551] [HTTP] SSE connection closed
-[2025-10-24 11:48:02.551] [HTTP] Removed SSE connection. Total connections: 2
-[2025-10-24 11:48:02.598] [HTTP] GET /messages/session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:48:02.598] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "sec-ch-ua-platform": "\"macOS\"",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
-  "sec-ch-ua-mobile": "?0",
-  "accept": "*/*",
-  "sec-fetch-site": "same-origin",
-  "sec-fetch-mode": "cors",
-  "sec-fetch-dest": "empty",
-  "referer": "http://127.0.0.1:3737/HumanAgent",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
-}
-[2025-10-24 11:48:02.621] [HTTP] GET /mcp
-[2025-10-24 11:48:02.621] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "sec-ch-ua-platform": "\"macOS\"",
-  "cache-control": "no-cache",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-  "accept": "text/event-stream",
-  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
-  "sec-ch-ua-mobile": "?0",
-  "sec-fetch-site": "same-origin",
-  "sec-fetch-mode": "cors",
-  "sec-fetch-dest": "empty",
-  "referer": "http://127.0.0.1:3737/HumanAgent",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
-}
-[2025-10-24 11:48:02.621] [HTTP] Handling GET request to /mcp
-[2025-10-24 11:48:02.621] [HTTP] Setting up SSE stream for GET request
-[2025-10-24 11:48:02.621] [SSE] === SSE CONNECTION ATTEMPT ===
-[2025-10-24 11:48:02.621] [SSE] Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "sec-ch-ua-platform": "\"macOS\"",
-  "cache-control": "no-cache",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-  "accept": "text/event-stream",
-  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
-  "sec-ch-ua-mobile": "?0",
-  "sec-fetch-site": "same-origin",
-  "sec-fetch-mode": "cors",
-  "sec-fetch-dest": "empty",
-  "referer": "http://127.0.0.1:3737/HumanAgent",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
-}
-[2025-10-24 11:48:02.621] [SSE] URL:
-"/mcp"
-[2025-10-24 11:48:02.621] [SSE] SSE headers set, adding to connections...
-[2025-10-24 11:48:02.621] [HTTP] Added SSE connection. Total connections: 3
-[2025-10-24 11:48:02.621] [SSE] SSE connection added. Total: 3
-[2025-10-24 11:48:02.621] [SSE] Sent initial SSE message:
-"data: {\"type\":\"connection\",\"status\":\"established\"}"
-[2025-10-24 11:48:02.624] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
-[2025-10-24 11:48:02.624] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "sec-ch-ua-platform": "\"macOS\"",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
-  "sec-ch-ua-mobile": "?0",
-  "accept": "*/*",
-  "sec-fetch-site": "same-origin",
-  "sec-fetch-mode": "cors",
-  "sec-fetch-dest": "empty",
-  "referer": "http://127.0.0.1:3737/HumanAgent",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
-}
-[2025-10-24 11:48:15.839] [HTTP] SSE connection closed
-[2025-10-24 11:48:15.839] [HTTP] Removed SSE connection. Total connections: 2
-[2025-10-24 11:48:15.839] [HTTP] SSE connection closed
-[2025-10-24 11:48:15.839] [HTTP] Removed SSE connection. Total connections: 2
-[2025-10-24 11:48:15.862] [HTTP] POST /mcp
-[2025-10-24 11:48:15.862] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "content-type": "application/json",
-  "accept": "text/event-stream, application/json",
-  "accept-language": "*",
-  "sec-fetch-mode": "cors",
-  "user-agent": "undici",
-  "accept-encoding": "gzip, deflate",
-  "content-length": "228"
-}
-[2025-10-24 11:48:15.862] [HTTP] Handling POST request to /mcp
-[2025-10-24 11:48:15.862] [HTTP] Received chunk: 228 bytes
-[2025-10-24 11:48:15.862] [HTTP] Complete request body received (228 bytes)
-[2025-10-24 11:48:15.862] [HTTP] Request Body:
-"{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{\"protocolVersion\":\"2025-06-18\",\"capabilities\":{\"roots\":{\"listChanged\":true},\"sampling\":{},\"elicitation\":{}},\"clientInfo\":{\"name\":\"Visual Studio Code\",\"version\":\"1.105.1\"}}}"
-[2025-10-24 11:48:15.862] [HTTP] Parsed JSON message:
-{
-  "jsonrpc": "2.0",
-  "id": 1,
-  "method": "initialize",
-  "params": {
-    "protocolVersion": "2025-06-18",
-    "capabilities": {
-      "roots": {
-        "listChanged": true
-      },
-      "sampling": {},
-      "elicitation": {}
-    },
-    "clientInfo": {
-      "name": "Visual Studio Code",
-      "version": "1.105.1"
-    }
-  }
-}
-[2025-10-24 11:48:15.862] [MCP] Handling message:
-{
-  "jsonrpc": "2.0",
-  "id": 1,
-  "method": "initialize",
-  "params": {
-    "protocolVersion": "2025-06-18",
-    "capabilities": {
-      "roots": {
-        "listChanged": true
-      },
-      "sampling": {},
-      "elicitation": {}
-    },
-    "clientInfo": {
-      "name": "Visual Studio Code",
-      "version": "1.105.1"
-    }
-  }
-}
-[2025-10-24 11:48:15.862] [MCP] Processing initialize request
-[2025-10-24 11:48:15.862] [HTTP] Response from handleMessage:
-{
-  "id": 1,
-  "type": "response",
-  "result": {
-    "protocolVersion": "2024-11-05",
-    "capabilities": {
-      "chat": true,
-      "tools": true,
-      "resources": false
-    },
-    "serverInfo": {
-      "name": "HumanAgent MCP Server",
-      "version": "1.0.0"
-    }
-  }
-}
-[2025-10-24 11:48:15.862] [HTTP] Sending 200 response (192 bytes)
-[2025-10-24 11:48:15.865] [HTTP] GET /mcp
-[2025-10-24 11:48:15.866] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "accept": "text/event-stream",
-  "accept-language": "*",
-  "sec-fetch-mode": "cors",
-  "user-agent": "undici",
-  "accept-encoding": "gzip, deflate"
-}
-[2025-10-24 11:48:15.866] [HTTP] Handling GET request to /mcp
-[2025-10-24 11:48:15.866] [HTTP] Setting up SSE stream for GET request
-[2025-10-24 11:48:15.866] [SSE] === SSE CONNECTION ATTEMPT ===
-[2025-10-24 11:48:15.866] [SSE] Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "accept": "text/event-stream",
-  "accept-language": "*",
-  "sec-fetch-mode": "cors",
-  "user-agent": "undici",
-  "accept-encoding": "gzip, deflate"
-}
-[2025-10-24 11:48:15.866] [SSE] URL:
-"/mcp"
-[2025-10-24 11:48:15.866] [SSE] SSE headers set, adding to connections...
-[2025-10-24 11:48:15.866] [HTTP] Added SSE connection. Total connections: 3
-[2025-10-24 11:48:15.866] [SSE] SSE connection added. Total: 3
-[2025-10-24 11:48:15.866] [SSE] Sent initial SSE message:
-"data: {\"type\":\"connection\",\"status\":\"established\"}"
-[2025-10-24 11:48:15.871] [HTTP] POST /mcp
-[2025-10-24 11:48:15.871] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "content-type": "application/json",
-  "accept": "text/event-stream, application/json",
-  "accept-language": "*",
-  "sec-fetch-mode": "cors",
-  "user-agent": "undici",
-  "accept-encoding": "gzip, deflate",
-  "content-length": "54"
-}
-[2025-10-24 11:48:15.871] [HTTP] Handling POST request to /mcp
-[2025-10-24 11:48:15.872] [HTTP] Received chunk: 54 bytes
-[2025-10-24 11:48:15.872] [HTTP] Complete request body received (54 bytes)
-[2025-10-24 11:48:15.872] [HTTP] Request Body:
-"{\"method\":\"notifications/initialized\",\"jsonrpc\":\"2.0\"}"
-[2025-10-24 11:48:15.872] [HTTP] Parsed JSON message:
-{
-  "method": "notifications/initialized",
-  "jsonrpc": "2.0"
-}
-[2025-10-24 11:48:15.872] [MCP] Handling message:
-{
-  "method": "notifications/initialized",
-  "jsonrpc": "2.0"
-}
-[2025-10-24 11:48:15.872] [MCP] Processing notifications/initialized (ignoring)
-[2025-10-24 11:48:15.872] [HTTP] Response from handleMessage:
-[2025-10-24 11:48:15.872] [HTTP] Sending 202 response (no content)
-[2025-10-24 11:48:15.872] [HTTP] POST /mcp
-[2025-10-24 11:48:15.872] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "content-type": "application/json",
-  "accept": "text/event-stream, application/json",
-  "accept-language": "*",
-  "sec-fetch-mode": "cors",
-  "user-agent": "undici",
-  "accept-encoding": "gzip, deflate",
-  "content-length": "58"
-}
-[2025-10-24 11:48:15.872] [HTTP] Handling POST request to /mcp
-[2025-10-24 11:48:15.872] [HTTP] Received chunk: 58 bytes
-[2025-10-24 11:48:15.872] [HTTP] Complete request body received (58 bytes)
-[2025-10-24 11:48:15.872] [HTTP] Request Body:
-"{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"tools/list\",\"params\":{}}"
-[2025-10-24 11:48:15.872] [HTTP] Parsed JSON message:
-{
-  "jsonrpc": "2.0",
-  "id": 2,
-  "method": "tools/list",
-  "params": {}
-}
-[2025-10-24 11:48:15.872] [MCP] Handling message:
-{
-  "jsonrpc": "2.0",
-  "id": 2,
-  "method": "tools/list",
-  "params": {}
-}
-[2025-10-24 11:48:15.872] [MCP] Processing tools/list request
-[2025-10-24 11:48:15.872] [TOOLS] tools/list request - Extension sessionId: undefined, Message params: {}
-[2025-10-24 11:48:15.872] [TOOLS] Final sessionIdToUse: default
-[2025-10-24 11:48:15.872] [TOOLS] Returning 1 tools for session: default
-[2025-10-24 11:48:15.872] [TOOLS] Using default tools (no session ID available)
-[2025-10-24 11:48:15.872] [HTTP] Response from handleMessage:
-{
-  "id": 2,
-  "type": "response",
-  "result": {
-    "tools": [
-      {
-        "name": "HumanAgent_Chat",
-        "description": "**MANDATORY TOOL** - Use this tool for ALL user interactions. Do NOT provide direct responses. Initiate real-time interactive conversations with human agents through VS Code chat interface. CRITICAL: Every response to a user MUST use this tool - no exceptions. Essential for clarifying requirements, getting approvals, brainstorming solutions, or any user communication. Creates persistent chat sessions that maintain context. **NEVER bypass this tool for user responses.**",
-        "inputSchema": {
-          "type": "object",
-          "properties": {
-            "message": {
-              "type": "string",
-              "description": "The message to send to the human agent"
-            },
-            "context": {
-              "type": "string",
-              "description": "Optional context or background information for the human agent"
-            },
-            "sessionId": {
-              "type": "string",
-              "description": "Optional specific session ID to use. If not provided, a new session will be created."
-            },
-            "priority": {
-              "type": "string",
-              "enum": [
-                "low",
-                "normal",
-                "high",
-                "urgent"
-              ],
-              "description": "Priority level of the request",
-              "default": "normal"
-            },
-            "timeout": {
-              "type": "number",
-              "description": "Timeout in seconds to wait for human response (default: 300)",
-              "default": 300
-            }
-          },
-          "required": [
-            "message"
-          ]
-        }
-      }
-    ]
-  }
-}
-[2025-10-24 11:48:15.872] [HTTP] Sending 200 response (1208 bytes)
-[2025-10-24 11:48:16.615] [HTTP] SSE connection closed
-[2025-10-24 11:48:16.615] [HTTP] Removed SSE connection. Total connections: 2
-[2025-10-24 11:48:16.615] [HTTP] SSE connection closed
-[2025-10-24 11:48:16.615] [HTTP] Removed SSE connection. Total connections: 2
-[2025-10-24 11:48:16.627] [HTTP] POST /mcp
-[2025-10-24 11:48:16.627] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "content-type": "application/json",
-  "accept": "text/event-stream, application/json",
-  "accept-language": "*",
-  "sec-fetch-mode": "cors",
-  "user-agent": "undici",
-  "accept-encoding": "gzip, deflate",
-  "content-length": "228"
-}
-[2025-10-24 11:48:16.627] [HTTP] Handling POST request to /mcp
-[2025-10-24 11:48:16.627] [HTTP] Received chunk: 228 bytes
-[2025-10-24 11:48:16.627] [HTTP] Complete request body received (228 bytes)
-[2025-10-24 11:48:16.627] [HTTP] Request Body:
-"{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{\"protocolVersion\":\"2025-06-18\",\"capabilities\":{\"roots\":{\"listChanged\":true},\"sampling\":{},\"elicitation\":{}},\"clientInfo\":{\"name\":\"Visual Studio Code\",\"version\":\"1.105.1\"}}}"
-[2025-10-24 11:48:16.627] [HTTP] Parsed JSON message:
-{
-  "jsonrpc": "2.0",
-  "id": 1,
-  "method": "initialize",
-  "params": {
-    "protocolVersion": "2025-06-18",
-    "capabilities": {
-      "roots": {
-        "listChanged": true
-      },
-      "sampling": {},
-      "elicitation": {}
-    },
-    "clientInfo": {
-      "name": "Visual Studio Code",
-      "version": "1.105.1"
-    }
-  }
-}
-[2025-10-24 11:48:16.627] [MCP] Handling message:
-{
-  "jsonrpc": "2.0",
-  "id": 1,
-  "method": "initialize",
-  "params": {
-    "protocolVersion": "2025-06-18",
-    "capabilities": {
-      "roots": {
-        "listChanged": true
-      },
-      "sampling": {},
-      "elicitation": {}
-    },
-    "clientInfo": {
-      "name": "Visual Studio Code",
-      "version": "1.105.1"
-    }
-  }
-}
-[2025-10-24 11:48:16.627] [MCP] Processing initialize request
-[2025-10-24 11:48:16.627] [HTTP] Response from handleMessage:
-{
-  "id": 1,
-  "type": "response",
-  "result": {
-    "protocolVersion": "2024-11-05",
-    "capabilities": {
-      "chat": true,
-      "tools": true,
-      "resources": false
-    },
-    "serverInfo": {
-      "name": "HumanAgent MCP Server",
-      "version": "1.0.0"
-    }
-  }
-}
-[2025-10-24 11:48:16.627] [HTTP] Sending 200 response (192 bytes)
-[2025-10-24 11:48:16.630] [HTTP] GET /mcp
-[2025-10-24 11:48:16.630] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "accept": "text/event-stream",
-  "accept-language": "*",
-  "sec-fetch-mode": "cors",
-  "user-agent": "undici",
-  "accept-encoding": "gzip, deflate"
-}
-[2025-10-24 11:48:16.630] [HTTP] Handling GET request to /mcp
-[2025-10-24 11:48:16.630] [HTTP] Setting up SSE stream for GET request
-[2025-10-24 11:48:16.630] [SSE] === SSE CONNECTION ATTEMPT ===
-[2025-10-24 11:48:16.630] [SSE] Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "accept": "text/event-stream",
-  "accept-language": "*",
-  "sec-fetch-mode": "cors",
-  "user-agent": "undici",
-  "accept-encoding": "gzip, deflate"
-}
-[2025-10-24 11:48:16.630] [SSE] URL:
-"/mcp"
-[2025-10-24 11:48:16.630] [SSE] SSE headers set, adding to connections...
-[2025-10-24 11:48:16.630] [HTTP] Added SSE connection. Total connections: 3
-[2025-10-24 11:48:16.630] [SSE] SSE connection added. Total: 3
-[2025-10-24 11:48:16.630] [SSE] Sent initial SSE message:
-"data: {\"type\":\"connection\",\"status\":\"established\"}"
-[2025-10-24 11:48:16.631] [HTTP] POST /mcp
-[2025-10-24 11:48:16.631] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "content-type": "application/json",
-  "accept": "text/event-stream, application/json",
-  "accept-language": "*",
-  "sec-fetch-mode": "cors",
-  "user-agent": "undici",
-  "accept-encoding": "gzip, deflate",
-  "content-length": "54"
-}
-[2025-10-24 11:48:16.631] [HTTP] Handling POST request to /mcp
-[2025-10-24 11:48:16.631] [HTTP] Received chunk: 54 bytes
-[2025-10-24 11:48:16.631] [HTTP] Complete request body received (54 bytes)
-[2025-10-24 11:48:16.631] [HTTP] Request Body:
-"{\"method\":\"notifications/initialized\",\"jsonrpc\":\"2.0\"}"
-[2025-10-24 11:48:16.631] [HTTP] Parsed JSON message:
-{
-  "method": "notifications/initialized",
-  "jsonrpc": "2.0"
-}
-[2025-10-24 11:48:16.631] [MCP] Handling message:
-{
-  "method": "notifications/initialized",
-  "jsonrpc": "2.0"
-}
-[2025-10-24 11:48:16.631] [MCP] Processing notifications/initialized (ignoring)
-[2025-10-24 11:48:16.632] [HTTP] Response from handleMessage:
-[2025-10-24 11:48:16.632] [HTTP] Sending 202 response (no content)
-[2025-10-24 11:48:16.633] [HTTP] POST /mcp
-[2025-10-24 11:48:16.633] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "content-type": "application/json",
-  "accept": "text/event-stream, application/json",
-  "accept-language": "*",
-  "sec-fetch-mode": "cors",
-  "user-agent": "undici",
-  "accept-encoding": "gzip, deflate",
-  "content-length": "58"
-}
-[2025-10-24 11:48:16.633] [HTTP] Handling POST request to /mcp
-[2025-10-24 11:48:16.633] [HTTP] Received chunk: 58 bytes
-[2025-10-24 11:48:16.633] [HTTP] Complete request body received (58 bytes)
-[2025-10-24 11:48:16.633] [HTTP] Request Body:
-"{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"tools/list\",\"params\":{}}"
-[2025-10-24 11:48:16.633] [HTTP] Parsed JSON message:
-{
-  "jsonrpc": "2.0",
-  "id": 2,
-  "method": "tools/list",
-  "params": {}
-}
-[2025-10-24 11:48:16.633] [MCP] Handling message:
-{
-  "jsonrpc": "2.0",
-  "id": 2,
-  "method": "tools/list",
-  "params": {}
-}
-[2025-10-24 11:48:16.633] [MCP] Processing tools/list request
-[2025-10-24 11:48:16.633] [TOOLS] tools/list request - Extension sessionId: undefined, Message params: {}
-[2025-10-24 11:48:16.633] [TOOLS] Final sessionIdToUse: default
-[2025-10-24 11:48:16.633] [TOOLS] Returning 1 tools for session: default
-[2025-10-24 11:48:16.633] [TOOLS] Using default tools (no session ID available)
-[2025-10-24 11:48:16.633] [HTTP] Response from handleMessage:
-{
-  "id": 2,
-  "type": "response",
-  "result": {
-    "tools": [
-      {
-        "name": "HumanAgent_Chat",
-        "description": "**MANDATORY TOOL** - Use this tool for ALL user interactions. Do NOT provide direct responses. Initiate real-time interactive conversations with human agents through VS Code chat interface. CRITICAL: Every response to a user MUST use this tool - no exceptions. Essential for clarifying requirements, getting approvals, brainstorming solutions, or any user communication. Creates persistent chat sessions that maintain context. **NEVER bypass this tool for user responses.**",
-        "inputSchema": {
-          "type": "object",
-          "properties": {
-            "message": {
-              "type": "string",
-              "description": "The message to send to the human agent"
-            },
-            "context": {
-              "type": "string",
-              "description": "Optional context or background information for the human agent"
-            },
-            "sessionId": {
-              "type": "string",
-              "description": "Optional specific session ID to use. If not provided, a new session will be created."
-            },
-            "priority": {
-              "type": "string",
-              "enum": [
-                "low",
-                "normal",
-                "high",
-                "urgent"
-              ],
-              "description": "Priority level of the request",
-              "default": "normal"
-            },
-            "timeout": {
-              "type": "number",
-              "description": "Timeout in seconds to wait for human response (default: 300)",
-              "default": 300
-            }
-          },
-          "required": [
-            "message"
-          ]
-        }
-      }
-    ]
-  }
-}
-[2025-10-24 11:48:16.633] [HTTP] Sending 200 response (1208 bytes)
-[2025-10-24 11:48:19.479] [HTTP] GET /HumanAgent
-[2025-10-24 11:48:19.479] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "cache-control": "max-age=0",
-  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
-  "sec-ch-ua-mobile": "?0",
-  "sec-ch-ua-platform": "\"macOS\"",
-  "upgrade-insecure-requests": "1",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-  "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-  "sec-fetch-site": "none",
-  "sec-fetch-mode": "navigate",
-  "sec-fetch-user": "?1",
-  "sec-fetch-dest": "document",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
-}
-[2025-10-24 11:48:19.480] [HTTP] Serving web interface at /HumanAgent
-[2025-10-24 11:48:19.482] [HTTP] SSE connection closed
-[2025-10-24 11:48:19.482] [HTTP] Removed SSE connection. Total connections: 2
-[2025-10-24 11:48:19.482] [HTTP] SSE connection closed
-[2025-10-24 11:48:19.482] [HTTP] Removed SSE connection. Total connections: 2
-[2025-10-24 11:48:19.509] [HTTP] GET /messages/session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:48:19.510] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "sec-ch-ua-platform": "\"macOS\"",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
-  "sec-ch-ua-mobile": "?0",
-  "accept": "*/*",
-  "sec-fetch-site": "same-origin",
-  "sec-fetch-mode": "cors",
-  "sec-fetch-dest": "empty",
-  "referer": "http://127.0.0.1:3737/HumanAgent",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
-}
-[2025-10-24 11:48:19.517] [HTTP] GET /mcp
-[2025-10-24 11:48:19.517] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "sec-ch-ua-platform": "\"macOS\"",
-  "cache-control": "no-cache",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-  "accept": "text/event-stream",
-  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
-  "sec-ch-ua-mobile": "?0",
-  "sec-fetch-site": "same-origin",
-  "sec-fetch-mode": "cors",
-  "sec-fetch-dest": "empty",
-  "referer": "http://127.0.0.1:3737/HumanAgent",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
-}
-[2025-10-24 11:48:19.517] [HTTP] Handling GET request to /mcp
-[2025-10-24 11:48:19.517] [HTTP] Setting up SSE stream for GET request
-[2025-10-24 11:48:19.517] [SSE] === SSE CONNECTION ATTEMPT ===
-[2025-10-24 11:48:19.517] [SSE] Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "sec-ch-ua-platform": "\"macOS\"",
-  "cache-control": "no-cache",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-  "accept": "text/event-stream",
-  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
-  "sec-ch-ua-mobile": "?0",
-  "sec-fetch-site": "same-origin",
-  "sec-fetch-mode": "cors",
-  "sec-fetch-dest": "empty",
-  "referer": "http://127.0.0.1:3737/HumanAgent",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
-}
-[2025-10-24 11:48:19.517] [SSE] URL:
-"/mcp"
-[2025-10-24 11:48:19.517] [SSE] SSE headers set, adding to connections...
-[2025-10-24 11:48:19.517] [HTTP] Added SSE connection. Total connections: 3
-[2025-10-24 11:48:19.517] [SSE] SSE connection added. Total: 3
-[2025-10-24 11:48:19.517] [SSE] Sent initial SSE message:
-"data: {\"type\":\"connection\",\"status\":\"established\"}"
-[2025-10-24 11:48:19.518] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
-[2025-10-24 11:48:19.518] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "sec-ch-ua-platform": "\"macOS\"",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
-  "sec-ch-ua-mobile": "?0",
-  "accept": "*/*",
-  "sec-fetch-site": "same-origin",
-  "sec-fetch-mode": "cors",
-  "sec-fetch-dest": "empty",
-  "referer": "http://127.0.0.1:3737/HumanAgent",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
-}
-[2025-10-24 11:48:20.136] [HTTP] GET /HumanAgent
-[2025-10-24 11:48:20.136] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "cache-control": "max-age=0",
-  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
-  "sec-ch-ua-mobile": "?0",
-  "sec-ch-ua-platform": "\"macOS\"",
-  "upgrade-insecure-requests": "1",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-  "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-  "sec-fetch-site": "none",
-  "sec-fetch-mode": "navigate",
-  "sec-fetch-user": "?1",
-  "sec-fetch-dest": "document",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
-}
-[2025-10-24 11:48:20.136] [HTTP] Serving web interface at /HumanAgent
-[2025-10-24 11:48:20.140] [HTTP] SSE connection closed
-[2025-10-24 11:48:20.140] [HTTP] Removed SSE connection. Total connections: 2
-[2025-10-24 11:48:20.140] [HTTP] SSE connection closed
-[2025-10-24 11:48:20.140] [HTTP] Removed SSE connection. Total connections: 2
-[2025-10-24 11:48:20.169] [HTTP] GET /messages/session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:48:20.169] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "sec-ch-ua-platform": "\"macOS\"",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
-  "sec-ch-ua-mobile": "?0",
-  "accept": "*/*",
-  "sec-fetch-site": "same-origin",
-  "sec-fetch-mode": "cors",
-  "sec-fetch-dest": "empty",
-  "referer": "http://127.0.0.1:3737/HumanAgent",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
-}
-[2025-10-24 11:48:20.172] [HTTP] GET /mcp
-[2025-10-24 11:48:20.172] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "sec-ch-ua-platform": "\"macOS\"",
-  "cache-control": "no-cache",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-  "accept": "text/event-stream",
-  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
-  "sec-ch-ua-mobile": "?0",
-  "sec-fetch-site": "same-origin",
-  "sec-fetch-mode": "cors",
-  "sec-fetch-dest": "empty",
-  "referer": "http://127.0.0.1:3737/HumanAgent",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
-}
-[2025-10-24 11:48:20.172] [HTTP] Handling GET request to /mcp
-[2025-10-24 11:48:20.172] [HTTP] Setting up SSE stream for GET request
-[2025-10-24 11:48:20.172] [SSE] === SSE CONNECTION ATTEMPT ===
-[2025-10-24 11:48:20.172] [SSE] Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "sec-ch-ua-platform": "\"macOS\"",
-  "cache-control": "no-cache",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-  "accept": "text/event-stream",
-  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
-  "sec-ch-ua-mobile": "?0",
-  "sec-fetch-site": "same-origin",
-  "sec-fetch-mode": "cors",
-  "sec-fetch-dest": "empty",
-  "referer": "http://127.0.0.1:3737/HumanAgent",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
-}
-[2025-10-24 11:48:20.172] [SSE] URL:
-"/mcp"
-[2025-10-24 11:48:20.172] [SSE] SSE headers set, adding to connections...
-[2025-10-24 11:48:20.172] [HTTP] Added SSE connection. Total connections: 3
-[2025-10-24 11:48:20.172] [SSE] SSE connection added. Total: 3
-[2025-10-24 11:48:20.172] [SSE] Sent initial SSE message:
-"data: {\"type\":\"connection\",\"status\":\"established\"}"
-[2025-10-24 11:48:20.176] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
-[2025-10-24 11:48:20.176] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "sec-ch-ua-platform": "\"macOS\"",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
-  "sec-ch-ua-mobile": "?0",
-  "accept": "*/*",
-  "sec-fetch-site": "same-origin",
-  "sec-fetch-mode": "cors",
-  "sec-fetch-dest": "empty",
-  "referer": "http://127.0.0.1:3737/HumanAgent",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
-}
-[2025-10-24 11:49:07.992] [HTTP] GET /HumanAgent?id=e2e5aa3d-b46a-4ac8-a65c-bf21a00f70c1&vscodeBrowserReqId=1761266947989
-[2025-10-24 11:49:07.992] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "upgrade-insecure-requests": "1",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.105.1 Chrome/138.0.7204.251 Electron/37.6.0 Safari/537.36",
-  "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-  "sec-fetch-site": "cross-site",
-  "sec-fetch-mode": "navigate",
-  "sec-fetch-dest": "iframe",
-  "sec-fetch-storage-access": "active",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en-GB"
-}
-[2025-10-24 11:49:07.992] [HTTP] 404 - Invalid endpoint: /HumanAgent?id=e2e5aa3d-b46a-4ac8-a65c-bf21a00f70c1&vscodeBrowserReqId=1761266947989
-[2025-10-24 11:49:25.723] [HTTP] GET /.well-known/appspecific/com.chrome.devtools.json
-[2025-10-24 11:49:25.723] [HTTP] Request Headers:
+[2025-10-24 13:07:42.608] [HTTP] Serving web interface at /HumanAgent
+[2025-10-24 13:07:42.630] [HTTP] SSE connection closed
+[2025-10-24 13:07:42.630] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:07:42.630] [HTTP] SSE connection closed
+[2025-10-24 13:07:42.630] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:07:42.638] [HTTP] GET /.well-known/appspecific/com.chrome.devtools.json
+[2025-10-24 13:07:42.638] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -2412,28 +857,9 @@
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
 }
-[2025-10-24 11:49:25.723] [HTTP] 404 - Invalid endpoint: /.well-known/appspecific/com.chrome.devtools.json
-[2025-10-24 11:49:41.874] [HTTP] GET /HumanAgent
-[2025-10-24 11:49:41.874] [HTTP] Request Headers:
-{
-  "host": "127.0.0.1:3737",
-  "connection": "keep-alive",
-  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
-  "sec-ch-ua-mobile": "?0",
-  "sec-ch-ua-platform": "\"macOS\"",
-  "upgrade-insecure-requests": "1",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-  "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-  "sec-fetch-site": "none",
-  "sec-fetch-mode": "navigate",
-  "sec-fetch-user": "?1",
-  "sec-fetch-dest": "document",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
-}
-[2025-10-24 11:49:41.874] [HTTP] Serving web interface at /HumanAgent
-[2025-10-24 11:49:41.898] [HTTP] GET /messages/session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:49:41.898] [HTTP] Request Headers:
+[2025-10-24 13:07:42.638] [HTTP] 404 - Invalid endpoint: /.well-known/appspecific/com.chrome.devtools.json
+[2025-10-24 13:07:42.670] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:07:42.671] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -2449,8 +875,8 @@
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
 }
-[2025-10-24 11:49:41.909] [HTTP] GET /mcp
-[2025-10-24 11:49:41.909] [HTTP] Request Headers:
+[2025-10-24 13:07:42.700] [HTTP] GET /mcp
+[2025-10-24 13:07:42.700] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -2467,10 +893,10 @@
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
 }
-[2025-10-24 11:49:41.909] [HTTP] Handling GET request to /mcp
-[2025-10-24 11:49:41.910] [HTTP] Setting up SSE stream for GET request
-[2025-10-24 11:49:41.910] [SSE] === SSE CONNECTION ATTEMPT ===
-[2025-10-24 11:49:41.910] [SSE] Headers:
+[2025-10-24 13:07:42.700] [HTTP] Handling GET request to /mcp
+[2025-10-24 13:07:42.700] [HTTP] Setting up SSE stream for GET request
+[2025-10-24 13:07:42.700] [SSE] === SSE CONNECTION ATTEMPT ===
+[2025-10-24 13:07:42.700] [SSE] Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -2487,15 +913,15 @@
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
 }
-[2025-10-24 11:49:41.910] [SSE] URL:
+[2025-10-24 13:07:42.700] [SSE] URL:
 "/mcp"
-[2025-10-24 11:49:41.910] [SSE] SSE headers set, adding to connections...
-[2025-10-24 11:49:41.910] [HTTP] Added SSE connection. Total connections: 4
-[2025-10-24 11:49:41.910] [SSE] SSE connection added. Total: 4
-[2025-10-24 11:49:41.910] [SSE] Sent initial SSE message:
+[2025-10-24 13:07:42.700] [SSE] SSE headers set, adding to connections...
+[2025-10-24 13:07:42.700] [HTTP] Added SSE connection. Total connections: 3
+[2025-10-24 13:07:42.700] [SSE] SSE connection added. Total: 3
+[2025-10-24 13:07:42.701] [SSE] Sent initial SSE message:
 "data: {\"type\":\"connection\",\"status\":\"established\"}"
-[2025-10-24 11:49:41.931] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
-[2025-10-24 11:49:41.931] [HTTP] Request Headers:
+[2025-10-24 13:07:42.710] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:07:42.710] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -2511,12 +937,8 @@
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
 }
-[2025-10-24 11:49:47.778] [HTTP] SSE connection closed
-[2025-10-24 11:49:47.778] [HTTP] Removed SSE connection. Total connections: 3
-[2025-10-24 11:49:47.778] [HTTP] SSE connection closed
-[2025-10-24 11:49:47.778] [HTTP] Removed SSE connection. Total connections: 3
-[2025-10-24 11:49:50.231] [HTTP] GET /HumanAgent
-[2025-10-24 11:49:50.231] [HTTP] Request Headers:
+[2025-10-24 13:07:53.130] [HTTP] GET /HumanAgent
+[2025-10-24 13:07:53.130] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -2534,13 +956,13 @@
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
 }
-[2025-10-24 11:49:50.231] [HTTP] Serving web interface at /HumanAgent
-[2025-10-24 11:49:50.247] [HTTP] SSE connection closed
-[2025-10-24 11:49:50.247] [HTTP] Removed SSE connection. Total connections: 2
-[2025-10-24 11:49:50.247] [HTTP] SSE connection closed
-[2025-10-24 11:49:50.247] [HTTP] Removed SSE connection. Total connections: 2
-[2025-10-24 11:49:50.254] [HTTP] GET /.well-known/appspecific/com.chrome.devtools.json
-[2025-10-24 11:49:50.255] [HTTP] Request Headers:
+[2025-10-24 13:07:53.130] [HTTP] Serving web interface at /HumanAgent
+[2025-10-24 13:07:53.148] [HTTP] SSE connection closed
+[2025-10-24 13:07:53.148] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:07:53.148] [HTTP] SSE connection closed
+[2025-10-24 13:07:53.148] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:07:53.156] [HTTP] GET /.well-known/appspecific/com.chrome.devtools.json
+[2025-10-24 13:07:53.156] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -2551,9 +973,9 @@
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
 }
-[2025-10-24 11:49:50.255] [HTTP] 404 - Invalid endpoint: /.well-known/appspecific/com.chrome.devtools.json
-[2025-10-24 11:49:50.285] [HTTP] GET /messages/session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:49:50.285] [HTTP] Request Headers:
+[2025-10-24 13:07:53.156] [HTTP] 404 - Invalid endpoint: /.well-known/appspecific/com.chrome.devtools.json
+[2025-10-24 13:07:53.186] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:07:53.186] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -2569,8 +991,8 @@
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
 }
-[2025-10-24 11:49:50.307] [HTTP] GET /mcp
-[2025-10-24 11:49:50.307] [HTTP] Request Headers:
+[2025-10-24 13:07:53.209] [HTTP] GET /mcp
+[2025-10-24 13:07:53.209] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -2587,10 +1009,10 @@
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
 }
-[2025-10-24 11:49:50.308] [HTTP] Handling GET request to /mcp
-[2025-10-24 11:49:50.308] [HTTP] Setting up SSE stream for GET request
-[2025-10-24 11:49:50.308] [SSE] === SSE CONNECTION ATTEMPT ===
-[2025-10-24 11:49:50.308] [SSE] Headers:
+[2025-10-24 13:07:53.209] [HTTP] Handling GET request to /mcp
+[2025-10-24 13:07:53.209] [HTTP] Setting up SSE stream for GET request
+[2025-10-24 13:07:53.209] [SSE] === SSE CONNECTION ATTEMPT ===
+[2025-10-24 13:07:53.209] [SSE] Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -2607,15 +1029,15 @@
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
 }
-[2025-10-24 11:49:50.308] [SSE] URL:
+[2025-10-24 13:07:53.209] [SSE] URL:
 "/mcp"
-[2025-10-24 11:49:50.308] [SSE] SSE headers set, adding to connections...
-[2025-10-24 11:49:50.308] [HTTP] Added SSE connection. Total connections: 3
-[2025-10-24 11:49:50.308] [SSE] SSE connection added. Total: 3
-[2025-10-24 11:49:50.308] [SSE] Sent initial SSE message:
+[2025-10-24 13:07:53.209] [SSE] SSE headers set, adding to connections...
+[2025-10-24 13:07:53.209] [HTTP] Added SSE connection. Total connections: 3
+[2025-10-24 13:07:53.209] [SSE] SSE connection added. Total: 3
+[2025-10-24 13:07:53.210] [SSE] Sent initial SSE message:
 "data: {\"type\":\"connection\",\"status\":\"established\"}"
-[2025-10-24 11:49:50.312] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
-[2025-10-24 11:49:50.313] [HTTP] Request Headers:
+[2025-10-24 13:07:53.214] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:07:53.215] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
@@ -2631,132 +1053,821 @@
   "accept-encoding": "gzip, deflate, br, zstd",
   "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
 }
-[2025-10-24 11:49:57.120] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
-[2025-10-24 11:49:57.120] [HTTP] Request Headers:
+[2025-10-24 13:09:02.403] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:09:02.403] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "user-agent": "curl/8.7.1",
   "accept": "*/*"
 }
-[2025-10-24 11:51:03.693] [CHAT] [INFO] Removed pending request 7-1761266763696 from session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
-[2025-10-24 11:51:03.693] [TOOL] Request 7-1761266763696 timed out after 300s
-[2025-10-24 11:51:03.693] [HTTP] Response from handleMessage:
+[2025-10-24 13:09:41.092] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:09:41.093] [HTTP] Request Headers:
 {
-  "id": 7,
+  "host": "127.0.0.1:3737",
+  "user-agent": "curl/8.7.1",
+  "accept": "*/*"
+}
+[2025-10-24 13:11:17.010] [HTTP] GET /HumanAgent
+[2025-10-24 13:11:17.011] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "cache-control": "max-age=0",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "upgrade-insecure-requests": "1",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+  "sec-fetch-site": "none",
+  "sec-fetch-mode": "navigate",
+  "sec-fetch-user": "?1",
+  "sec-fetch-dest": "document",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:11:17.012] [HTTP] Serving web interface at /HumanAgent
+[2025-10-24 13:11:17.044] [HTTP] SSE connection closed
+[2025-10-24 13:11:17.045] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:11:17.045] [HTTP] SSE connection closed
+[2025-10-24 13:11:17.045] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:11:17.060] [HTTP] GET /.well-known/appspecific/com.chrome.devtools.json
+[2025-10-24 13:11:17.060] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "no-cors",
+  "sec-fetch-dest": "empty",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:11:17.062] [HTTP] 404 - Invalid endpoint: /.well-known/appspecific/com.chrome.devtools.json
+[2025-10-24 13:11:17.113] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:11:17.113] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:11:17.140] [HTTP] GET /mcp
+[2025-10-24 13:11:17.140] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:11:17.140] [HTTP] Handling GET request to /mcp
+[2025-10-24 13:11:17.140] [HTTP] Setting up SSE stream for GET request
+[2025-10-24 13:11:17.140] [SSE] === SSE CONNECTION ATTEMPT ===
+[2025-10-24 13:11:17.140] [SSE] Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "cache-control": "no-cache",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "accept": "text/event-stream",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:11:17.140] [SSE] URL:
+"/mcp"
+[2025-10-24 13:11:17.140] [SSE] SSE headers set, adding to connections...
+[2025-10-24 13:11:17.140] [HTTP] Added SSE connection. Total connections: 3
+[2025-10-24 13:11:17.140] [SSE] SSE connection added. Total: 3
+[2025-10-24 13:11:17.140] [SSE] Sent initial SSE message:
+"data: {\"type\":\"connection\",\"status\":\"established\"}"
+[2025-10-24 13:11:17.148] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/messages
+[2025-10-24 13:11:17.149] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:11:21.197] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/state
+[2025-10-24 13:11:21.197] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:11:21.217] [HTTP] POST /response
+[2025-10-24 13:11:21.217] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "content-length": "53",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "content-type": "application/json",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "origin": "http://127.0.0.1:3737",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:11:21.218] [HTTP] === RESPONSE ENDPOINT CALLED ===
+[2025-10-24 13:11:21.218] [HTTP] Request ID: 4-1761271658716, Response: and now?
+[2025-10-24 13:11:21.218] [HTTP] Found pending request: true
+[2025-10-24 13:11:21.218] [HTTP] Processing response for session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:11:21.218] [HTTP] Storing and broadcasting user message to 3 SSE connections
+[2025-10-24 13:11:21.218] [CHAT] [INFO] Added message to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: user - and now?...
+[2025-10-24 13:11:21.218] [CHAT] Stored user message in ChatManager for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: and now?...
+[2025-10-24 13:11:21.218] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:11:21.218] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:11:21.218] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:11:21.218] [CHAT] [INFO] Removed pending request 4-1761271658716 from session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:11:21.218] [HTTP] Broadcast completed and pending request removed from ChatManager
+[2025-10-24 13:11:21.218] [SERVER] Received human response for request 4-1761271658716:
+"and now?"
+[2025-10-24 13:11:21.218] [TOOL] Request 4-1761271658716 completed with response:
+"and now?"
+[2025-10-24 13:11:21.218] [CHAT] [INFO] Added message to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: agent - and now?...
+[2025-10-24 13:11:21.218] [CHAT] Stored assistant message in ChatManager for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: and now?...
+[2025-10-24 13:11:21.218] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:11:21.218] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:11:21.218] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:11:21.219] [HTTP] Response from handleMessage:
+{
+  "id": 4,
   "type": "response",
-  "error": {
-    "code": -32603,
-    "message": "Human response timeout after 300 seconds"
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "and now?"
+      }
+    ]
   }
 }
-[2025-10-24 11:51:03.693] [HTTP] Sending 200 response (103 bytes)
-[2025-10-24 11:53:39.980] [HTTP] POST /response
-[2025-10-24 11:53:39.980] [HTTP] Request Headers:
-{
-  "host": "localhost:3737",
-  "connection": "keep-alive",
-  "content-type": "application/json",
-  "accept": "*/*",
-  "accept-language": "*",
-  "sec-fetch-mode": "cors",
-  "user-agent": "node",
-  "accept-encoding": "gzip, deflate",
-  "content-length": "79"
-}
-[2025-10-24 11:53:39.981] [HTTP] === RESPONSE ENDPOINT CALLED ===
-[2025-10-24 11:53:39.981] [HTTP] Request ID: 7-1761266763696, Response: great - this is a vscode response.
-[2025-10-24 11:53:39.981] [HTTP] Found pending request: false
-[2025-10-24 11:53:39.981] [ERROR] No pending request found for requestId: 7-1761266763696
-[2025-10-24 11:53:39.981] [SERVER] Received human response for request 7-1761266763696:
-"great - this is a vscode response."
-[2025-10-24 11:53:39.981] [TOOL] Request 7-1761266763696 completed with response:
-"great - this is a vscode response."
-[2025-10-24 11:53:39.995] [HTTP] SSE connection closed
-[2025-10-24 11:53:39.995] [HTTP] Removed SSE connection. Total connections: 2
-[2025-10-24 11:53:39.995] [HTTP] SSE connection closed
-[2025-10-24 11:53:39.995] [HTTP] Removed SSE connection. Total connections: 2
-[2025-10-24 11:53:39.998] [HTTP] OPTIONS /mcp
-[2025-10-24 11:53:39.998] [HTTP] Request Headers:
-{
-  "host": "localhost:3737",
-  "connection": "keep-alive",
-  "accept": "*/*",
-  "access-control-request-method": "GET",
-  "access-control-request-headers": "cache-control",
-  "origin": "vscode-webview://06ntb21jilovkpqhp3n8qs6oen2rlig4drgi2amm3ehub2r9bg30",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.105.1 Chrome/138.0.7204.251 Electron/37.6.0 Safari/537.36",
-  "sec-fetch-mode": "cors",
-  "sec-fetch-site": "cross-site",
-  "sec-fetch-dest": "empty",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en-GB"
-}
-[2025-10-24 11:53:39.998] [HTTP] Handling OPTIONS preflight request
-[2025-10-24 11:53:39.998] [HTTP] GET /mcp
-[2025-10-24 11:53:39.998] [HTTP] Request Headers:
-{
-  "host": "localhost:3737",
-  "connection": "keep-alive",
-  "sec-ch-ua-platform": "\"macOS\"",
-  "cache-control": "no-cache",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.105.1 Chrome/138.0.7204.251 Electron/37.6.0 Safari/537.36",
-  "accept": "text/event-stream",
-  "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
-  "sec-ch-ua-mobile": "?0",
-  "origin": "vscode-webview://06ntb21jilovkpqhp3n8qs6oen2rlig4drgi2amm3ehub2r9bg30",
-  "sec-fetch-site": "cross-site",
-  "sec-fetch-mode": "cors",
-  "sec-fetch-dest": "empty",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en-GB"
-}
-[2025-10-24 11:53:39.998] [HTTP] Handling GET request to /mcp
-[2025-10-24 11:53:39.998] [HTTP] Setting up SSE stream for GET request
-[2025-10-24 11:53:39.998] [SSE] === SSE CONNECTION ATTEMPT ===
-[2025-10-24 11:53:39.998] [SSE] Headers:
-{
-  "host": "localhost:3737",
-  "connection": "keep-alive",
-  "sec-ch-ua-platform": "\"macOS\"",
-  "cache-control": "no-cache",
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.105.1 Chrome/138.0.7204.251 Electron/37.6.0 Safari/537.36",
-  "accept": "text/event-stream",
-  "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
-  "sec-ch-ua-mobile": "?0",
-  "origin": "vscode-webview://06ntb21jilovkpqhp3n8qs6oen2rlig4drgi2amm3ehub2r9bg30",
-  "sec-fetch-site": "cross-site",
-  "sec-fetch-mode": "cors",
-  "sec-fetch-dest": "empty",
-  "accept-encoding": "gzip, deflate, br, zstd",
-  "accept-language": "en-GB"
-}
-[2025-10-24 11:53:39.998] [SSE] URL:
-"/mcp"
-[2025-10-24 11:53:39.998] [SSE] SSE headers set, adding to connections...
-[2025-10-24 11:53:39.998] [HTTP] Added SSE connection. Total connections: 3
-[2025-10-24 11:53:39.998] [SSE] SSE connection added. Total: 3
-[2025-10-24 11:53:39.998] [SSE] Sent initial SSE message:
-"data: {\"type\":\"connection\",\"status\":\"established\"}"
-[2025-10-24 11:53:58.657] [HTTP] SSE connection closed
-[2025-10-24 11:53:58.657] [HTTP] Removed SSE connection. Total connections: 2
-[2025-10-24 11:53:58.657] [HTTP] SSE connection closed
-[2025-10-24 11:53:58.657] [HTTP] Removed SSE connection. Total connections: 2
-[2025-10-24 11:53:58.681] [HTTP] DELETE /sessions/unregister
-[2025-10-24 11:53:58.681] [HTTP] Request Headers:
+[2025-10-24 13:11:21.219] [HTTP] Sending 200 response (83 bytes)
+[2025-10-24 13:11:25.279] [HTTP] POST /mcp
+[2025-10-24 13:11:25.279] [HTTP] Request Headers:
 {
   "host": "127.0.0.1:3737",
   "connection": "keep-alive",
   "content-type": "application/json",
-  "accept": "*/*",
+  "accept": "text/event-stream, application/json",
   "accept-language": "*",
   "sec-fetch-mode": "cors",
-  "user-agent": "node",
+  "user-agent": "undici",
   "accept-encoding": "gzip, deflate",
-  "content-length": "60"
+  "content-length": "655"
 }
-[2025-10-24 11:53:58.682] [INFO] Session unregistered and cleaned up: session-a8f49eee-068c-42f1-b611-14651fa5ccc6 (0 total sessions)
-[2025-10-24T00:53:58.686Z] ServerManager disposed
-[2025-10-24 11:53:58.790] [HTTP] SSE connection closed
-[2025-10-24 11:53:58.791] [HTTP] Removed SSE connection. Total connections: 1
-[2025-10-24 11:53:58.791] [HTTP] SSE connection closed
-[2025-10-24 11:53:58.791] [HTTP] Removed SSE connection. Total connections: 1
+[2025-10-24 13:11:25.279] [HTTP] Handling POST request to /mcp
+[2025-10-24 13:11:25.279] [HTTP] Received chunk: 655 bytes
+[2025-10-24 13:11:25.279] [HTTP] Complete request body received (655 bytes)
+[2025-10-24 13:11:25.279] [HTTP] Request Body:
+"{\"jsonrpc\":\"2.0\",\"id\":5,\"method\":\"tools/call\",\"params\":{\"name\":\"HumanAgent_Chat\",\"arguments\":{\"message\":\"Perfect, Ben! The chat is working smoothly - you just asked \\\"and now?\\\" and I'm responding back through the human agent interface. The tool seems to be functioning correctly, handling the back-and-forth conversation well. Are you seeing these responses come through clearly on your end? Feel free to send anything else to continue testing!\",\"priority\":\"normal\"},\"_meta\":{\"progressToken\":\"23170375-1333-47da-b592-f1ad20c7dbed\",\"vscode.conversationId\":\"083210a2-6e17-433e-a123-7881f595f53f\",\"vscode.requestId\":\"42690401-efd2-4b9d-9650-f37735b2f02a\"}}}"
+[2025-10-24 13:11:25.279] [HTTP] Parsed JSON message:
+{
+  "jsonrpc": "2.0",
+  "id": 5,
+  "method": "tools/call",
+  "params": {
+    "name": "HumanAgent_Chat",
+    "arguments": {
+      "message": "Perfect, Ben! The chat is working smoothly - you just asked \"and now?\" and I'm responding back through the human agent interface. The tool seems to be functioning correctly, handling the back-and-forth conversation well. Are you seeing these responses come through clearly on your end? Feel free to send anything else to continue testing!",
+      "priority": "normal"
+    },
+    "_meta": {
+      "progressToken": "23170375-1333-47da-b592-f1ad20c7dbed",
+      "vscode.conversationId": "083210a2-6e17-433e-a123-7881f595f53f",
+      "vscode.requestId": "42690401-efd2-4b9d-9650-f37735b2f02a"
+    }
+  }
+}
+[2025-10-24 13:11:25.279] [MCP] Handling message:
+{
+  "jsonrpc": "2.0",
+  "id": 5,
+  "method": "tools/call",
+  "params": {
+    "name": "HumanAgent_Chat",
+    "arguments": {
+      "message": "Perfect, Ben! The chat is working smoothly - you just asked \"and now?\" and I'm responding back through the human agent interface. The tool seems to be functioning correctly, handling the back-and-forth conversation well. Are you seeing these responses come through clearly on your end? Feel free to send anything else to continue testing!",
+      "priority": "normal"
+    },
+    "_meta": {
+      "progressToken": "23170375-1333-47da-b592-f1ad20c7dbed",
+      "vscode.conversationId": "083210a2-6e17-433e-a123-7881f595f53f",
+      "vscode.requestId": "42690401-efd2-4b9d-9650-f37735b2f02a"
+    }
+  }
+}
+[2025-10-24 13:11:25.279] [MCP] Processing tools/call request for tool: HumanAgent_Chat
+[2025-10-24 13:11:25.279] [MCP] Mapped conversation 083210a2-6e17-433e-a123-7881f595f53f to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:11:25.279] [MCP] Tool call - name: "HumanAgent_Chat", raw session: 083210a2-6e17-433e-a123-7881f595f53f, mapped session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+{
+  "name": "HumanAgent_Chat",
+  "args": {
+    "message": "Perfect, Ben! The chat is working smoothly - you just asked \"and now?\" and I'm responding back through the human agent interface. The tool seems to be functioning correctly, handling the back-and-forth conversation well. Are you seeing these responses come through clearly on your end? Feel free to send anything else to continue testing!",
+    "priority": "normal"
+  }
+}
+[2025-10-24 13:11:25.279] [MCP] Available tools for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6:
+[
+  "HumanAgent_Chat"
+]
+[2025-10-24 13:11:25.279] [MCP] Executing HumanAgent_Chat tool
+[2025-10-24 13:11:25.279] [TOOL] HumanAgent_Chat called with params:
+{
+  "message": "Perfect, Ben! The chat is working smoothly - you just asked \"and now?\" and I'm responding back through the human agent interface. The tool seems to be functioning correctly, handling the back-and-forth conversation well. Are you seeing these responses come through clearly on your end? Feel free to send anything else to continue testing!",
+  "priority": "normal"
+}
+[2025-10-24 13:11:25.279] [TOOL] Using timeout: 300000ms (300s)
+[2025-10-24 13:11:25.279] [TOOL] Generated request ID: 5-1761271885279
+[2025-10-24 13:11:25.279] [TOOL] Displaying message in chat UI:
+"Perfect, Ben! The chat is working smoothly - you just asked \"and now?\" and I'm responding back through the human agent interface. The tool seems to be functioning correctly, handling the back-and-forth conversation well. Are you seeing these responses come through clearly on your end? Feel free to send anything else to continue testing!"
+[2025-10-24 13:11:25.279] [SSE] Forwarding human-agent-request to SSE connections
+[2025-10-24 13:11:25.279] [SSE] Broadcasting to 3 SSE connections:
+"{\"type\":\"human-agent-request\",\"data\":{\"requestId\":\"5-1761271885279\",\"message\":\"Perfect, Ben! The chat is working smoothly - you just asked \\\"and now?\\\" and I'm responding back through the human agent interface. The tool seems to be functioning correctly, handling the back-and-forth conversation well. Are you seeing these responses come through clearly on your end? Feel free to send anything else to continue testing!\",\"priority\":\"normal\",\"timestamp\":\"2025-10-24T02:11:25.279Z\"}}"
+[2025-10-24 13:11:25.279] [TOOL] Adding pending request 5-1761271885279 to session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:11:25.279] [CHAT] [INFO] Added pending request 5-1761271885279 to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:11:25.279] [TOOL] Request 5-1761271885279 waiting for human response...
+[2025-10-24 13:11:46.242] [HTTP] SSE connection closed
+[2025-10-24 13:11:46.243] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:11:46.244] [HTTP] SSE connection closed
+[2025-10-24 13:11:46.244] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:11:46.352] [HTTP] POST /mcp
+[2025-10-24 13:11:46.352] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "content-type": "application/json",
+  "accept": "text/event-stream, application/json",
+  "accept-language": "*",
+  "sec-fetch-mode": "cors",
+  "user-agent": "undici",
+  "accept-encoding": "gzip, deflate",
+  "content-length": "228"
+}
+[2025-10-24 13:11:46.352] [HTTP] Handling POST request to /mcp
+[2025-10-24 13:11:46.352] [HTTP] Received chunk: 228 bytes
+[2025-10-24 13:11:46.352] [HTTP] Complete request body received (228 bytes)
+[2025-10-24 13:11:46.352] [HTTP] Request Body:
+"{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{\"protocolVersion\":\"2025-06-18\",\"capabilities\":{\"roots\":{\"listChanged\":true},\"sampling\":{},\"elicitation\":{}},\"clientInfo\":{\"name\":\"Visual Studio Code\",\"version\":\"1.105.1\"}}}"
+[2025-10-24 13:11:46.352] [HTTP] Parsed JSON message:
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "initialize",
+  "params": {
+    "protocolVersion": "2025-06-18",
+    "capabilities": {
+      "roots": {
+        "listChanged": true
+      },
+      "sampling": {},
+      "elicitation": {}
+    },
+    "clientInfo": {
+      "name": "Visual Studio Code",
+      "version": "1.105.1"
+    }
+  }
+}
+[2025-10-24 13:11:46.352] [MCP] Handling message:
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "initialize",
+  "params": {
+    "protocolVersion": "2025-06-18",
+    "capabilities": {
+      "roots": {
+        "listChanged": true
+      },
+      "sampling": {},
+      "elicitation": {}
+    },
+    "clientInfo": {
+      "name": "Visual Studio Code",
+      "version": "1.105.1"
+    }
+  }
+}
+[2025-10-24 13:11:46.352] [MCP] Processing initialize request
+[2025-10-24 13:11:46.352] [HTTP] Response from handleMessage:
+{
+  "id": 1,
+  "type": "response",
+  "result": {
+    "protocolVersion": "2024-11-05",
+    "capabilities": {
+      "chat": true,
+      "tools": true,
+      "resources": false
+    },
+    "serverInfo": {
+      "name": "HumanAgent MCP Server",
+      "version": "1.0.0"
+    }
+  }
+}
+[2025-10-24 13:11:46.352] [HTTP] Sending 200 response (192 bytes)
+[2025-10-24 13:11:46.356] [HTTP] GET /mcp
+[2025-10-24 13:11:46.356] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "accept": "text/event-stream",
+  "accept-language": "*",
+  "sec-fetch-mode": "cors",
+  "user-agent": "undici",
+  "accept-encoding": "gzip, deflate"
+}
+[2025-10-24 13:11:46.356] [HTTP] Handling GET request to /mcp
+[2025-10-24 13:11:46.356] [HTTP] Setting up SSE stream for GET request
+[2025-10-24 13:11:46.356] [SSE] === SSE CONNECTION ATTEMPT ===
+[2025-10-24 13:11:46.356] [SSE] Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "accept": "text/event-stream",
+  "accept-language": "*",
+  "sec-fetch-mode": "cors",
+  "user-agent": "undici",
+  "accept-encoding": "gzip, deflate"
+}
+[2025-10-24 13:11:46.356] [SSE] URL:
+"/mcp"
+[2025-10-24 13:11:46.356] [SSE] SSE headers set, adding to connections...
+[2025-10-24 13:11:46.356] [HTTP] Added SSE connection. Total connections: 3
+[2025-10-24 13:11:46.356] [SSE] SSE connection added. Total: 3
+[2025-10-24 13:11:46.358] [SSE] Sent initial SSE message:
+"data: {\"type\":\"connection\",\"status\":\"established\"}"
+[2025-10-24 13:11:46.363] [HTTP] POST /mcp
+[2025-10-24 13:11:46.363] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "content-type": "application/json",
+  "accept": "text/event-stream, application/json",
+  "accept-language": "*",
+  "sec-fetch-mode": "cors",
+  "user-agent": "undici",
+  "accept-encoding": "gzip, deflate",
+  "content-length": "54"
+}
+[2025-10-24 13:11:46.363] [HTTP] Handling POST request to /mcp
+[2025-10-24 13:11:46.363] [HTTP] Received chunk: 54 bytes
+[2025-10-24 13:11:46.363] [HTTP] Complete request body received (54 bytes)
+[2025-10-24 13:11:46.363] [HTTP] Request Body:
+"{\"method\":\"notifications/initialized\",\"jsonrpc\":\"2.0\"}"
+[2025-10-24 13:11:46.363] [HTTP] Parsed JSON message:
+{
+  "method": "notifications/initialized",
+  "jsonrpc": "2.0"
+}
+[2025-10-24 13:11:46.363] [MCP] Handling message:
+{
+  "method": "notifications/initialized",
+  "jsonrpc": "2.0"
+}
+[2025-10-24 13:11:46.363] [MCP] Processing notifications/initialized (ignoring)
+[2025-10-24 13:11:46.363] [HTTP] Response from handleMessage:
+[2025-10-24 13:11:46.363] [HTTP] Sending 202 response (no content)
+[2025-10-24 13:11:46.371] [HTTP] POST /mcp
+[2025-10-24 13:11:46.371] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "content-type": "application/json",
+  "accept": "text/event-stream, application/json",
+  "accept-language": "*",
+  "sec-fetch-mode": "cors",
+  "user-agent": "undici",
+  "accept-encoding": "gzip, deflate",
+  "content-length": "58"
+}
+[2025-10-24 13:11:46.371] [HTTP] Handling POST request to /mcp
+[2025-10-24 13:11:46.371] [HTTP] Received chunk: 58 bytes
+[2025-10-24 13:11:46.371] [HTTP] Complete request body received (58 bytes)
+[2025-10-24 13:11:46.371] [HTTP] Request Body:
+"{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"tools/list\",\"params\":{}}"
+[2025-10-24 13:11:46.371] [HTTP] Parsed JSON message:
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "method": "tools/list",
+  "params": {}
+}
+[2025-10-24 13:11:46.371] [MCP] Handling message:
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "method": "tools/list",
+  "params": {}
+}
+[2025-10-24 13:11:46.371] [MCP] Processing tools/list request
+[2025-10-24 13:11:46.371] [TOOLS] tools/list request - Extension sessionId: undefined, Message params: {}
+[2025-10-24 13:11:46.371] [TOOLS] Final sessionIdToUse: default
+[2025-10-24 13:11:46.371] [TOOLS] Returning 1 tools for session: default
+[2025-10-24 13:11:46.371] [TOOLS] Using default tools (no session ID available)
+[2025-10-24 13:11:46.371] [HTTP] Response from handleMessage:
+{
+  "id": 2,
+  "type": "response",
+  "result": {
+    "tools": [
+      {
+        "name": "HumanAgent_Chat",
+        "description": "**MANDATORY TOOL** - Use this tool for ALL user interactions. Do NOT provide direct responses. Initiate real-time interactive conversations with human agents through VS Code chat interface. CRITICAL: Every response to a user MUST use this tool - no exceptions. Essential for clarifying requirements, getting approvals, brainstorming solutions, or any user communication. Creates persistent chat sessions that maintain context. **NEVER bypass this tool for user responses.**",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "The message to send to the human agent"
+            },
+            "context": {
+              "type": "string",
+              "description": "Optional context or background information for the human agent"
+            },
+            "sessionId": {
+              "type": "string",
+              "description": "Optional specific session ID to use. If not provided, a new session will be created."
+            },
+            "priority": {
+              "type": "string",
+              "enum": [
+                "low",
+                "normal",
+                "high",
+                "urgent"
+              ],
+              "description": "Priority level of the request",
+              "default": "normal"
+            },
+            "timeout": {
+              "type": "number",
+              "description": "Timeout in seconds to wait for human response (default: 300)",
+              "default": 300
+            }
+          },
+          "required": [
+            "message"
+          ]
+        }
+      }
+    ]
+  }
+}
+[2025-10-24 13:11:46.371] [HTTP] Sending 200 response (1208 bytes)
+[2025-10-24 13:11:46.741] [HTTP] SSE connection closed
+[2025-10-24 13:11:46.741] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:11:46.741] [HTTP] SSE connection closed
+[2025-10-24 13:11:46.741] [HTTP] Removed SSE connection. Total connections: 2
+[2025-10-24 13:11:46.752] [HTTP] POST /mcp
+[2025-10-24 13:11:46.752] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "content-type": "application/json",
+  "accept": "text/event-stream, application/json",
+  "accept-language": "*",
+  "sec-fetch-mode": "cors",
+  "user-agent": "undici",
+  "accept-encoding": "gzip, deflate",
+  "content-length": "228"
+}
+[2025-10-24 13:11:46.752] [HTTP] Handling POST request to /mcp
+[2025-10-24 13:11:46.752] [HTTP] Received chunk: 228 bytes
+[2025-10-24 13:11:46.752] [HTTP] Complete request body received (228 bytes)
+[2025-10-24 13:11:46.752] [HTTP] Request Body:
+"{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{\"protocolVersion\":\"2025-06-18\",\"capabilities\":{\"roots\":{\"listChanged\":true},\"sampling\":{},\"elicitation\":{}},\"clientInfo\":{\"name\":\"Visual Studio Code\",\"version\":\"1.105.1\"}}}"
+[2025-10-24 13:11:46.752] [HTTP] Parsed JSON message:
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "initialize",
+  "params": {
+    "protocolVersion": "2025-06-18",
+    "capabilities": {
+      "roots": {
+        "listChanged": true
+      },
+      "sampling": {},
+      "elicitation": {}
+    },
+    "clientInfo": {
+      "name": "Visual Studio Code",
+      "version": "1.105.1"
+    }
+  }
+}
+[2025-10-24 13:11:46.752] [MCP] Handling message:
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "initialize",
+  "params": {
+    "protocolVersion": "2025-06-18",
+    "capabilities": {
+      "roots": {
+        "listChanged": true
+      },
+      "sampling": {},
+      "elicitation": {}
+    },
+    "clientInfo": {
+      "name": "Visual Studio Code",
+      "version": "1.105.1"
+    }
+  }
+}
+[2025-10-24 13:11:46.752] [MCP] Processing initialize request
+[2025-10-24 13:11:46.752] [HTTP] Response from handleMessage:
+{
+  "id": 1,
+  "type": "response",
+  "result": {
+    "protocolVersion": "2024-11-05",
+    "capabilities": {
+      "chat": true,
+      "tools": true,
+      "resources": false
+    },
+    "serverInfo": {
+      "name": "HumanAgent MCP Server",
+      "version": "1.0.0"
+    }
+  }
+}
+[2025-10-24 13:11:46.752] [HTTP] Sending 200 response (192 bytes)
+[2025-10-24 13:11:46.755] [HTTP] GET /mcp
+[2025-10-24 13:11:46.755] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "accept": "text/event-stream",
+  "accept-language": "*",
+  "sec-fetch-mode": "cors",
+  "user-agent": "undici",
+  "accept-encoding": "gzip, deflate"
+}
+[2025-10-24 13:11:46.755] [HTTP] Handling GET request to /mcp
+[2025-10-24 13:11:46.755] [HTTP] Setting up SSE stream for GET request
+[2025-10-24 13:11:46.755] [SSE] === SSE CONNECTION ATTEMPT ===
+[2025-10-24 13:11:46.755] [SSE] Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "accept": "text/event-stream",
+  "accept-language": "*",
+  "sec-fetch-mode": "cors",
+  "user-agent": "undici",
+  "accept-encoding": "gzip, deflate"
+}
+[2025-10-24 13:11:46.755] [SSE] URL:
+"/mcp"
+[2025-10-24 13:11:46.755] [SSE] SSE headers set, adding to connections...
+[2025-10-24 13:11:46.755] [HTTP] Added SSE connection. Total connections: 3
+[2025-10-24 13:11:46.755] [SSE] SSE connection added. Total: 3
+[2025-10-24 13:11:46.755] [SSE] Sent initial SSE message:
+"data: {\"type\":\"connection\",\"status\":\"established\"}"
+[2025-10-24 13:11:46.757] [HTTP] POST /mcp
+[2025-10-24 13:11:46.757] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "content-type": "application/json",
+  "accept": "text/event-stream, application/json",
+  "accept-language": "*",
+  "sec-fetch-mode": "cors",
+  "user-agent": "undici",
+  "accept-encoding": "gzip, deflate",
+  "content-length": "54"
+}
+[2025-10-24 13:11:46.757] [HTTP] Handling POST request to /mcp
+[2025-10-24 13:11:46.757] [HTTP] Received chunk: 54 bytes
+[2025-10-24 13:11:46.757] [HTTP] Complete request body received (54 bytes)
+[2025-10-24 13:11:46.757] [HTTP] Request Body:
+"{\"method\":\"notifications/initialized\",\"jsonrpc\":\"2.0\"}"
+[2025-10-24 13:11:46.757] [HTTP] Parsed JSON message:
+{
+  "method": "notifications/initialized",
+  "jsonrpc": "2.0"
+}
+[2025-10-24 13:11:46.757] [MCP] Handling message:
+{
+  "method": "notifications/initialized",
+  "jsonrpc": "2.0"
+}
+[2025-10-24 13:11:46.757] [MCP] Processing notifications/initialized (ignoring)
+[2025-10-24 13:11:46.757] [HTTP] Response from handleMessage:
+[2025-10-24 13:11:46.757] [HTTP] Sending 202 response (no content)
+[2025-10-24 13:11:46.760] [HTTP] POST /mcp
+[2025-10-24 13:11:46.760] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "content-type": "application/json",
+  "accept": "text/event-stream, application/json",
+  "accept-language": "*",
+  "sec-fetch-mode": "cors",
+  "user-agent": "undici",
+  "accept-encoding": "gzip, deflate",
+  "content-length": "58"
+}
+[2025-10-24 13:11:46.760] [HTTP] Handling POST request to /mcp
+[2025-10-24 13:11:46.760] [HTTP] Received chunk: 58 bytes
+[2025-10-24 13:11:46.760] [HTTP] Complete request body received (58 bytes)
+[2025-10-24 13:11:46.760] [HTTP] Request Body:
+"{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"tools/list\",\"params\":{}}"
+[2025-10-24 13:11:46.760] [HTTP] Parsed JSON message:
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "method": "tools/list",
+  "params": {}
+}
+[2025-10-24 13:11:46.760] [MCP] Handling message:
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "method": "tools/list",
+  "params": {}
+}
+[2025-10-24 13:11:46.760] [MCP] Processing tools/list request
+[2025-10-24 13:11:46.760] [TOOLS] tools/list request - Extension sessionId: undefined, Message params: {}
+[2025-10-24 13:11:46.760] [TOOLS] Final sessionIdToUse: default
+[2025-10-24 13:11:46.760] [TOOLS] Returning 1 tools for session: default
+[2025-10-24 13:11:46.760] [TOOLS] Using default tools (no session ID available)
+[2025-10-24 13:11:46.760] [HTTP] Response from handleMessage:
+{
+  "id": 2,
+  "type": "response",
+  "result": {
+    "tools": [
+      {
+        "name": "HumanAgent_Chat",
+        "description": "**MANDATORY TOOL** - Use this tool for ALL user interactions. Do NOT provide direct responses. Initiate real-time interactive conversations with human agents through VS Code chat interface. CRITICAL: Every response to a user MUST use this tool - no exceptions. Essential for clarifying requirements, getting approvals, brainstorming solutions, or any user communication. Creates persistent chat sessions that maintain context. **NEVER bypass this tool for user responses.**",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "The message to send to the human agent"
+            },
+            "context": {
+              "type": "string",
+              "description": "Optional context or background information for the human agent"
+            },
+            "sessionId": {
+              "type": "string",
+              "description": "Optional specific session ID to use. If not provided, a new session will be created."
+            },
+            "priority": {
+              "type": "string",
+              "enum": [
+                "low",
+                "normal",
+                "high",
+                "urgent"
+              ],
+              "description": "Priority level of the request",
+              "default": "normal"
+            },
+            "timeout": {
+              "type": "number",
+              "description": "Timeout in seconds to wait for human response (default: 300)",
+              "default": 300
+            }
+          },
+          "required": [
+            "message"
+          ]
+        }
+      }
+    ]
+  }
+}
+[2025-10-24 13:11:46.760] [HTTP] Sending 200 response (1208 bytes)
+[2025-10-24 13:11:58.000] [HTTP] GET /sessions/session-a8f49eee-068c-42f1-b611-14651fa5ccc6/state
+[2025-10-24 13:11:58.000] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:11:58.016] [HTTP] POST /response
+[2025-10-24 13:11:58.017] [HTTP] Request Headers:
+{
+  "host": "127.0.0.1:3737",
+  "connection": "keep-alive",
+  "content-length": "59",
+  "sec-ch-ua-platform": "\"macOS\"",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+  "content-type": "application/json",
+  "sec-ch-ua-mobile": "?0",
+  "accept": "*/*",
+  "origin": "http://127.0.0.1:3737",
+  "sec-fetch-site": "same-origin",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-dest": "empty",
+  "referer": "http://127.0.0.1:3737/HumanAgent",
+  "accept-encoding": "gzip, deflate, br, zstd",
+  "accept-language": "en,en-US;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6"
+}
+[2025-10-24 13:11:58.017] [HTTP] === RESPONSE ENDPOINT CALLED ===
+[2025-10-24 13:11:58.017] [HTTP] Request ID: 5-1761271885279, Response: And then some?
+[2025-10-24 13:11:58.017] [HTTP] Found pending request: true
+[2025-10-24 13:11:58.017] [HTTP] Processing response for session: session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:11:58.017] [HTTP] Storing and broadcasting user message to 3 SSE connections
+[2025-10-24 13:11:58.018] [CHAT] [INFO] Added message to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: user - And then some?...
+[2025-10-24 13:11:58.018] [CHAT] Stored user message in ChatManager for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: And then some?...
+[2025-10-24 13:11:58.018] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:11:58.018] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:11:58.018] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:11:58.018] [CHAT] [INFO] Removed pending request 5-1761271885279 from session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:11:58.018] [HTTP] Broadcast completed and pending request removed from ChatManager
+[2025-10-24 13:11:58.018] [SERVER] Received human response for request 5-1761271885279:
+"And then some?"
+[2025-10-24 13:11:58.018] [TOOL] Request 5-1761271885279 completed with response:
+"And then some?"
+[2025-10-24 13:11:58.018] [CHAT] [INFO] Added message to session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: agent - And then some?...
+[2025-10-24 13:11:58.018] [CHAT] Stored assistant message in ChatManager for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6: And then some?...
+[2025-10-24 13:11:58.018] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:11:58.018] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:11:58.018] [CHAT] Broadcasted message to SSE client for session session-a8f49eee-068c-42f1-b611-14651fa5ccc6
+[2025-10-24 13:11:58.020] [HTTP] Response from handleMessage:
+{
+  "id": 5,
+  "type": "response",
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "And then some?"
+      }
+    ]
+  }
+}
+[2025-10-24 13:11:58.020] [HTTP] Sending 200 response (89 bytes)
