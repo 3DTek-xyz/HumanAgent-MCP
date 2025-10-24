@@ -132,6 +132,21 @@ export class ChatManager {
     }
 
     /**
+     * Find a pending request by ID across all sessions
+     */
+    findPendingRequest(requestId: string): { sessionId: string; data: any } | null {
+        for (const [sessionId, session] of this.sessions.entries()) {
+            if (session.pendingRequests.has(requestId)) {
+                return {
+                    sessionId,
+                    data: session.pendingRequests.get(requestId)
+                };
+            }
+        }
+        return null;
+    }
+
+    /**
      * Get session state summary
      */
     getSessionState(sessionId: string): {

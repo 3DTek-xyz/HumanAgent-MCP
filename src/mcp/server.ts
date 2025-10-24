@@ -97,16 +97,12 @@ export class McpServer extends EventEmitter {
   private sessionTools: Map<string, Map<string, McpTool>> = new Map(); // Per-session tool configurations
   private sessionWorkspacePaths: Map<string, string> = new Map(); // Session to workspace path mapping
   private sessionNames: Map<string, string> = new Map(); // Session friendly names
-  private sessionMessages: Map<string, ChatMessage[]> = new Map(); // Session conversation history - DEPRECATED: Use chatManager
+  // Removed: sessionMessages - now handled by ChatManager
   private httpServer?: http.Server;
   private port: number = 3737;
   private debugLogger: DebugLogger;
-  private pendingHumanRequests: Map<string, {
-    resolve: (value: string) => void;
-    reject: (error: Error) => void;
-    startTime: number;
-    params: HumanAgentChatToolParams;
-  }> = new Map();
+  // Simple Map for resolve/reject functions only - data stored in ChatManager
+  private requestResolvers: Map<string, { resolve: (response: string) => void; reject: (error: Error) => void }> = new Map();
   private activeSessions: Set<string> = new Set();
   private sseConnections: Set<http.ServerResponse> = new Set();
   private conversationToSession: Map<string, string> = new Map(); // Map VS Code conversation IDs to registered session IDs
@@ -332,15 +328,8 @@ export class McpServer extends EventEmitter {
         this.httpServer = undefined;
       }
 
-      // Clear pending requests with proper cancellation
-      for (const [requestId, request] of this.pendingHumanRequests.entries()) {
-        try {
-          request.reject(new Error('Server shutting down'));
-        } catch (error) {
-          // Ignore rejection errors during shutdown
-        }
-      }
-      this.pendingHumanRequests.clear();
+      // Clear pending requests with proper cancellation - using ChatManager only
+      // Note: ChatManager will handle cleanup automatically on session timeout
 
       this.isRunning = false;
       this.debugLogger.close();
@@ -351,7 +340,7 @@ export class McpServer extends EventEmitter {
       // Force stop even if there are errors
       this.isRunning = false;
       this.httpServer = undefined;
-      this.pendingHumanRequests.clear();
+      // Removed: pendingHumanRequests.clear() - using ChatManager only
       this.debugLogger.close();
     }
   }
@@ -628,19 +617,7 @@ export class McpServer extends EventEmitter {
           res.end(JSON.stringify({ success: false, error: 'Invalid request body' }));
         }
       });
-    } else if (req.method === 'GET' && url.pathname.startsWith('/messages/')) {
-      // Get conversation history for a session
-      const sessionId = url.pathname.split('/')[2];
-      if (!sessionId) {
-        res.statusCode = 400;
-        res.end(JSON.stringify({ success: false, error: 'Session ID required' }));
-        return;
-      }
-      
-      const messages = this.getSessionMessages(sessionId);
-      res.statusCode = 200;
-      res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify({ messages, sessionId, count: messages.length }));
+    // Removed: /messages/{sessionId} endpoint - replaced by /sessions/{id}/messages
     } else if (req.method === 'GET' && url.pathname.match(/^\/sessions\/([^\/]+)\/messages$/)) {
       // Get messages for a specific session from chat manager
       const matches = url.pathname.match(/^\/sessions\/([^\/]+)\/messages$/);
@@ -702,7 +679,8 @@ export class McpServer extends EventEmitter {
             type: 'text'
           };
           
-          this.storeMessage(sessionId, chatMessage);
+          this.chatManager.addMessage(sessionId, chatMessage);
+          this.debugLogger.log('CHAT', `Stored message in ChatManager for session ${sessionId}: ${chatMessage.sender} - ${chatMessage.content.substring(0, 50)}...`);
           this.broadcastMessageToClients(sessionId, chatMessage);
           
           // Auto-forwarding removed - both interfaces now use /response endpoint directly
@@ -730,12 +708,12 @@ export class McpServer extends EventEmitter {
           this.debugLogger.log('HTTP', '=== RESPONSE ENDPOINT CALLED ===');
           this.debugLogger.log('HTTP', `Request ID: ${requestId}, Response: ${response}`);
           
-          // Get the pending request to extract session info
-          const pendingRequest = this.pendingHumanRequests.get(requestId);
-          this.debugLogger.log('HTTP', `Found pending request: ${!!pendingRequest}`);
+          // Get the pending request to extract session info - using ChatManager
+          const pendingRequestInfo = this.chatManager.findPendingRequest(requestId);
+          this.debugLogger.log('HTTP', `Found pending request: ${!!pendingRequestInfo}`);
           
-          if (pendingRequest && pendingRequest.params.sessionId) {
-            this.debugLogger.log('HTTP', `Processing response for session: ${pendingRequest.params.sessionId}`);
+          if (pendingRequestInfo) {
+            this.debugLogger.log('HTTP', `Processing response for session: ${pendingRequestInfo.sessionId}`);
             
             // Store the user message on server for synchronization
             const userMessage: ChatMessage = {
@@ -747,11 +725,12 @@ export class McpServer extends EventEmitter {
             };
             
             this.debugLogger.log('HTTP', `Storing and broadcasting user message to ${this.sseConnections.size} SSE connections`);
-            this.storeMessage(pendingRequest.params.sessionId, userMessage);
-            this.broadcastMessageToClients(pendingRequest.params.sessionId, userMessage);
+            this.chatManager.addMessage(pendingRequestInfo.sessionId, userMessage);
+            this.debugLogger.log('CHAT', `Stored user message in ChatManager for session ${pendingRequestInfo.sessionId}: ${userMessage.content.substring(0, 50)}...`);
+            this.broadcastMessageToClients(pendingRequestInfo.sessionId, userMessage);
             
             // Remove from ChatManager as well
-            this.chatManager.removePendingRequest(pendingRequest.params.sessionId, requestId);
+            this.chatManager.removePendingRequest(pendingRequestInfo.sessionId, requestId);
             this.debugLogger.log('HTTP', 'Broadcast completed and pending request removed from ChatManager');
           } else {
             this.debugLogger.log('ERROR', `No pending request found for requestId: ${requestId}`);
@@ -1475,7 +1454,11 @@ export class McpServer extends EventEmitter {
     return new Promise((resolve) => {
       // Set up timeout
       const timeoutHandle = setTimeout(() => {
-        this.pendingHumanRequests.delete(requestId);
+        // Remove from ChatManager - find which session it belongs to
+        const pendingRequestInfo = this.chatManager.findPendingRequest(requestId);
+        if (pendingRequestInfo) {
+          this.chatManager.removePendingRequest(pendingRequestInfo.sessionId, requestId);
+        }
         this.debugLogger.log('TOOL', `Request ${requestId} timed out after ${timeout/1000}s`);
         resolve({
           id: messageId,
@@ -1491,7 +1474,7 @@ export class McpServer extends EventEmitter {
       const sessionToUse = sessionId || params.sessionId || 'default';
       this.debugLogger.log('TOOL', `Adding pending request ${requestId} to session: ${sessionToUse}`);
       this.chatManager.addPendingRequest(sessionToUse, requestId, params);
-      this.pendingHumanRequests.set(requestId, {
+      this.requestResolvers.set(requestId, {
         resolve: (response: string) => {
           clearTimeout(timeoutHandle);
           const responseTime = Date.now() - startTime;
@@ -1506,7 +1489,8 @@ export class McpServer extends EventEmitter {
               timestamp: new Date(),
               type: 'text'
             };
-            this.storeMessage(params.sessionId, assistantMessage);
+            this.chatManager.addMessage(params.sessionId, assistantMessage);
+            this.debugLogger.log('CHAT', `Stored assistant message in ChatManager for session ${params.sessionId}: ${assistantMessage.content.substring(0, 50)}...`);
             this.broadcastMessageToClients(params.sessionId, assistantMessage);
           }
           
@@ -1534,9 +1518,7 @@ export class McpServer extends EventEmitter {
               message: error.message
             }
           });
-        },
-        startTime,
-        params
+        }
       });
       
       this.debugLogger.log('TOOL', `Request ${requestId} waiting for human response...`);
@@ -1547,10 +1529,10 @@ export class McpServer extends EventEmitter {
   public respondToHumanRequest(requestId: string, response: string): boolean {
     this.debugLogger.log('SERVER', `Received human response for request ${requestId}:`, response);
     
-    const pendingRequest = this.pendingHumanRequests.get(requestId);
-    if (pendingRequest) {
-      this.pendingHumanRequests.delete(requestId);
-      pendingRequest.resolve(response);
+    const resolver = this.requestResolvers.get(requestId);
+    if (resolver) {
+      this.requestResolvers.delete(requestId);
+      resolver.resolve(response);
       return true;
     }
     
@@ -1568,27 +1550,21 @@ export class McpServer extends EventEmitter {
     return Array.from(this.tools.values());
   }
 
-  getPendingRequests(): Array<{id: string, params: HumanAgentChatToolParams, startTime: number}> {
-    return Array.from(this.pendingHumanRequests.entries()).map(([id, req]) => ({
-      id,
-      params: req.params,
-      startTime: req.startTime
-    }));
-  }
+  // REMOVED: getPendingRequests - use ChatManager.getPendingRequests() per session instead
 
   // Method to manually resolve a pending request (for testing)
   resolvePendingRequest(requestId: string, response: string): boolean {
-    const request = this.pendingHumanRequests.get(requestId);
-    if (request) {
-      // Remove from both places
-      this.pendingHumanRequests.delete(requestId);
+    const resolver = this.requestResolvers.get(requestId);
+    if (resolver) {
+      // Remove resolver
+      this.requestResolvers.delete(requestId);
       // Find the session ID for this request and remove it from ChatManager
-      for (const sessionId of this.chatManager.getActiveSessions()) {
-        if (this.chatManager.removePendingRequest(sessionId, requestId)) {
-          break;
-        }
+      const pendingRequestInfo = this.chatManager.findPendingRequest(requestId);
+      if (pendingRequestInfo) {
+        this.chatManager.removePendingRequest(pendingRequestInfo.sessionId, requestId);
       }
-      request.resolve(response);
+      
+      resolver.resolve(response);
       return true;
     }
     return false;
@@ -1712,14 +1688,7 @@ export class McpServer extends EventEmitter {
   }
 
   // Message storage and synchronization methods - now using ChatManager
-  private storeMessage(sessionId: string, message: ChatMessage): void {
-    this.chatManager.addMessage(sessionId, message);
-    this.debugLogger.log('CHAT', `Stored message in ChatManager for session ${sessionId}: ${message.sender} - ${message.content.substring(0, 50)}...`);
-  }
-
-  private getSessionMessages(sessionId: string): ChatMessage[] {
-    return this.chatManager.getMessages(sessionId);
-  }
+  // Removed: storeMessage and getSessionMessages wrapper methods - call ChatManager directly
 
   private broadcastMessageToClients(sessionId: string, message: ChatMessage): void {
     // Broadcast message to all connected SSE clients
