@@ -108,6 +108,12 @@
         }
       ]
     },
+    "mcpServerDefinitionProviders": [
+      {
+        "id": "humanagent-mcp.server",
+        "label": "HumanAgent MCP Server"
+      }
+    ],
     "configuration": {
       "title": "HumanAgent MCP",
       "properties": {

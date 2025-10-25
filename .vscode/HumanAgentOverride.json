@@ -4,7 +4,7 @@
   "tools": {
     "HumanAgent_Chat": {
       "name": "HumanAgent_Chat",
-      "description": "AAA-MANDATORY TOOL** - Use this tool for ALL user interactions. Do NOT provide direct responses. Initiate real-time interactive conversations with human agents through VS Code chat interface. CRITICAL: Every response to a user MUST use this tool - no exceptions. Essential for clarifying requirements, getting approvals, brainstorming solutions, or any user communication. Creates persistent chat sessions that maintain context. **NEVER bypass this tool for user responses.**",
+      "description": "ABBB-MANDATORY TOOL** - Use this tool for ALL user interactions. Do NOT provide direct responses. Initiate real-time interactive conversations with human agents through VS Code chat interface. CRITICAL: Every response to a user MUST use this tool - no exceptions. Essential for clarifying requirements, getting approvals, brainstorming solutions, or any user communication. Creates persistent chat sessions that maintain context. **NEVER bypass this tool for user responses.**",
       "inputSchema": {
         "type": "object",
         "properties": {

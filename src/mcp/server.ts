@@ -3,6 +3,7 @@ import * as http from 'http';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
+import * as crypto from 'crypto';
 import { McpMessage, McpServerConfig, HumanAgentSession, ChatMessage, McpTool, HumanAgentChatToolParams, HumanAgentChatToolResult } from './types';
 import { ChatManager } from './chatManager';
 
@@ -135,6 +136,7 @@ export class McpServer extends EventEmitter {
   private sseConnections: Set<http.ServerResponse> = new Set();
   private conversationToSession: Map<string, string> = new Map(); // Map VS Code conversation IDs to registered session IDs
   private chatManager: ChatManager; // Centralized chat and session management
+  private sseClients: Map<string, http.ServerResponse> = new Map(); // Per-session SSE connections
 
   constructor(private sessionId?: string, private workspacePath?: string) {
     super();
@@ -193,21 +195,45 @@ export class McpServer extends EventEmitter {
     }
   }
 
-  private sendMcpNotification(method: string, params?: any): void {
-    // Check if we're in standalone mode (connected via stdio)
-    if (process.stdout && process.stdout.writable) {
-      const notification = {
-        type: 'notification',
-        method: method,
-        params: params || {}
-      };
-      
-      try {
-        process.stdout.write(JSON.stringify(notification) + '\n');
-        this.debugLogger.log('MCP', `Sent MCP notification: ${method}`, params);
-      } catch (error) {
-        this.debugLogger.log('ERROR', `Failed to send MCP notification: ${method}`, error);
+  private sendMcpNotification(method: string, params?: any, sessionId?: string): void {
+    this.debugLogger.log('MCP', `Sending SSE notification: ${method}`, params);
+
+    const notification = {
+      jsonrpc: '2.0',
+      method,
+      params: params || {}
+    };
+
+    if (sessionId) {
+      // Send to specific session
+      const sseResponse = this.sseClients.get(sessionId);
+      if (sseResponse) {
+        this.debugLogger.log('SSE', `Sending notification to session: ${sessionId}`);
+        this.sendSSEMessage(sseResponse, notification);
+      } else {
+        this.debugLogger.log('SSE', `No SSE connection for session: ${sessionId}`);
       }
+    } else {
+      // Send to all active sessions with SSE connections
+      for (const activeSessionId of this.activeSessions) {
+        const sseResponse = this.sseClients.get(activeSessionId);
+        if (sseResponse) {
+          this.debugLogger.log('SSE', `Sending notification to active session: ${activeSessionId}`);
+          this.sendSSEMessage(sseResponse, notification);
+        } else {
+          this.debugLogger.log('SSE', `No SSE connection for active session: ${activeSessionId}`);
+        }
+      }
+    }
+  }
+
+  private sendSSEMessage(response: http.ServerResponse, message: any): void {
+    try {
+      const data = JSON.stringify(message);
+      response.write(`data: ${data}\n\n`);
+      this.debugLogger.log('SSE', `Sent SSE message: ${message.method || 'response'}`);
+    } catch (error) {
+      this.debugLogger.log('ERROR', `Failed to send SSE message:`, error);
     }
   }
 
@@ -554,6 +580,18 @@ export class McpServer extends EventEmitter {
           if (response) {
             res.statusCode = 200;
             res.setHeader('Content-Type', 'application/json');
+            
+            // If this is an initialize response, generate and set session ID
+            if (message.method === 'initialize') {
+              // Generate new session ID if none provided in URL
+              const responseSessionId = sessionId || `session-${crypto.randomUUID()}`;
+              res.setHeader('Mcp-Session-Id', responseSessionId);
+              this.debugLogger.log('HTTP', `Set Mcp-Session-Id header: ${responseSessionId}`);
+              
+              // Add this session to active sessions for notifications
+              this.activeSessions.add(responseSessionId);
+            }
+            
             const responseJson = JSON.stringify(response);
             this.debugLogger.log('HTTP', `Sending 200 response (${responseJson.length} bytes)`);
             res.end(responseJson);
@@ -588,6 +626,24 @@ export class McpServer extends EventEmitter {
     this.debugLogger.log('SSE', 'Headers:', req.headers);
     this.debugLogger.log('SSE', 'URL:', req.url);
     
+    // Extract sessionId from query params in URL or Mcp-Session-Id header
+    const url = new URL(req.url!, `http://${req.headers.host}`);
+    let sessionId = url.searchParams.get('sessionId');
+    
+    // If not in URL, try the Mcp-Session-Id header (per MCP spec)
+    if (!sessionId) {
+      sessionId = req.headers['mcp-session-id'] as string;
+    }
+    
+    if (!sessionId) {
+      this.debugLogger.log('SSE', 'No sessionId in SSE request (tried URL param and Mcp-Session-Id header)');
+      this.debugLogger.log('SSE', `Request headers: ${JSON.stringify(req.headers)}`);
+      this.debugLogger.log('SSE', `Request URL: ${req.url}`);
+      // For now, let's allow connection without sessionId and use a default
+      sessionId = 'default-sse-session';
+      this.debugLogger.log('SSE', `Using default sessionId: ${sessionId}`);
+    }
+    
     // Set up Server-Sent Events (SSE) stream
     res.statusCode = 200;
     res.setHeader('Content-Type', 'text/event-stream');
@@ -599,15 +655,16 @@ export class McpServer extends EventEmitter {
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Cache-Control, Connection');
     
-    this.debugLogger.log('SSE', 'SSE headers set, adding to connections...');
+    this.debugLogger.log('SSE', `SSE headers set for session ${sessionId}, adding to connections...`);
     
-    // Add this connection to our active SSE connections
-    this.sseConnections.add(res);
-    this.debugLogger.log('HTTP', `Added SSE connection. Total connections: ${this.sseConnections.size}`);
-    this.debugLogger.log('SSE', `SSE connection added. Total: ${this.sseConnections.size}`);
+    // Add this connection to our session-based SSE connections
+    this.sseClients.set(sessionId, res);
+    this.sseConnections.add(res); // Keep old connections for cleanup
+    this.debugLogger.log('HTTP', `Added SSE connection for session ${sessionId}. Total connections: ${this.sseConnections.size}`);
+    this.debugLogger.log('SSE', `SSE connection added for session ${sessionId}. Total: ${this.sseConnections.size}`);
     
     // Send initial connection acknowledgment
-    const initialMessage = 'data: {"type":"connection","status":"established"}\n\n';
+    const initialMessage = 'data: {"type":"connection","status":"established","sessionId":"' + sessionId + '"}\n\n';
     res.write(initialMessage);
     this.debugLogger.log('SSE', 'Sent initial SSE message:', initialMessage.trim());
     
@@ -623,10 +680,11 @@ export class McpServer extends EventEmitter {
     
     // Handle client disconnect
     const cleanup = () => {
-      this.debugLogger.log('HTTP', 'SSE connection closed');
+      this.debugLogger.log('HTTP', `SSE connection closed for session ${sessionId}`);
       clearInterval(heartbeat);
       this.sseConnections.delete(res);
-      this.debugLogger.log('HTTP', `Removed SSE connection. Total connections: ${this.sseConnections.size}`);
+      this.sseClients.delete(sessionId);
+      this.debugLogger.log('HTTP', `Removed SSE connection for session ${sessionId}. Total connections: ${this.sseConnections.size}`);
     };
     
     req.on('close', cleanup);
@@ -890,23 +948,31 @@ export class McpServer extends EventEmitter {
   async handleMessage(message: McpMessage): Promise<McpMessage | null> {
     this.debugLogger.log('MCP', 'Handling message:', message);
     
+    // Extract sessionId from message params if available
+    const sessionId = message.params?.sessionId;
+    
     try {
+      let response: McpMessage | null = null;
+      
       switch (message.method) {
         case 'initialize':
           this.debugLogger.log('MCP', 'Processing initialize request');
-          return this.handleInitialize(message);
+          response = this.handleInitialize(message);
+          break;
         case 'tools/list':
           this.debugLogger.log('MCP', 'Processing tools/list request');
-          return this.handleToolsList(message);
+          response = this.handleToolsList(message);
+          break;
         case 'tools/call':
           this.debugLogger.log('MCP', `Processing tools/call request for tool: ${message.params?.name}`);
-          return await this.handleToolCall(message);
+          response = await this.handleToolCall(message);
+          break;
         case 'notifications/initialized':
           this.debugLogger.log('MCP', 'Processing notifications/initialized (ignoring)');
           return null;
         default:
           this.debugLogger.log('MCP', `Unknown method: ${message.method}`);
-          return {
+          response = {
             id: message.id,
             type: 'response',
             error: {
@@ -915,6 +981,10 @@ export class McpServer extends EventEmitter {
             }
           };
       }
+      
+      // Notifications are now sent via SSE, no need to include in response
+      
+      return response;
     } catch (error) {
       return {
         id: message.id,
@@ -1526,6 +1596,8 @@ export class McpServer extends EventEmitter {
   }
 
   private handleInitialize(message: McpMessage): McpMessage {
+
+
     return {
       id: message.id,
       type: 'response',

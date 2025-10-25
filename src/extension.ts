@@ -13,6 +13,36 @@ let mcpConfigManager: McpConfigManager;
 let workspaceSessionId: string;
 let serverManager: ServerManager;
 
+// MCP Server Definition Provider for VS Code native MCP integration
+class HumanAgentMcpProvider implements vscode.McpServerDefinitionProvider {
+    private _onDidChangeMcpServerDefinitions = new vscode.EventEmitter<void>();
+    readonly onDidChangeMcpServerDefinitions = this._onDidChangeMcpServerDefinitions.event;
+
+    constructor(private sessionId: string) {}
+
+    provideMcpServerDefinitions(token: vscode.CancellationToken): vscode.ProviderResult<vscode.McpHttpServerDefinition[]> {
+        // Return our HumanAgent MCP server definition with current sessionId
+        const serverUrl = `http://127.0.0.1:3737/mcp?sessionId=${this.sessionId}`;
+        const serverUri = vscode.Uri.parse(serverUrl);
+        const server = new vscode.McpHttpServerDefinition('HumanAgent MCP', serverUri);
+        return [server];
+    }
+
+    // Method to fire the change event when override files are reloaded
+    notifyServerDefinitionsChanged(): void {
+        console.log('HumanAgent MCP: Firing onDidChangeMcpServerDefinitions event');
+        this._onDidChangeMcpServerDefinitions.fire();
+    }
+
+    // Update session ID when it changes
+    updateSessionId(newSessionId: string): void {
+        this.sessionId = newSessionId;
+        this.notifyServerDefinitionsChanged();
+    }
+}
+
+let mcpProvider: HumanAgentMcpProvider;
+
 // Generate or retrieve persistent workspace session ID
 function getWorkspaceSessionId(context: vscode.ExtensionContext): string {
 	const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
@@ -72,12 +102,23 @@ export async function activate(context: vscode.ExtensionContext) {
 	// Generate or retrieve persistent workspace session ID
 	workspaceSessionId = getWorkspaceSessionId(context);
 
-	// Restore the persisted session name for this session ID
-	await restoreSessionName(context, workspaceSessionId);
-
 	// Initialize MCP Configuration Manager
 	const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
 	mcpConfigManager = new McpConfigManager(workspaceRoot, context.extensionPath);
+
+	// Initialize and register VS Code native MCP provider
+	mcpProvider = new HumanAgentMcpProvider(workspaceSessionId);
+	context.subscriptions.push(vscode.lm.registerMcpServerDefinitionProvider('humanagent-mcp.server', mcpProvider));
+	console.log('HumanAgent MCP: Registered MCP server definition provider');
+
+	// Fire startup event if override file exists to refresh VS Code tools
+	if (workspaceRoot) {
+		const overrideFilePath = path.join(workspaceRoot, '.vscode', 'HumanAgentOverride.json');
+		if (require('fs').existsSync(overrideFilePath)) {
+			console.log('HumanAgent MCP: Override file detected on startup, firing onDidChangeMcpServerDefinitions');
+			mcpProvider.notifyServerDefinitionsChanged();
+		}
+	}
 
 	// Initialize Server Manager
 	const serverPath = path.join(context.extensionPath, 'dist', 'mcpStandalone.js');
@@ -106,6 +147,15 @@ export async function activate(context: vscode.ExtensionContext) {
 	// Auto-detect and start standalone MCP server if already configured
 	await autoStartMcpServer(mcpConfigManager, workspaceSessionId);
 
+	// Restore the persisted session name after server is running (with retry)
+	setTimeout(async () => {
+		try {
+			await restoreSessionName(context, workspaceSessionId);
+		} catch (error) {
+			console.log('HumanAgent MCP: Could not restore session name on startup (server may not be ready yet):', error);
+		}
+	}, 1000); // Wait 1 second for server to fully start
+
 	// Initialize Tree View Provider
 	chatTreeProvider = new ChatTreeProvider();
 	const treeView = vscode.window.createTreeView('humanagent-mcp.chatSessions', {
@@ -114,7 +164,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 
 	// Initialize Chat Webview Provider (no internal server dependency)
-	const chatWebviewProvider = new ChatWebviewProvider(context.extensionUri, null, mcpConfigManager, workspaceSessionId, context);
+	const chatWebviewProvider = new ChatWebviewProvider(context.extensionUri, null, mcpConfigManager, workspaceSessionId, context, mcpProvider);
 	context.subscriptions.push(
 		vscode.window.registerWebviewViewProvider(ChatWebviewProvider.viewType, chatWebviewProvider)
 	);

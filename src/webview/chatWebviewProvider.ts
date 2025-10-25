@@ -26,7 +26,8 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
     mcpServer: McpServer | null,
     mcpConfigManager?: McpConfigManager,
     private readonly workspaceSessionId?: string,
-    private readonly context?: vscode.ExtensionContext
+    private readonly context?: vscode.ExtensionContext,
+    private readonly mcpProvider?: any
   ) {
     this.mcpServer = mcpServer;
     this.mcpConfigManager = mcpConfigManager;
@@ -333,6 +334,12 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
             }
           } catch (reloadError) {
             console.error('Failed to call /reload endpoint:', reloadError);
+          }
+
+          // Fire VS Code native MCP event to refresh tools
+          if (this.mcpProvider) {
+            this.mcpProvider.notifyServerDefinitionsChanged();
+            console.log('Fired onDidChangeMcpServerDefinitions event to refresh VS Code tools');
           }
 
           vscode.window.showInformationMessage('Override file reloaded successfully!');
