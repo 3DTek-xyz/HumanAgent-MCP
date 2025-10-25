@@ -1,5 +1,5 @@
 [X] Assess / Set logging path and details correctly for release & dev.
-[ ] Create a new readme
+[X] Create a new readme - COMPLETED: Created truthful README.md for users and ReadMeDev.md for developers
 [X] Consider how updates to the extension will work.
 
 [X] Override Prompt Script is not generated from exact coded system tool description - seems to be stale - where is the info coming from for the override creation?
@@ -14,4 +14,5 @@
 [ ] Would be great if I could paste in an image or screen shot - Copilot agent allows this in the vscode plugin.
 [X]  put an option in the MCP.json and the global setup to change the default timout to a new value - FIXED: Removed silent 300-second fallback, now waits indefinitely if no timeout specified, or uses explicit timeout from tool params/overrides
 [X] Getting chat friendly name on startup seems to be failing "[Extension Host] Failed to restore session name: TypeError: fetch failed (at console.<anonymous> (file:///Applications/Visual%20Studio%20Code.app/Contents/Resources/app/out/vs/workbench/api/node/extensionHostProcess.js:203:32117))" - FIXED: Moved session name restoration to after server startup with retry logic
+[ ] Package Extension so we can install locally and test the seperation of workspaces - to ensure we do not cross contaminate anything between workspaces. 
 [ ] Publish Extension - WHEN ALL ELSE IS DONE!

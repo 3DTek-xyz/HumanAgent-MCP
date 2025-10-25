@@ -1,6 +1,114 @@
 # HumanAgent MCP - VS Code Extension
 
-A VS Code extension that implements a Model Context Protocol (MCP) server for real-time human-AI communication. This extension enables AI agents to initiate conversations with human developers directly through VS Code's chat interface.
+# HumanAgent MCP
+
+A VS Code extension that enables AI agents to communicate directly with developers through an integrated chat interface. Built on the Model Context Protocol (MCP) standard.
+
+## What it does
+
+When AI assistants like Claude or Cursor need clarification, approval, or input from you, they can use the HumanAgent_Chat tool to send messages directly to your VS Code interface. You see their questions in real-time and can respond immediately, creating a seamless collaborative workflow.
+
+## Installation
+
+1. Open VS Code
+2. Install the HumanAgent MCP extension from the marketplace
+3. The extension automatically starts an MCP server on port 3737
+4. Configure your AI assistant to use the MCP server at `http://127.0.0.1:3737/mcp`
+
+## Usage
+
+### VS Code Interface
+
+After installation, you'll see:
+- **Chat Sessions** view in the Explorer panel showing active conversations
+- **HumanAgent Chat** panel (dockable) for the main chat interface
+- Audio notifications when new messages arrive (configurable)
+
+### Basic Workflow
+
+1. AI assistant calls the `HumanAgent_Chat` tool when it needs human input
+2. Message appears in your VS Code chat interface with optional sound notification
+3. You respond through the chat interface
+4. AI assistant receives your response and continues working
+
+### Commands
+
+- **Create New Chat Session** - Start a fresh conversation
+- **Configure MCP Server** - Set up workspace or global MCP registration
+- **Show Status** - View server status and active sessions
+
+## Configuration
+
+### MCP Server Registration
+
+The extension can register the MCP server in two ways:
+
+**Workspace Registration** (Recommended)
+- Creates `.vscode/mcp.json` in your current workspace
+- Server only available to this workspace
+- Automatic session management per workspace
+
+**Global Registration**
+- Registers in VS Code's global MCP settings  
+- Available to all workspaces
+- Manual session management
+
+### Settings
+
+Access via VS Code Settings (search for "HumanAgent"):
+
+- `humanagent-mcp.logging.enabled` - Enable debug logging to `.vscode` directory (default: false)
+- `humanagent-mcp.logging.level` - Log level: ERROR, WARN, INFO, DEBUG (default: INFO)
+
+### Tool Customization
+
+Create `.vscode/override-prompt.md` in your workspace to customize how the AI tool behaves:
+
+```markdown
+# Custom HumanAgent_Chat Tool
+
+## Description
+Your custom description here
+
+## Properties
+- message: Custom message field description
+- timeout: Response timeout in seconds (optional)
+```
+
+## Web Interface
+
+Access the web interface at `http://127.0.0.1:3737/` to:
+- View chat sessions from any browser
+- Send messages from outside VS Code  
+- Monitor active conversations
+
+## Requirements
+
+- VS Code 1.105.0 or higher
+- Network access to localhost port 3737
+- AI assistant configured to use MCP (Claude, Cursor, etc.)
+
+## Troubleshooting
+
+**Extension not starting**
+- Check VS Code Developer Console for errors
+- Verify port 3737 is not in use by another application
+
+**AI can't connect**  
+- Ensure MCP server is registered (use Configure MCP Server command)
+- Check the server URL includes your session ID: `http://127.0.0.1:3737/mcp?sessionId=your-session-id`
+
+**No audio notifications**
+- Check VS Code notification settings
+- Test notifications using the Configure panel
+
+**Messages not appearing**
+- Refresh the Chat Sessions view
+- Check server status in the HumanAgent Chat panel
+
+## License
+
+MIT License
 
 ## Features
 
