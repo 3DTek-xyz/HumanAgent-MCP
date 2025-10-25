@@ -1677,8 +1677,8 @@ export class McpServer extends EventEmitter {
   private async handleHumanAgentChatTool(messageId: string, params: HumanAgentChatToolParams, sessionId?: string, toolName?: string): Promise<McpMessage> {
     this.debugLogger.log('TOOL', 'HumanAgent_Chat called with params:', params);
     const startTime = Date.now();
-    const timeout = (params.timeout || 300) * 1000; // Convert to milliseconds
-    this.debugLogger.log('TOOL', `Using timeout: ${timeout}ms (${timeout/1000}s)`);
+    const timeoutMs = params.timeout ? params.timeout * 1000 : null; // Convert to milliseconds or null for no timeout
+    this.debugLogger.log('TOOL', `Using timeout: ${timeoutMs ? `${timeoutMs}ms (${timeoutMs/1000}s)` : 'no timeout (wait indefinitely)'}`);
     
     // Generate unique request ID for tracking this specific request
     const requestId = `${messageId}-${Date.now()}`;
@@ -1690,23 +1690,26 @@ export class McpServer extends EventEmitter {
     
     // Wait for human response
     return new Promise((resolve) => {
-      // Set up timeout
-      const timeoutHandle = setTimeout(() => {
-        // Remove from ChatManager - find which session it belongs to
-        const pendingRequestInfo = this.chatManager.findPendingRequest(requestId);
-        if (pendingRequestInfo) {
-          this.chatManager.removePendingRequest(pendingRequestInfo.sessionId, requestId);
-        }
-        this.debugLogger.log('TOOL', `Request ${requestId} timed out after ${timeout/1000}s`);
-        resolve({
-          id: messageId,
-          type: 'response',
-          error: {
-            code: -32603,
-            message: `Human response timeout after ${params.timeout || 300} seconds`
+      // Set up timeout only if specified
+      let timeoutHandle: NodeJS.Timeout | null = null;
+      if (timeoutMs) {
+        timeoutHandle = setTimeout(() => {
+          // Remove from ChatManager - find which session it belongs to
+          const pendingRequestInfo = this.chatManager.findPendingRequest(requestId);
+          if (pendingRequestInfo) {
+            this.chatManager.removePendingRequest(pendingRequestInfo.sessionId, requestId);
           }
-        });
-      }, timeout);
+          this.debugLogger.log('TOOL', `Request ${requestId} timed out after ${timeoutMs/1000}s`);
+          resolve({
+            id: messageId,
+            type: 'response',
+            error: {
+              code: -32603,
+              message: `Human response timeout after ${params.timeout} seconds`
+            }
+          });
+        }, timeoutMs);
+      }
       
       // Store the pending request using the extracted session ID
       const sessionToUse = sessionId || params.sessionId || 'default';
@@ -1737,7 +1740,7 @@ export class McpServer extends EventEmitter {
       this.chatManager.addPendingRequest(sessionToUse, requestId, { ...params, toolName: toolName || 'HumanAgent_Chat' });
       this.requestResolvers.set(requestId, {
         resolve: (response: string) => {
-          clearTimeout(timeoutHandle);
+          if (timeoutHandle) { clearTimeout(timeoutHandle); }
           const responseTime = Date.now() - startTime;
           this.debugLogger.log('TOOL', `Request ${requestId} completed with response:`, response);
           
@@ -1768,7 +1771,7 @@ export class McpServer extends EventEmitter {
           });
         },
         reject: (error: Error) => {
-          clearTimeout(timeoutHandle);
+          if (timeoutHandle) { clearTimeout(timeoutHandle); }
           this.debugLogger.log('TOOL', `Request ${requestId} rejected:`, error);
           resolve({
             id: messageId,
