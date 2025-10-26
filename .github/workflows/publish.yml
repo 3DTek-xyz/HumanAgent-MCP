@@ -28,7 +28,9 @@ jobs:
         npm version $VERSION --no-git-tag-version
         
     - name: Package extension
-      run: npm run vscode:prepublish
+      run: |
+        npm run vscode:prepublish
+        npx @vscode/vsce package
       
     - name: Publish to marketplace
       run: npx @vscode/vsce publish --pat ${{ secrets.VCSE_PAT }}
@@ -36,7 +38,7 @@ jobs:
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
       with:
-        files: ./humanagent-mcp-*.vsix
+        files: "*.vsix"
         tag_name: ${{ github.ref_name }}
         name: Release ${{ github.ref_name }}
         generate_release_notes: true
