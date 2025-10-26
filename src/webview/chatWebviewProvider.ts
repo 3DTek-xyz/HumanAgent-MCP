@@ -322,6 +322,7 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
           }
 
           // Fire VS Code native MCP event to refresh tools
+          // The version update will force VS Code to refresh cached tool definitions
           if (this.mcpProvider) {
             this.mcpProvider.notifyServerDefinitionsChanged();
             console.log('Fired onDidChangeMcpServerDefinitions event to refresh VS Code tools');
@@ -988,12 +989,10 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
               // Update status text based on configuration
               const statusElement = document.getElementById('server-status-text');
               if (statusElement && message.data.configType) {
-                if (message.data.configType === 'workspace') {
-                  statusElement.textContent = 'HumanAgent MCP Server (Workspace)';
-                } else if (message.data.configType === 'global') {
-                  statusElement.textContent = 'HumanAgent MCP Server (Global)';
+                if (message.data.configType === 'native') {
+                  statusElement.textContent = 'HumanAgent MCP Server (Connected)';
                 } else {
-                  statusElement.textContent = 'HumanAgent MCP Server (Not Configured)';
+                  statusElement.textContent = 'HumanAgent MCP Server (Unknown)';
                 }
               }
               console.log('Server status:', message.data);

@@ -553,7 +553,7 @@ export class McpServer extends EventEmitter {
       // Web interface for multi-session chat
       await this.handleWebInterface(req, res);
       return;
-    } else if (req.url?.startsWith('/sessions') || req.url === '/response' || req.url?.startsWith('/tools') || req.url === '/reload' || req.url?.startsWith('/messages/')) {
+    } else if (req.url?.startsWith('/sessions') || req.url === '/response' || req.url?.startsWith('/tools') || req.url?.startsWith('/debug') || req.url === '/reload' || req.url?.startsWith('/messages/')) {
       // Session management, response, tools, reload, messages, and chat endpoints
       await this.handleSessionEndpoint(req, res);
       return;
@@ -1012,6 +1012,39 @@ export class McpServer extends EventEmitter {
         const finalTools = Array.from(toolMap.values());
         res.end(JSON.stringify({ tools: finalTools, merged: true }));
       }
+    } else if (req.method === 'GET' && url.pathname.startsWith('/debug/tools')) {
+      // Debug endpoint to inspect tools for a specific session
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      
+      const sessionId = url.searchParams.get('sessionId');
+      
+      if (!sessionId) {
+        res.end(JSON.stringify({ 
+          error: 'sessionId parameter required',
+          usage: '/debug/tools?sessionId=<session-id>',
+          availableSessions: Array.from(this.activeSessions)
+        }));
+        return;
+      }
+      
+      const sessionTools = this.sessionTools.get(sessionId);
+      const defaultTools = Array.from(this.tools.values());
+      const tools = this.getAvailableTools(sessionId);
+      
+      res.end(JSON.stringify({
+        sessionId,
+        hasSessionTools: sessionTools !== undefined,
+        sessionToolCount: sessionTools ? sessionTools.size : 0,
+        sessionToolNames: sessionTools ? Array.from(sessionTools.keys()) : [],
+        defaultToolCount: defaultTools.length,
+        finalToolCount: tools.length,
+        humanAgentChatTool: tools.find(t => t.name === 'HumanAgent_Chat'),
+        debugInfo: {
+          sessionExists: this.activeSessions.has(sessionId),
+          sessionToolsRegistered: this.sessionTools.has(sessionId)
+        }
+      }));
     } else if (req.method === 'POST' && url.pathname === '/reload') {
       // Reload workspace overrides
       let body = '';
@@ -1809,6 +1842,7 @@ export class McpServer extends EventEmitter {
     
     this.debugLogger.log('TOOLS', `tools/list request - Extension sessionId: ${this.sessionId}, Message params: ${JSON.stringify(message.params)}`);
     this.debugLogger.log('TOOLS', `Final sessionIdToUse: ${sessionIdToUse || 'default'}`);
+    this.debugLogger.log('TOOLS', `Available session tools: ${Array.from(this.sessionTools.keys()).join(', ')}`);
     
     const tools = this.getAvailableTools(sessionIdToUse);
     
@@ -1818,9 +1852,19 @@ export class McpServer extends EventEmitter {
       const sessionTools = this.sessionTools.get(sessionIdToUse);
       if (sessionTools) {
         this.debugLogger.log('TOOLS', `Session tools found: ${Array.from(sessionTools.keys()).join(', ')}`);
+        // Log the actual HumanAgent_Chat tool description
+        const chatTool = sessionTools.get('HumanAgent_Chat');
+        if (chatTool) {
+          this.debugLogger.log('TOOLS', `HumanAgent_Chat description: ${chatTool.description.substring(0, 100)}...`);
+        }
       }
     } else {
       this.debugLogger.log('TOOLS', `Using default tools (no session ID available)`);
+      // Also log default tool description for comparison
+      const defaultChatTool = this.tools.get('HumanAgent_Chat');
+      if (defaultChatTool) {
+        this.debugLogger.log('TOOLS', `Default HumanAgent_Chat description: ${defaultChatTool.description.substring(0, 100)}...`);
+      }
     }
     
     return {
