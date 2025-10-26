@@ -51,23 +51,12 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
 
   private loadNotificationSettings() {
     try {
-      // Try to load settings from mcp.json
-      const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
-      if (workspaceRoot) {
-        const mcpConfigPath = `${workspaceRoot}/.vscode/mcp.json`;
-        const fs = require('fs');
-        if (fs.existsSync(mcpConfigPath)) {
-          const mcpConfig = JSON.parse(fs.readFileSync(mcpConfigPath, 'utf8'));
-          // Check if humanagent-mcp server has notifications settings
-          if (mcpConfig.servers && mcpConfig.servers['humanagent-mcp'] && mcpConfig.servers['humanagent-mcp'].notifications) {
-            const notifications = mcpConfig.servers['humanagent-mcp'].notifications;
-            this.notificationSettings = {
-              enableSound: notifications.enableSound ?? true,
-              enableFlashing: notifications.enableFlashing ?? true
-            };
-          }
-        }
-      }
+      // Load settings from VS Code configuration
+      const config = vscode.workspace.getConfiguration('humanagent-mcp');
+      this.notificationSettings = {
+        enableSound: config.get<boolean>('notifications.enableSound', true),
+        enableFlashing: config.get<boolean>('notifications.enableFlashing', true)
+      };
     } catch (error) {
       console.error('ChatWebviewProvider: Error loading notification settings:', error);
       // Use defaults on error
@@ -248,18 +237,14 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
       return;
     }
 
-    const isRegisteredWorkspace = this.mcpConfigManager?.isMcpServerRegistered(false) ?? false;
-    const isRegisteredGlobal = this.mcpConfigManager?.isMcpServerRegistered(true) ?? false;
-    const configType = isRegisteredWorkspace ? 'workspace' : (isRegisteredGlobal ? 'global' : 'none');
-
     this._view.webview.postMessage({
       type: 'serverStatus',
       data: {
         running: true, // Assume standalone server is running if configured
         tools: 1, // Default tool count
         pendingRequests: 0, // Can't get from standalone server easily
-        registered: isRegisteredWorkspace || isRegisteredGlobal,
-        configType: configType
+        registered: true, // Always true with native provider
+        configType: 'native' // Native provider registration
       }
     });
   }
@@ -488,11 +473,9 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
           vscode.window.showInformationMessage('MCP Server management not available - using standalone server');
           break;
         case 'register':
-          // Use the MCP configuration from the parent command
-          vscode.commands.executeCommand('humanagent-mcp.configureMcp');
-          break;
         case 'unregister':
-          vscode.commands.executeCommand('humanagent-mcp.configureMcp');
+          // Registration handled automatically by native provider
+          vscode.window.showInformationMessage('HumanAgent MCP registration is handled automatically by the native provider.');
           break;
         case 'configure':
           vscode.commands.executeCommand('humanagent-mcp.configureMcp');
@@ -500,6 +483,10 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
         case 'testSound':
           // Test notification sound by triggering a fake notification
           await this.displayHumanAgentMessage('🔊 Audio test - this is a test notification sound!', 'Testing audio notifications', 'test-audio');
+          break;
+        case 'requestServerStatus':
+          // Show the same notification popup as the main status command
+          vscode.commands.executeCommand('humanagent-mcp.showStatus');
           break;
         case 'overridePrompt':
           await this.createPromptOverrideFile();
@@ -850,7 +837,8 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
         <script>
           const vscode = acquireVsCodeApi();
           
-          // Set global flag for override file existence
+          // Set session ID and override file flag
+          const sessionId = '${this.workspaceSessionId}';
           window.overrideFileExists = ${overrideFileExists};
           
           // Play notification beep sound
@@ -955,47 +943,15 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
           let currentServerStatus = null;
 
           function getDynamicMenuOptions() {
-            const options = [];
+            // Simplified menu options (no registration needed with native provider)
+            const options = [
+              { text: '📊 Show Status', action: 'requestServerStatus' },
+              { text: window.overrideFileExists ? '📁 Recreate Override File' : '📁 Create Override File', action: 'overridePrompt' },
+              { text: '📝 Name This Chat', action: 'nameSession' },
+              { text: '🌐 Open Web View', action: 'openWebView' }
+            ];
             
-            if (!currentServerStatus) {
-              // Default options when status unknown
-              const defaultOptions = [
-                { text: '📦 Install Globally', action: 'register' },
-                { text: '📁 Install in Workspace', action: 'register' },
-                { text: '📊 Show Status', action: 'requestServerStatus' },
-                { text: window.overrideFileExists ? '📁 Recreate Override File' : '📁 Create Override File', action: 'overridePrompt' },
-                { text: '📝 Name This Chat', action: 'nameSession' },
-                { text: '🌐 Open Web View', action: 'openWebView' }
-              ];
-              
-              // Check for override file existence even when status unknown
-              if (window.overrideFileExists) {
-                defaultOptions.push({ text: '🔄 Reload Override File', action: 'reloadOverride' });
-              }
-              
-              defaultOptions.push({ text: '⚙️ Configure MCP', action: 'configure' });
-              return defaultOptions;
-            }
-
-            // Dynamic options based on current registration status
-            if (currentServerStatus.configType === 'workspace') {
-              options.push({ text: '🗑️ Uninstall from Workspace', action: 'unregister' });
-              options.push({ text: '📦 Install Globally', action: 'register' });
-            } else if (currentServerStatus.configType === 'global') {
-              options.push({ text: '📁 Install in Workspace', action: 'register' }); 
-              options.push({ text: '🗑️ Uninstall Globally', action: 'unregister' });
-            } else {
-              // Not installed anywhere
-              options.push({ text: '📦 Install Globally', action: 'register' });
-              options.push({ text: '📁 Install in Workspace', action: 'register' });
-            }
-            
-            options.push({ text: '📊 Show Status', action: 'requestServerStatus' });
-            options.push({ text: window.overrideFileExists ? '📁 Recreate Override File' : '📁 Create Override File', action: 'overridePrompt' });
-            options.push({ text: '📝 Name This Chat', action: 'nameSession' });
-            options.push({ text: '🌐 Open Web View', action: 'openWebView' });
-            
-            // Check for HumanAgentOverride.json file existence (passed from extension)
+            // Check for override file existence
             if (window.overrideFileExists) {
               options.push({ text: '🔄 Reload Override File', action: 'reloadOverride' });
             }
@@ -1059,19 +1015,78 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
           });
 
           // Set up SSE connection for real-time server events
+          let currentEventSource = null;
+          let connectionInProgress = false;
+          
           function setupSSEConnection() {
+            if (connectionInProgress) {
+              console.log('⚠️ SSE connection already in progress, skipping duplicate attempt');
+              return;
+            }
+            
+            connectionInProgress = true;
+            
             try {
-              console.log('Setting up SSE connection to MCP server...');
-              const eventSource = new EventSource('http://localhost:3737/mcp');
+              // Close existing connection if present
+              if (currentEventSource && currentEventSource.readyState !== 2) { // 2 = CLOSED
+                console.log('🔄 Closing existing EventSource before creating new one');
+                currentEventSource.close();
+              }
+              
+              console.log('Setting up SSE connection to MCP server for session:', sessionId);
+              const eventSource = new EventSource(\`http://localhost:3737/mcp?sessionId=\${sessionId}\`);
+              currentEventSource = eventSource;
+              
+              // Enhanced connection health monitoring
+              let lastHeartbeat = Date.now();
+              let heartbeatTimeout = null;
+              let messageCount = 0;
+              let connectionStartTime = Date.now();
+              
+              // Monitor heartbeat to detect stale connections
+              function resetHeartbeatTimeout() {
+                if (heartbeatTimeout) {
+                  clearTimeout(heartbeatTimeout);
+                }
+                heartbeatTimeout = setTimeout(() => {
+                  console.error('❌ SSE Connection Analysis:');
+                  console.error('  - No heartbeat for 25 seconds, EventSource appears stale');
+                  console.error('  - Last heartbeat:', new Date(lastHeartbeat).toISOString());
+                  console.error('  - Connection duration:', Math.round((Date.now() - connectionStartTime) / 1000), 'seconds');
+                  console.error('  - Messages received:', messageCount);
+                  console.error('  - EventSource readyState:', eventSource.readyState);
+                  console.error('  - Reconnecting...');
+                  eventSource.close();
+                  connectionInProgress = false;
+                  setTimeout(setupSSEConnection, 1000);
+                }, 25000); // Timeout after 25 seconds (2.5x heartbeat interval)
+              }
               
               eventSource.onopen = function(event) {
-                console.log('SSE connection opened:', event);
+                console.log('✅ SSE connection opened for session:', sessionId);
+                console.log('   EventSource readyState:', eventSource.readyState);
+                console.log('   Connection time:', new Date().toISOString());
+                lastHeartbeat = Date.now();
+                connectionStartTime = Date.now();
+                messageCount = 0;
+                connectionInProgress = false; // Connection successful, allow future connections
+                resetHeartbeatTimeout();
               };
               
               eventSource.onmessage = function(event) {
                 try {
+                  messageCount++;
                   const data = JSON.parse(event.data);
-                  console.log('SSE event received:', data);
+                  
+                  // Handle heartbeat for connection monitoring
+                  if (data.type === 'heartbeat') {
+                    lastHeartbeat = Date.now();
+                    resetHeartbeatTimeout();
+                    console.log('💓 Heartbeat received at', new Date().toISOString(), '(msg #' + messageCount + ')');
+                    return; // Don't log heartbeats further
+                  }
+                  
+                  console.log('📨 SSE event received (msg #' + messageCount + '):', data);
                   
                   if (data.type === 'request-state-change') {
                     handleRequestStateChange(data.data);
@@ -1087,13 +1102,30 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
               };
               
               eventSource.onerror = function(error) {
-                console.error('SSE connection error:', error);
-                // Try to reconnect after 5 seconds
+                console.error('❌ SSE connection error detected:');
+                console.error('   Error object:', error);
+                console.error('   EventSource readyState:', eventSource.readyState);
+                console.error('   Connection duration:', Math.round((Date.now() - connectionStartTime) / 1000), 'seconds');
+                console.error('   Messages received before error:', messageCount);
+                console.error('   Last heartbeat:', new Date(lastHeartbeat).toISOString());
+                
+                if (heartbeatTimeout) {
+                  clearTimeout(heartbeatTimeout);
+                }
+                
+                // Log readyState meaning
+                const stateNames = ['CONNECTING', 'OPEN', 'CLOSED'];
+                console.error('   EventSource state:', stateNames[eventSource.readyState] || 'UNKNOWN');
+                
+                // Reset connection state and try to reconnect after 5 seconds
+                connectionInProgress = false;
+                console.log('🔄 Reconnecting SSE in 5 seconds...');
                 setTimeout(setupSSEConnection, 5000);
               };
               
             } catch (error) {
               console.error('Failed to setup SSE connection:', error);
+              connectionInProgress = false;
             }
           }
 

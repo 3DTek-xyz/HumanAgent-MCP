@@ -68,15 +68,10 @@ export class McpConfigManager {
 
       // Use the extension path passed during construction
 
-      // Configure our MCP server (HTTP transport)
-      const mcpUrl = sessionId ? `http://127.0.0.1:3737/mcp?sessionId=${sessionId}` : 'http://127.0.0.1:3737/mcp';
+      // Configure our MCP server (HTTP transport) - no sessionId in URL
       const serverConfig: any = {
         type: 'http',
-        url: mcpUrl,
-        notifications: {
-          enableSound: true,
-          enableFlashing: true
-        }
+        url: 'http://127.0.0.1:3737/mcp'
       };
 
       // Add our server to the config
@@ -100,15 +95,10 @@ export class McpConfigManager {
     try {
       // Use the extension path passed during construction
 
-      // Configure our MCP server (HTTP transport)
-      const mcpUrl = sessionId ? `http://127.0.0.1:3737/mcp?sessionId=${sessionId}` : 'http://127.0.0.1:3737/mcp';
+      // Configure our MCP server (HTTP transport) - no sessionId in URL
       const serverConfig: any = {
         type: 'http',
-        url: mcpUrl,
-        notifications: {
-          enableSound: true,
-          enableFlashing: true
-        }
+        url: 'http://127.0.0.1:3737/mcp'
       };
 
       // Get current global MCP servers configuration

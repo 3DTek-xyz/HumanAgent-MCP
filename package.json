@@ -127,6 +127,16 @@
           "enum": ["ERROR", "WARN", "INFO", "DEBUG"],
           "default": "INFO",
           "description": "Set the logging level for HumanAgent MCP server"
+        },
+        "humanagent-mcp.notifications.enableSound": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable audio notifications when AI agents send messages"
+        },
+        "humanagent-mcp.notifications.enableFlashing": {
+          "type": "boolean", 
+          "default": true,
+          "description": "Enable visual flashing notifications when AI agents send messages"
         }
       }
     }

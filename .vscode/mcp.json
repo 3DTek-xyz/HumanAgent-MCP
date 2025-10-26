@@ -10,14 +10,6 @@
         "6000"
       ],
       "env": {}
-    },
-    "humanagent-mcp": {
-      "type": "http",
-      "url": "http://127.0.0.1:3737/mcp?sessionId=session-a8f49eee-068c-42f1-b611-14651fa5ccc6",
-      "notifications": {
-        "enableSound": true,
-        "enableFlashing": true
-      }
     }
   },
   "inputs": []

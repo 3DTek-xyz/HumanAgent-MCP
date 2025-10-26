@@ -21,10 +21,11 @@ class HumanAgentMcpProvider implements vscode.McpServerDefinitionProvider {
     constructor(private sessionId: string) {}
 
     provideMcpServerDefinitions(token: vscode.CancellationToken): vscode.ProviderResult<vscode.McpHttpServerDefinition[]> {
-        // Return our HumanAgent MCP server definition with current sessionId
-        const serverUrl = `http://127.0.0.1:3737/mcp?sessionId=${this.sessionId}`;
+        // Use separate endpoint for MCP tools to avoid SSE conflicts with webview
+        const serverUrl = `http://127.0.0.1:3737/mcp-tools?sessionId=${this.sessionId}`;
         const serverUri = vscode.Uri.parse(serverUrl);
         const server = new vscode.McpHttpServerDefinition('HumanAgent MCP', serverUri);
+        console.log('HumanAgent MCP: Using separate MCP tools endpoint to avoid SSE conflicts');
         return [server];
     }
 
@@ -144,8 +145,8 @@ export async function activate(context: vscode.ExtensionContext) {
 	
 	serverManager = ServerManager.getInstance(serverOptions);
 
-	// Auto-detect and start standalone MCP server if already configured
-	await autoStartMcpServer(mcpConfigManager, workspaceSessionId);
+	// Auto-start server and register session (no mcp.json dependency)
+	await ensureServerAndRegisterSession(workspaceSessionId);
 
 	// Restore the persisted session name after server is running (with retry)
 	setTimeout(async () => {
@@ -191,9 +192,6 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	// Create dedicated status command
 	const showStatusCommand = vscode.commands.registerCommand('humanagent-mcp.showStatus', async () => {
-		const isWorkspaceRegistered = mcpConfigManager?.isMcpServerRegistered(false) ?? false;
-		const isGlobalRegistered = mcpConfigManager?.isMcpServerRegistered(true) ?? false;
-		
 		// Get detailed server status
 		const serverStatus = await serverManager.getServerStatus();
 		
@@ -204,8 +202,7 @@ export async function activate(context: vscode.ExtensionContext) {
 			`- Port: ${serverStatus.port}\n` +
 			`- Host: ${serverStatus.host}\n` +
 			`- Session: ${workspaceSessionId}\n` +
-			`- Workspace registration: ${isWorkspaceRegistered ? '✅' : '❌'}\n` +
-			`- Global registration: ${isGlobalRegistered ? '✅' : '❌'}`
+			`- Registration: Native Provider ✅`
 		);
 	});
 
@@ -252,16 +249,9 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 
 	const configureMcpCommand = vscode.commands.registerCommand('humanagent-mcp.configureMcp', async () => {
-		// Refresh state checks each time the command is executed
-		const hasWorkspace = mcpConfigManager?.hasWorkspace() ?? false;
-		const isWorkspaceRegistered = mcpConfigManager?.isMcpServerRegistered(false) ?? false;
-		const isGlobalRegistered = mcpConfigManager?.isMcpServerRegistered(true) ?? false;
-		
-		console.log(`HumanAgent MCP: Configure command - hasWorkspace: ${hasWorkspace}, workspaceRegistered: ${isWorkspaceRegistered}, globalRegistered: ${isGlobalRegistered}`);
-
 		const options = [];
 		
-		// Server management options
+		// Server management options only (registration handled automatically by native provider)
 		const serverStatus = await serverManager.getServerStatus();
 		if (serverStatus.isRunning) {
 			options.push('🔴 Stop Server');
@@ -270,33 +260,10 @@ export async function activate(context: vscode.ExtensionContext) {
 			options.push('▶️ Start Server');
 		}
 		
-		if (hasWorkspace) {
-			if (isWorkspaceRegistered) {
-				options.push('🗑️ Unregister from This Workspace');
-				console.log('HumanAgent MCP: Added workspace UNREGISTER option');
-			} else {
-				options.push('📝 Register for This Workspace');
-				console.log('HumanAgent MCP: Added workspace REGISTER option');
-			}
-		}
-		
-		if (isGlobalRegistered) {
-			options.push('🗑️ Unregister Globally');
-			console.log('HumanAgent MCP: Added global UNREGISTER option');
-		} else {
-			options.push('🌐 Register Globally');
-			console.log('HumanAgent MCP: Added global REGISTER option');
-		}
-		
-		if (hasWorkspace) {
-			options.push('📄 Open Workspace Configuration');
-		}
 		options.push('📊 Show Status');
-		
-		console.log(`HumanAgent MCP: Final options: ${options.join(', ')}`);
 
 		const action = await vscode.window.showQuickPick(options, {
-			placeHolder: 'Choose MCP Server configuration action:'
+			placeHolder: 'Choose MCP Server action:'
 		});
 
 		if (!action) {
@@ -314,36 +281,12 @@ export async function activate(context: vscode.ExtensionContext) {
 				case '🔄 Restart Server':
 					await vscode.commands.executeCommand('humanagent-mcp.restartServer');
 					break;
-				case '📝 Register for This Workspace':
-					await mcpConfigManager!.ensureMcpServerRegistered(false, workspaceSessionId);
-					vscode.window.showInformationMessage('MCP server registered for this workspace! Restart VS Code to enable Copilot integration.');
-					break;
-				case '🌐 Register Globally':
-					await mcpConfigManager!.ensureMcpServerRegistered(true, workspaceSessionId);
-					vscode.window.showInformationMessage('MCP server registered globally! Restart VS Code to enable Copilot integration.');
-					break;
-				case '🗑️ Unregister from This Workspace':
-					await mcpConfigManager!.removeMcpServerRegistration(false);
-					vscode.window.showInformationMessage('MCP server unregistered from this workspace. Restart VS Code to apply changes.');
-					break;
-				case '🗑️ Unregister Globally':
-					await mcpConfigManager!.removeMcpServerRegistration(true);
-					vscode.window.showInformationMessage('MCP server unregistered globally. Restart VS Code to apply changes.');
-					break;
-				case '📄 Open Workspace Configuration':
-					const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
-					if (workspaceRoot) {
-						const configPath = vscode.Uri.file(workspaceRoot + '/.vscode/mcp.json');
-						vscode.commands.executeCommand('vscode.open', configPath);
-					}
-					break;
 				case '📊 Show Status':
-					// Call the dedicated status command
 					vscode.commands.executeCommand('humanagent-mcp.showStatus');
 					break;
 			}
 		} catch (error) {
-			vscode.window.showErrorMessage(`MCP configuration failed: ${error instanceof Error ? error.message : String(error)}`);
+			vscode.window.showErrorMessage(`Server action failed: ${error instanceof Error ? error.message : String(error)}`);
 		}
 	});
 
@@ -364,37 +307,38 @@ export async function activate(context: vscode.ExtensionContext) {
 	//vscode.window.showInformationMessage('HumanAgent MCP extension activated successfully!');
 }
 
-// Auto-detect MCP server configuration and guide user if needed
-async function autoStartMcpServer(configManager: McpConfigManager, sessionId: string): Promise<void> {
+// Simplified server startup and session registration (no mcp.json dependency)
+async function ensureServerAndRegisterSession(sessionId: string): Promise<void> {
 	try {
-		// Check for workspace configuration first (higher priority)
-		if (configManager.isMcpServerRegistered(false)) {
-			console.log(`HumanAgent MCP: Found workspace configuration for session ${sessionId}, checking server status...`);
-			await ensureServerAccessibleAndRegister(sessionId, 'workspace');
-			return;
-		}
+		console.log(`HumanAgent MCP: Starting server and registering session ${sessionId}...`);
 		
-		// Check for global configuration
-		if (configManager.isMcpServerRegistered(true)) {
-			console.log(`HumanAgent MCP: Found global configuration for session ${sessionId}, checking server status...`);
-			await ensureServerAccessibleAndRegister(sessionId, 'global');
-			return;
-		}
-		
-		// No configuration found - guide user to setup
-		console.log(`HumanAgent MCP: No MCP configuration found for session ${sessionId}`);
-		vscode.window.showInformationMessage(
-			'HumanAgent MCP Server not configured. Use the Configure MCP command to set up the server.',
-			'Configure Now'
-		).then(selection => {
-			if (selection === 'Configure Now') {
-				vscode.commands.executeCommand('humanagent-mcp.configureMcp');
+		// Check if server is accessible, if not start it
+		const serverAccessible = await isServerAccessible();
+		if (!serverAccessible) {
+			console.log('HumanAgent MCP: Server not accessible, starting server...');
+			const serverStarted = await serverManager.ensureServerRunning();
+			if (!serverStarted) {
+				console.error('HumanAgent MCP: Failed to start server');
+				vscode.window.showWarningMessage('HumanAgent MCP Server could not be started. Some features may not work.');
+				return;
 			}
-		});
+			console.log('HumanAgent MCP: Server started successfully');
+		}
+		
+		// Register session with the server
+		const sessionExists = await validateSessionWithServer(sessionId);
+		if (!sessionExists) {
+			console.log(`HumanAgent MCP: Session ${sessionId} not found on server, registering new session...`);
+			await registerSessionWithStandaloneServer(sessionId, false);
+		} else {
+			console.log(`HumanAgent MCP: Session ${sessionId} exists on server, re-registering with override data...`);
+			await registerSessionWithStandaloneServer(sessionId, true);
+		}
+		console.log(`HumanAgent MCP: Session registration complete for ${sessionId}`);
 		
 	} catch (error) {
-		console.error('HumanAgent MCP: Failed to check server configuration:', error);
-		vscode.window.showErrorMessage('Failed to check HumanAgent MCP Server configuration');
+		console.error('HumanAgent MCP: Failed to start server or register session:', error);
+		vscode.window.showWarningMessage('HumanAgent MCP Server could not be initialized. Please check the server status and try reloading the workspace.');
 	}
 }
 
@@ -414,7 +358,7 @@ async function isPortInUse(port: number): Promise<boolean> {
 	});
 }
 
-// Check if MCP server is accessible and responding
+// Check if MCP server is accessible and responding with retry
 async function isServerAccessible(): Promise<boolean> {
 	try {
 		const response = await fetch('http://127.0.0.1:3737/sessions', {
@@ -423,12 +367,30 @@ async function isServerAccessible(): Promise<boolean> {
 		});
 		return response.ok;
 	} catch (error) {
-		console.log('HumanAgent MCP: Server accessibility check failed:', error);
+		console.log('HumanAgent MCP: Server accessibility check failed, retrying in 3 seconds...', error);
+		
+		// Wait 3 seconds and try once more
+		await new Promise(resolve => setTimeout(resolve, 3000));
+		
+		try {
+			const retryResponse = await fetch('http://127.0.0.1:3737/sessions', {
+				method: 'GET',
+				signal: AbortSignal.timeout(5000)
+			});
+			
+			if (retryResponse.ok) {
+				console.log('HumanAgent MCP: Server accessible on retry');
+				return true;
+			}
+		} catch (retryError) {
+			console.log('HumanAgent MCP: Server accessibility retry failed:', retryError);
+		}
+		
 		return false;
 	}
 }
 
-// Check if session exists on server by testing a simple MCP call
+// Check if session exists on server by testing a simple MCP call with retry
 async function validateSessionWithServer(sessionId: string): Promise<boolean> {
 	try {
 		const response = await fetch('http://127.0.0.1:3737/mcp', {
@@ -449,49 +411,100 @@ async function validateSessionWithServer(sessionId: string): Promise<boolean> {
 			return false;
 		}
 	} catch (error) {
-		console.log(`HumanAgent MCP: Session ${sessionId} validation failed:`, error);
-		return false;
+		console.log(`HumanAgent MCP: Session ${sessionId} validation failed, retrying in 3 seconds...`, error);
+		
+		// Wait 3 seconds and try once more
+		await new Promise(resolve => setTimeout(resolve, 3000));
+		
+		try {
+			const retryResponse = await fetch('http://127.0.0.1:3737/mcp', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ 
+					sessionId,
+					method: 'tools/list'
+				})
+			});
+			
+			if (retryResponse.ok) {
+				const result = await retryResponse.json() as any;
+				console.log(`HumanAgent MCP: Session ${sessionId} validated on server (retry)`);
+				return true;
+			} else {
+				console.log(`HumanAgent MCP: Session ${sessionId} not found on server (${retryResponse.status}) (retry)`);
+				return false;
+			}
+		} catch (retryError) {
+			console.log(`HumanAgent MCP: Session ${sessionId} validation retry failed:`, retryError);
+			return false;
+		}
 	}
 }
 
-// Register session with standalone server via HTTP (always sends override data)
+// Register session with standalone server via HTTP (always sends override data) with retry
 async function registerSessionWithStandaloneServer(sessionId: string, forceReregister: boolean = false): Promise<void> {
-	try {
-		// Read workspace override file if it exists
-		let overrideData = null;
-		const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
-		if (workspaceRoot) {
-			const overrideFilePath = path.join(workspaceRoot, '.vscode', 'HumanAgentOverride.json');
-			try {
-				const fs = require('fs');
-				if (fs.existsSync(overrideFilePath)) {
-					const overrideContent = fs.readFileSync(overrideFilePath, 'utf8');
-					overrideData = JSON.parse(overrideContent);
-					console.log(`HumanAgent MCP: Loaded override data for session ${sessionId}`);
-				}
-			} catch (error) {
-				console.error(`HumanAgent MCP: Error reading override file:`, error);
+	// Read workspace override file if it exists
+	let overrideData = null;
+	const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+	if (workspaceRoot) {
+		const overrideFilePath = path.join(workspaceRoot, '.vscode', 'HumanAgentOverride.json');
+		try {
+			const fs = require('fs');
+			if (fs.existsSync(overrideFilePath)) {
+				const overrideContent = fs.readFileSync(overrideFilePath, 'utf8');
+				overrideData = JSON.parse(overrideContent);
+				console.log(`HumanAgent MCP: Loaded override data for session ${sessionId}`);
 			}
+		} catch (error) {
+			console.error(`HumanAgent MCP: Error reading override file:`, error);
 		}
-		
+	}
+	
+	const requestBody = { 
+		sessionId,
+		overrideData: overrideData,
+		forceReregister: forceReregister
+	};
+	
+	try {
 		const response = await fetch('http://127.0.0.1:3737/sessions/register', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ 
-				sessionId,
-				overrideData: overrideData,
-				forceReregister: forceReregister
-			})
+			body: JSON.stringify(requestBody)
 		});
 		
 		if (response.ok) {
 			const result = await response.json() as any;
 			console.log(`HumanAgent MCP: Session ${sessionId} registered successfully. Total sessions: ${result.totalSessions}`);
+			return;
 		} else {
 			console.error(`HumanAgent MCP: Failed to register session ${sessionId}: ${response.status}`);
 		}
 	} catch (error) {
-		console.error(`HumanAgent MCP: Error registering session ${sessionId}:`, error);
+		console.error(`HumanAgent MCP: Error registering session ${sessionId}, retrying in 3 seconds...`, error);
+		
+		// Wait 3 seconds and try once more
+		await new Promise(resolve => setTimeout(resolve, 3000));
+		
+		try {
+			const retryResponse = await fetch('http://127.0.0.1:3737/sessions/register', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(requestBody)
+			});
+			
+			if (retryResponse.ok) {
+				const result = await retryResponse.json() as any;
+				console.log(`HumanAgent MCP: Session ${sessionId} registered successfully on retry. Total sessions: ${result.totalSessions}`);
+				return;
+			} else {
+				console.error(`HumanAgent MCP: Failed to register session ${sessionId} on retry: ${retryResponse.status}`);
+				throw new Error(`Registration failed: ${retryResponse.status}`);
+			}
+		} catch (retryError) {
+			console.error(`HumanAgent MCP: Session registration retry failed:`, retryError);
+			throw new Error(`Registration failed after retry: ${retryError}`);
+		}
 	}
 }
 

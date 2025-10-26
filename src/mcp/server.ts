@@ -17,8 +17,8 @@ class DebugLogger {
 
   constructor(workspaceRoot?: string) {
     // Check environment variables for logging configuration
-    this.loggingEnabled = process.env.HUMANAGENT_LOGGING_ENABLED === 'true';
-    this.loggingLevel = process.env.HUMANAGENT_LOGGING_LEVEL || 'INFO';
+    this.loggingEnabled = process.env.HUMANAGENT_LOGGING_ENABLED === 'true' || true; // Enable by default for debugging
+    this.loggingLevel = process.env.HUMANAGENT_LOGGING_LEVEL || 'DEBUG'; // Debug level by default
     
     // If logging is disabled, just log to console for important messages
     if (!this.loggingEnabled) {
@@ -27,20 +27,9 @@ class DebugLogger {
     }
     
     try {
-      // Determine log path based on workspace or fallback to temp directory
-      if (workspaceRoot) {
-        const vscodeDir = path.join(workspaceRoot, '.vscode');
-        this.logPath = path.join(vscodeDir, 'HumanAgent-server.log');
-        
-        // Ensure .vscode directory exists
-        if (!fs.existsSync(vscodeDir)) {
-          fs.mkdirSync(vscodeDir, { recursive: true });
-        }
-      } else {
-        // Fallback for standalone server or when no workspace available
-        const tempDir = os.tmpdir();
-        this.logPath = path.join(tempDir, 'HumanAgent-server.log');
-      }
+      // Always log to system temp directory - server is workspace-independent
+      const tempDir = os.tmpdir();
+      this.logPath = path.join(tempDir, 'HumanAgent-server.log');
       
       console.log(`[LOGGER] Attempting to create log file at: ${this.logPath}`);
       
@@ -134,9 +123,9 @@ export class McpServer extends EventEmitter {
   private requestResolvers: Map<string, { resolve: (response: string) => void; reject: (error: Error) => void }> = new Map();
   private activeSessions: Set<string> = new Set();
   private sseConnections: Set<http.ServerResponse> = new Set();
-  private conversationToSession: Map<string, string> = new Map(); // Map VS Code conversation IDs to registered session IDs
   private chatManager: ChatManager; // Centralized chat and session management
-  private sseClients: Map<string, http.ServerResponse> = new Map(); // Per-session SSE connections
+  private sseClients: Map<string, http.ServerResponse> = new Map(); // Per-session SSE connections (VS Code webviews)
+  private webInterfaceConnections: Set<http.ServerResponse> = new Set(); // Web interface connections (all browsers)
 
   constructor(private sessionId?: string, private workspacePath?: string) {
     super();
@@ -169,31 +158,61 @@ export class McpServer extends EventEmitter {
 
   private setupEventForwarding(): void {
     this.on('request-state-change', (data) => {
-      this.debugLogger.log('SSE', 'Forwarding request-state-change to SSE connections');
-      this.broadcastToSSE('request-state-change', data);
+      this.debugLogger.log('SSE', 'Forwarding request-state-change to target session and web interface');
+      this.sendToSessionAndWeb(data.sessionId, 'request-state-change', data);
     });
   }
 
-  private broadcastToSSE(eventType: string, data: any): void {
+  // Send event to web interface connections only
+  private sendToWebInterface(eventType: string, data: any): void {
     const message = JSON.stringify({ type: eventType, data });
     const eventData = `data: ${message}\n\n`;
     
-    this.debugLogger.log('SSE', `Broadcasting to ${this.sseConnections.size} SSE connections:`, message);
+    this.debugLogger.log('SSE', `Sending to ${this.webInterfaceConnections.size} web interface connections:`, message);
     
-    // Send to all active SSE connections
-    for (const connection of this.sseConnections) {
+    for (const connection of this.webInterfaceConnections) {
       if (!connection.destroyed) {
         try {
           connection.write(eventData);
         } catch (error) {
-          this.debugLogger.log('SSE', 'Failed to write to SSE connection:', error);
+          this.debugLogger.log('SSE', 'Failed to write to web interface connection:', error);
+          this.webInterfaceConnections.delete(connection);
           this.sseConnections.delete(connection);
         }
       } else {
+        this.webInterfaceConnections.delete(connection);
         this.sseConnections.delete(connection);
       }
     }
   }
+
+  // Send event to specific session only
+  private sendToSession(sessionId: string, eventType: string, data: any): void {
+    const message = { type: eventType, data };
+    
+    const sessionConnection = this.sseClients.get(sessionId);
+    if (!sessionConnection) {
+      this.debugLogger.log('WARN', `❌ No SSE connection found for session ${sessionId}`);
+      return;
+    }
+    
+    // Debug: Compare connection objects to see if they match the heartbeat connection
+    this.debugLogger.log('SSE', `🔍 Sending to session ${sessionId} - Connection destroyed: ${sessionConnection.destroyed}, writable: ${sessionConnection.writable}`);
+    
+    // Use the enhanced sendSSEMessage method with health checking
+    this.sendSSEMessage(sessionConnection, message);
+    this.debugLogger.log('SSE', `Sent to session ${sessionId}:`, JSON.stringify(message));
+  }
+
+  // Send event to specific session AND web interface
+  private sendToSessionAndWeb(sessionId: string, eventType: string, data: any): void {
+    // Send to specific session
+    this.sendToSession(sessionId, eventType, data);
+    // Also send to web interface
+    this.sendToWebInterface(eventType, data);
+  }
+
+
 
   private sendMcpNotification(method: string, params?: any, sessionId?: string): void {
     this.debugLogger.log('MCP', `Sending SSE notification: ${method}`, params);
@@ -229,11 +248,27 @@ export class McpServer extends EventEmitter {
 
   private sendSSEMessage(response: http.ServerResponse, message: any): void {
     try {
+      // Check connection health before sending
+      if (response.destroyed) {
+        this.debugLogger.log('ERROR', `Cannot send SSE message: connection is destroyed`);
+        return;
+      }
+      
+      if (!response.writable) {
+        this.debugLogger.log('ERROR', `Cannot send SSE message: connection is not writable`);
+        return;
+      }
+      
       const data = JSON.stringify(message);
-      response.write(`data: ${data}\n\n`);
-      this.debugLogger.log('SSE', `Sent SSE message: ${message.method || 'response'}`);
+      const success = response.write(`data: ${data}\n\n`);
+      
+      if (success) {
+        this.debugLogger.log('SSE', `✅ Successfully sent SSE message: ${message.type || message.method || 'response'}`);
+      } else {
+        this.debugLogger.log('ERROR', `❌ Failed to write SSE message (buffer full): ${message.type || message.method || 'response'}`);
+      }
     } catch (error) {
-      this.debugLogger.log('ERROR', `Failed to send SSE message:`, error);
+      this.debugLogger.log('ERROR', `❌ Exception sending SSE message:`, error);
     }
   }
 
@@ -257,10 +292,7 @@ export class McpServer extends EventEmitter {
             type: 'string',
             description: 'Optional context or background information for the human agent'
           },
-          sessionId: {
-            type: 'string',
-            description: 'Optional specific session ID to use. If not provided, a new session will be created.'
-          },
+
           priority: {
             type: 'string',
             enum: ['low', 'normal', 'high', 'urgent'],
@@ -512,7 +544,11 @@ export class McpServer extends EventEmitter {
     const reqUrl = new URL(req.url!, `http://${req.headers.host}`);
     
     if (reqUrl.pathname === '/mcp') {
-      // Main MCP protocol endpoint
+      // Main MCP protocol endpoint (webview SSE)
+    } else if (reqUrl.pathname === '/mcp-tools') {
+      // MCP tools endpoint (extension only, no SSE conflicts)
+      await this.handleMcpToolsEndpoint(req, res, reqUrl);
+      return;
     } else if (req.url === '/HumanAgent') {
       // Web interface for multi-session chat
       await this.handleWebInterface(req, res);
@@ -626,22 +662,31 @@ export class McpServer extends EventEmitter {
     this.debugLogger.log('SSE', 'Headers:', req.headers);
     this.debugLogger.log('SSE', 'URL:', req.url);
     
-    // Extract sessionId from query params in URL or Mcp-Session-Id header
+    // Extract sessionId and clientType from query params in URL or headers
     const url = new URL(req.url!, `http://${req.headers.host}`);
     let sessionId = url.searchParams.get('sessionId');
+    const clientType = url.searchParams.get('clientType');
     
     // If not in URL, try the Mcp-Session-Id header (per MCP spec)
     if (!sessionId) {
       sessionId = req.headers['mcp-session-id'] as string;
     }
     
-    if (!sessionId) {
-      this.debugLogger.log('SSE', 'No sessionId in SSE request (tried URL param and Mcp-Session-Id header)');
+    // Validate connection parameters
+    if (!sessionId && clientType !== 'web') {
+      this.debugLogger.log('ERROR', 'SSE connection rejected: sessionId required for VS Code connections, or use clientType=web for web interface');
       this.debugLogger.log('SSE', `Request headers: ${JSON.stringify(req.headers)}`);
       this.debugLogger.log('SSE', `Request URL: ${req.url}`);
-      // For now, let's allow connection without sessionId and use a default
-      sessionId = 'default-sse-session';
-      this.debugLogger.log('SSE', `Using default sessionId: ${sessionId}`);
+      res.statusCode = 400;
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ error: 'sessionId required for VS Code connections, or use clientType=web for web interface' }));
+      return;
+    }
+    
+    // For web interface connections, use a placeholder sessionId for logging
+    if (clientType === 'web') {
+      sessionId = 'web-interface';
+      this.debugLogger.log('SSE', 'Web interface SSE connection detected via clientType=web');
     }
     
     // Set up Server-Sent Events (SSE) stream
@@ -657,11 +702,21 @@ export class McpServer extends EventEmitter {
     
     this.debugLogger.log('SSE', `SSE headers set for session ${sessionId}, adding to connections...`);
     
-    // Add this connection to our session-based SSE connections
-    this.sseClients.set(sessionId, res);
-    this.sseConnections.add(res); // Keep old connections for cleanup
-    this.debugLogger.log('HTTP', `Added SSE connection for session ${sessionId}. Total connections: ${this.sseConnections.size}`);
-    this.debugLogger.log('SSE', `SSE connection added for session ${sessionId}. Total: ${this.sseConnections.size}`);
+    // Detect connection type: web interface via clientType=web, VS Code via sessionId
+    const isWebInterface = clientType === 'web';
+    const isVSCodeWebview = !isWebInterface && sessionId !== 'web-interface';
+    
+    if (isWebInterface) {
+      // Web interface connection - add to web interface connections
+      this.webInterfaceConnections.add(res);
+      this.sseConnections.add(res); // Keep old connections for cleanup
+      this.debugLogger.log('SSE', `Added web interface SSE connection. Total web connections: ${this.webInterfaceConnections.size}`);
+    } else {
+      // VS Code webview connection - add to session-specific connections
+      this.sseClients.set(sessionId!, res);
+      this.sseConnections.add(res); // Keep old connections for cleanup
+      this.debugLogger.log('SSE', `Added VS Code SSE connection for session ${sessionId}. Total session connections: ${this.sseClients.size}`);
+    }
     
     // Send initial connection acknowledgment
     const initialMessage = 'data: {"type":"connection","status":"established","sessionId":"' + sessionId + '"}\n\n';
@@ -676,15 +731,22 @@ export class McpServer extends EventEmitter {
         clearInterval(heartbeat);
         this.sseConnections.delete(res);
       }
-    }, 30000); // Send heartbeat every 30 seconds
+    }, 10000); // Send heartbeat every 10 seconds
     
     // Handle client disconnect
     const cleanup = () => {
       this.debugLogger.log('HTTP', `SSE connection closed for session ${sessionId}`);
       clearInterval(heartbeat);
       this.sseConnections.delete(res);
-      this.sseClients.delete(sessionId);
-      this.debugLogger.log('HTTP', `Removed SSE connection for session ${sessionId}. Total connections: ${this.sseConnections.size}`);
+      
+      // Remove from appropriate connection type
+      if (isWebInterface) {
+        this.webInterfaceConnections.delete(res);
+        this.debugLogger.log('HTTP', `Removed web interface SSE connection. Total web connections: ${this.webInterfaceConnections.size}`);
+      } else {
+        this.sseClients.delete(sessionId);
+        this.debugLogger.log('HTTP', `Removed VS Code SSE connection for session ${sessionId}. Total session connections: ${this.sseClients.size}`);
+      }
     };
     
     req.on('close', cleanup);
@@ -696,6 +758,33 @@ export class McpServer extends EventEmitter {
     // Session termination - could be implemented if needed
     res.statusCode = 405;
     res.end('Method Not Allowed');
+  }
+
+  private async handleMcpToolsEndpoint(req: http.IncomingMessage, res: http.ServerResponse, reqUrl: URL): Promise<void> {
+    // MCP tools endpoint - handles MCP protocol for VS Code extension without SSE conflicts
+    this.debugLogger.log('HTTP', `MCP Tools: ${req.method} ${req.url}`);
+    
+    // Extract sessionId from query params
+    const sessionId = reqUrl.searchParams.get('sessionId');
+    if (!sessionId) {
+      this.debugLogger.log('ERROR', 'MCP Tools: sessionId required');
+      res.statusCode = 400;
+      res.end(JSON.stringify({ error: 'sessionId required' }));
+      return;
+    }
+
+    if (req.method === 'POST') {
+      // Handle MCP protocol messages (initialize, tools/list, tools/call)
+      await this.handleHttpPost(req, res);
+    } else if (req.method === 'GET') {
+      // Reject GET requests to prevent SSE conflicts - tools only via POST
+      this.debugLogger.log('WARN', 'MCP Tools: GET requests not allowed (use /mcp for SSE)');
+      res.statusCode = 405;
+      res.end(JSON.stringify({ error: 'GET not allowed on /mcp-tools - use /mcp for SSE' }));
+    } else {
+      res.statusCode = 405;
+      res.end('Method Not Allowed');
+    }
   }
 
   private async handleSessionEndpoint(req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
@@ -769,9 +858,9 @@ export class McpServer extends EventEmitter {
           this.sessionNames.set(sessionId, name);
           this.debugLogger.log('INFO', `Session ${sessionId} named: "${name}"`);
           
-          // Broadcast name change via SSE to all connected clients
-          this.broadcastToSSE('session-name-changed', { sessionId, name });
-          this.debugLogger.log('SSE', 'Broadcasting session name change to all clients');
+          // Send name change to target session and web interface
+          this.sendToSessionAndWeb(sessionId, 'session-name-changed', { sessionId, name });
+          this.debugLogger.log('SSE', 'Sent session name change to target session and web interface');
           
           res.statusCode = 200;
           res.setHeader('Content-Type', 'application/json');
@@ -1417,6 +1506,95 @@ export class McpServer extends EventEmitter {
             }
         }
 
+        function addSessionTab(sessionId) {
+            // Check if tab already exists
+            const existingTab = document.querySelector(\`[data-session="\${sessionId}"].tab\`);
+            if (existingTab) {
+                console.log(\`Tab for session \${sessionId} already exists\`);
+                return;
+            }
+
+            const tabsContainer = document.getElementById('tabs');
+            const contentDiv = document.querySelector('.content');
+            
+            if (!tabsContainer || !contentDiv) {
+                console.error('Could not find tabs container or content div');
+                return;
+            }
+
+            // Create new tab
+            const tabElement = document.createElement('div');
+            tabElement.className = 'tab';
+            tabElement.setAttribute('data-session', sessionId);
+            tabElement.textContent = \`Session: \${sessionId.substring(0, 8)}\`;
+            tabElement.onclick = () => switchToSession(sessionId);
+            
+            // Add tab to container
+            tabsContainer.appendChild(tabElement);
+
+            // Create new chat container
+            const chatContainer = document.createElement('div');
+            chatContainer.className = 'chat-container';
+            chatContainer.setAttribute('data-session', sessionId);
+            chatContainer.innerHTML = \`
+                <div class="messages" id="messages-\${sessionId}">
+                    <!-- Messages will be loaded dynamically -->
+                </div>
+                <div class="input-container">
+                    <textarea class="input-box" placeholder="Type your message..." data-session="\${sessionId}"></textarea>
+                    <button class="send-button" data-session="\${sessionId}">Send</button>
+                </div>
+            \`;
+            
+            // Add chat container to content
+            contentDiv.appendChild(chatContainer);
+
+            // Set up event listeners for new input elements
+            const textarea = chatContainer.querySelector('textarea');
+            const button = chatContainer.querySelector('button');
+            
+            if (textarea) {
+                textarea.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        sendResponse(sessionId);
+                    }
+                });
+            }
+            
+            if (button) {
+                button.addEventListener('click', () => sendResponse(sessionId));
+            }
+
+            console.log(\`Added new session tab: \${sessionId}\`);
+        }
+
+        function removeSessionTab(sessionId) {
+            // Remove tab
+            const tabElement = document.querySelector(\`[data-session="\${sessionId}"].tab\`);
+            if (tabElement) {
+                tabElement.remove();
+            }
+
+            // Remove chat container
+            const chatContainer = document.querySelector(\`[data-session="\${sessionId}"].chat-container\`);
+            if (chatContainer) {
+                chatContainer.remove();
+            }
+
+            // If this was the active session, switch to first available
+            const remainingTabs = document.querySelectorAll('.tab');
+            if (remainingTabs.length > 0) {
+                const firstTab = remainingTabs[0];
+                const firstSessionId = firstTab.getAttribute('data-session');
+                if (firstSessionId) {
+                    switchToSession(firstSessionId);
+                }
+            }
+
+            console.log(\`Removed session tab: \${sessionId}\`);
+        }
+
         // Load existing messages for all sessions
         async function loadExistingMessages() {
             const sessions = ['${sessions.map(s => s.id).join("', '")}'];
@@ -1478,7 +1656,7 @@ export class McpServer extends EventEmitter {
         // WebSocket connection for real-time updates
         function setupRealtimeUpdates() {
             console.log('Setting up SSE connection to /mcp...');
-            const eventSource = new EventSource('/mcp');
+            const eventSource = new EventSource('/mcp?clientType=web');
             
             eventSource.onopen = function(event) {
                 console.log('SSE connection opened successfully:', event);
@@ -1548,6 +1726,14 @@ export class McpServer extends EventEmitter {
                     } else if (data.type === 'session_update') {
                         // Refresh the page to show new sessions
                         window.location.reload();
+                    } else if (data.type === 'session-registered' && data.data) {
+                        // Add new session tab dynamically
+                        console.log('New session registered:', data.data);
+                        addSessionTab(data.data.sessionId);
+                    } else if (data.type === 'session-unregistered' && data.data) {
+                        // Remove session tab dynamically
+                        console.log('Session unregistered:', data.data);
+                        removeSessionTab(data.data.sessionId);
                     } else if (data.type === 'session-name-changed' && data.data) {
                         // Handle session name changes
                         console.log('Session name changed:', data.data);
@@ -1646,11 +1832,10 @@ export class McpServer extends EventEmitter {
 
   private async handleToolCall(message: McpMessage): Promise<McpMessage> {
     const { name, arguments: args } = message.params;
-    // Extract session ID from _meta.vscode.conversationId (VS Code) or fallback to args.sessionId (web)
-    const rawSessionId = message.params._meta?.['vscode.conversationId'] || args?.sessionId;
-    const sessionId = this.mapToRegisteredSession(rawSessionId);
+    // Use actual session ID from MCP message context, not tool argument
+    const sessionId = message.params.sessionId;
     
-    this.debugLogger.log('MCP', `Tool call - name: "${name}", raw session: ${rawSessionId}, mapped session: ${sessionId}`, { name, args });
+    this.debugLogger.log('MCP', `Tool call - name: "${name}", sessionId: ${sessionId}`, { name, args });
     
     // Check session-specific tools first, then default tools
     const sessionTools = sessionId ? this.sessionTools.get(sessionId) : null;
@@ -1676,6 +1861,21 @@ export class McpServer extends EventEmitter {
 
   private async handleHumanAgentChatTool(messageId: string, params: HumanAgentChatToolParams, sessionId?: string, toolName?: string): Promise<McpMessage> {
     this.debugLogger.log('TOOL', 'HumanAgent_Chat called with params:', params);
+    
+    // Require valid session ID - no default fallback allowed
+    const actualSessionId = sessionId || params.sessionId;
+    if (!actualSessionId) {
+      this.debugLogger.log('ERROR', 'HumanAgent_Chat tool called without session ID - rejecting');
+      return {
+        id: messageId,
+        type: 'response',
+        error: {
+          code: -32602,
+          message: 'Invalid parameters: sessionId is required for HumanAgent_Chat tool'
+        }
+      };
+    }
+    
     const startTime = Date.now();
     const timeoutMs = params.timeout ? params.timeout * 1000 : null; // Convert to milliseconds or null for no timeout
     this.debugLogger.log('TOOL', `Using timeout: ${timeoutMs ? `${timeoutMs}ms (${timeoutMs/1000}s)` : 'no timeout (wait indefinitely)'}`);
@@ -1711,9 +1911,8 @@ export class McpServer extends EventEmitter {
         }, timeoutMs);
       }
       
-      // Store the pending request using the extracted session ID
-      const sessionToUse = sessionId || params.sessionId || 'default';
-      this.debugLogger.log('TOOL', `Adding pending request ${requestId} to session: ${sessionToUse}`);
+      // Use the validated session ID
+      this.debugLogger.log('TOOL', `Adding pending request ${requestId} to session: ${actualSessionId}`);
       
       // Store the AI's message (this IS the AI communication - it talks by calling the tool)
       const aiMessage: ChatMessage = {
@@ -1723,21 +1922,21 @@ export class McpServer extends EventEmitter {
         timestamp: new Date(),
         type: 'text'
       };
-      this.chatManager.addMessage(sessionToUse, aiMessage);
-      this.debugLogger.log('CHAT', `Stored AI message in ChatManager for session ${sessionToUse}: ${aiMessage.content.substring(0, 50)}...`);
-      this.broadcastMessageToClients(sessionToUse, aiMessage);
+      this.chatManager.addMessage(actualSessionId, aiMessage);
+      this.debugLogger.log('CHAT', `Stored AI message in ChatManager for session ${actualSessionId}: ${aiMessage.content.substring(0, 50)}...`);
+      this.broadcastMessageToClients(actualSessionId, aiMessage);
       
       // Emit request state to enable input controls and show waiting indicator
       this.emit('request-state-change', {
         requestId,
-        sessionId: sessionToUse,
+        sessionId: actualSessionId,
         state: 'waiting_for_response',
         message: params.message,
         context: params.context,
         timestamp: new Date().toISOString()
       });
       
-      this.chatManager.addPendingRequest(sessionToUse, requestId, { ...params, toolName: toolName || 'HumanAgent_Chat' });
+      this.chatManager.addPendingRequest(actualSessionId, requestId, { ...params, toolName: toolName || 'HumanAgent_Chat' });
       this.requestResolvers.set(requestId, {
         resolve: (response: string) => {
           if (timeoutHandle) { clearTimeout(timeoutHandle); }
@@ -1747,7 +1946,7 @@ export class McpServer extends EventEmitter {
           // Emit request completed state to disable input controls and hide waiting indicator
           this.emit('request-state-change', {
             requestId,
-            sessionId: sessionToUse,
+            sessionId: actualSessionId,
             state: 'completed',
             response: response,
             timestamp: new Date().toISOString()
@@ -1872,38 +2071,12 @@ export class McpServer extends EventEmitter {
     }
     
     this.debugLogger.log('INFO', `Session registered: ${sessionId} (${this.activeSessions.size} total sessions)`);
+    
+    // Send session registration to web interface only (for web UI tab creation)
+    this.sendToWebInterface('session-registered', { sessionId, totalSessions: this.activeSessions.size });
   }
 
-  private mapToRegisteredSession(conversationId?: string): string | undefined {
-    if (!conversationId) {
-      return undefined;
-    }
 
-    // Check if it's already a registered session ID
-    if (this.activeSessions.has(conversationId)) {
-      return conversationId;
-    }
-
-    // Check if it's a conversation ID we've seen before
-    const mappedSession = this.conversationToSession.get(conversationId);
-    if (mappedSession && this.activeSessions.has(mappedSession)) {
-      this.debugLogger.log('MCP', `Mapped conversation ${conversationId} to session ${mappedSession}`);
-      return mappedSession;
-    }
-
-    // If not found, try to map to the first available registered session
-    // This handles the case where VS Code conversation ID needs to be linked to a web-registered session
-    const activeSessions = Array.from(this.activeSessions);
-    if (activeSessions.length > 0) {
-      const targetSession = activeSessions[0]; // Use first available session
-      this.conversationToSession.set(conversationId, targetSession);
-      this.debugLogger.log('MCP', `Auto-mapped conversation ${conversationId} to session ${targetSession}`);
-      return targetSession;
-    }
-
-    this.debugLogger.log('MCP', `No registered session found for conversation ${conversationId}`);
-    return undefined;
-  }
 
   unregisterSession(sessionId: string): void {
     this.activeSessions.delete(sessionId);
@@ -1912,6 +2085,9 @@ export class McpServer extends EventEmitter {
     this.sessionWorkspacePaths.delete(sessionId);
     this.sessionMessageSettings.delete(sessionId);
     this.debugLogger.log('INFO', `Session unregistered and cleaned up: ${sessionId} (${this.activeSessions.size} total sessions)`);
+    
+    // Send session unregistration to web interface only (for web UI tab removal)
+    this.sendToWebInterface('session-unregistered', { sessionId, totalSessions: this.activeSessions.size });
   }
 
   getActiveSessions(): string[] {
@@ -1975,7 +2151,7 @@ export class McpServer extends EventEmitter {
   // Removed: storeMessage and getSessionMessages wrapper methods - call ChatManager directly
 
   private broadcastMessageToClients(sessionId: string, message: ChatMessage): void {
-    // Broadcast message to all connected SSE clients
+    // Send message to specific session AND all web interface connections
     const messageEvent = {
       type: 'chat_message',
       sessionId: sessionId,
@@ -1990,15 +2166,32 @@ export class McpServer extends EventEmitter {
     
     const sseData = `data: ${JSON.stringify(messageEvent)}\n\n`;
     
-    // Send to all connected SSE clients (VS Code webviews and web interfaces)
-    for (const connection of this.sseConnections) {
+    // Send to the specific session's SSE connection (VS Code webview)
+    const sessionConnection = this.sseClients.get(sessionId);
+    if (sessionConnection) {
       try {
-        connection.write(sseData);
-        this.debugLogger.log('CHAT', `Broadcasted message to SSE client for session ${sessionId}`);
+        sessionConnection.write(sseData);
+        this.debugLogger.log('CHAT', `Sent message to VS Code session ${sessionId}`);
       } catch (error) {
-        this.debugLogger.log('ERROR', 'Failed to broadcast message to SSE client:', error);
+        this.debugLogger.log('ERROR', `Failed to send message to VS Code session ${sessionId}:`, error);
         // Remove failed connection
-        this.sseConnections.delete(connection);
+        this.sseClients.delete(sessionId);
+        this.sseConnections.delete(sessionConnection);
+      }
+    } else {
+      this.debugLogger.log('WARN', `No VS Code SSE connection found for session ${sessionId}`);
+    }
+    
+    // Also send to all web interface connections
+    for (const webConnection of this.webInterfaceConnections) {
+      try {
+        webConnection.write(sseData);
+        this.debugLogger.log('CHAT', `Sent message to web interface for session ${sessionId}`);
+      } catch (error) {
+        this.debugLogger.log('ERROR', `Failed to send message to web interface:`, error);
+        // Remove failed connection
+        this.webInterfaceConnections.delete(webConnection);
+        this.sseConnections.delete(webConnection);
       }
     }
   }
