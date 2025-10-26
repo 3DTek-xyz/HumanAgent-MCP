@@ -2,6 +2,12 @@
 
 VS Code extension that creates an MCP server for AI assistants to chat with humans.
 
+## Demo
+
+![HumanAgent MCP Extension Demo](high-res-demo.gif)
+
+*Complete demonstration of the HumanAgent MCP extension in action - showing real-time human-AI collaboration*
+
 ## What it does
 
 This extension provides a `HumanAgent_Chat` MCP tool that forces AI assistants to communicate through a human agent instead of giving direct responses. When an AI uses this tool, it opens a chat session where humans can respond in real-time.
