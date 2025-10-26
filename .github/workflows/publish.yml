@@ -31,7 +31,7 @@ jobs:
       run: npm run vscode:prepublish
       
     - name: Publish to marketplace
-      run: npx @vscode/vsce publish --pat ${{ secrets.VSCE_PAT }}
+      run: npx @vscode/vsce publish --pat ${{ secrets.VCSE_PAT }}
       
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
