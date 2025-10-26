@@ -8,8 +8,8 @@ node_modules
 # VS Code workspace settings
 .vscode/
 
-# GitHub workflow and personal files
-.github/
+# GitHub personal files (but allow workflows)
+.github/copilot-instructions.md
 
 # Environment files
 .env
