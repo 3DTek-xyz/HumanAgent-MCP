@@ -249,107 +249,6 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
     });
   }
 
-
-
-  private async reloadOverrideFile() {
-    try {
-      // Check if we have an active workspace
-      if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
-        vscode.window.showErrorMessage('No workspace is currently open');
-        return;
-      }
-
-      const workspaceFolder = vscode.workspace.workspaceFolders[0];
-      const overrideFilePath = path.join(workspaceFolder.uri.fsPath, '.vscode', 'HumanAgentOverride.json');
-
-      // Check if override file exists
-      if (!fs.existsSync(overrideFilePath)) {
-        vscode.window.showWarningMessage('No HumanAgentOverride.json file found in .vscode directory');
-        return;
-      }
-
-      // Force session re-registration with fresh override data
-      try {
-        // Read the current override file
-        let overrideData = null;
-        if (fs.existsSync(overrideFilePath)) {
-          const overrideContent = fs.readFileSync(overrideFilePath, 'utf8');
-          overrideData = JSON.parse(overrideContent);
-        }
-
-        // Get current sessions and re-register them with fresh data
-        const sessionsResponse = await fetch('http://localhost:3737/sessions');
-        if (sessionsResponse.ok) {
-          const sessionsData = await sessionsResponse.json() as { sessions: string[] };
-          
-          for (const sessionId of sessionsData.sessions) {
-            const response = await fetch('http://localhost:3737/sessions/register', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                sessionId,
-                overrideData: overrideData,
-                forceReregister: true
-              })
-            });
-            
-            if (!response.ok) {
-              console.error(`Failed to re-register session ${sessionId}`);
-            }
-          }
-          
-          // Call reload endpoint to trigger tools/list_changed notification to VS Code MCP
-          try {
-            const reloadResponse = await fetch('http://localhost:3737/reload', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                workspacePath: workspaceFolder.uri.fsPath
-              })
-            });
-            
-            if (reloadResponse.ok) {
-              console.log('Successfully triggered tools/list_changed notification for VS Code MCP');
-            } else {
-              console.error('Failed to trigger MCP tools reload');
-            }
-          } catch (reloadError) {
-            console.error('Failed to call /reload endpoint:', reloadError);
-          }
-
-          // Fire VS Code native MCP event to refresh tools
-          // The version update will force VS Code to refresh cached tool definitions
-          if (this.mcpProvider) {
-            this.mcpProvider.notifyServerDefinitionsChanged();
-            console.log('Fired onDidChangeMcpServerDefinitions event to refresh VS Code tools');
-          }
-
-          vscode.window.showInformationMessage('Override file reloaded successfully!');
-        } else {
-          vscode.window.showWarningMessage('Failed to get sessions from server');
-        }
-      } catch (error) {
-        console.error('Failed to reload override file:', error);
-        vscode.window.showWarningMessage('Could not communicate with MCP server for reload');
-      }
-      
-      // Refresh the webview to update the menu
-      if (this._view) {
-        this._view.webview.html = this._getHtmlForWebview(this._view.webview);
-      }
-
-      console.log('ChatWebviewProvider: Override file reloaded successfully');
-      
-    } catch (error) {
-      console.error('ChatWebviewProvider: Error reloading override file:', error);
-      vscode.window.showErrorMessage(`Failed to reload override file: ${error}`);
-    }
-  }
-
   private async createPromptOverrideFile() {
     try {
       console.log('ChatWebviewProvider: Creating prompt override file...');
@@ -491,9 +390,6 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
           break;
         case 'overridePrompt':
           await this.createPromptOverrideFile();
-          break;
-        case 'reloadOverride':
-          await this.reloadOverrideFile();
           break;
         case 'nameSession':
           await this.nameCurrentSession();
@@ -952,10 +848,7 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
               { text: '🌐 Open Web View', action: 'openWebView' }
             ];
             
-            // Check for override file existence
-            if (window.overrideFileExists) {
-              options.push({ text: '🔄 Reload Override File', action: 'reloadOverride' });
-            }
+            // Override file changes require VS Code restart/reload to take effect
             
             options.push({ text: '⚙️ Configure MCP', action: 'configure' });
             
