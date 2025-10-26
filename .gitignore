@@ -21,3 +21,5 @@ Thumbs.db
 
 # Logs
 *.log
+# macOS files
+.DS_Store
