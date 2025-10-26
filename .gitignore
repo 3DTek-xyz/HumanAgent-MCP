@@ -1,5 +1,23 @@
+# Build output
 out
 dist
 node_modules
 .vscode-test/
 *.vsix
+
+# VS Code workspace settings
+.vscode/
+
+# GitHub workflow and personal files
+.github/
+
+# Environment files
+.env
+.env.local
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
