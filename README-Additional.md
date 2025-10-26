@@ -41,6 +41,7 @@ Both interfaces show the same chat sessions and message history.
 ## Tool Customization
 
 Create `.vscode/HumanAgentOverride.json` to customize tool descriptions and message behavior:
+THIS IS SUPER HELPFUL - NOTE THE LAST PART WHERE YOU CAN APEND A MESSAGE TO THE END OF EVERY REPLY!
 
 ```json
 {
