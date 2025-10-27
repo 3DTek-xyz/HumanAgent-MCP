@@ -145,7 +145,7 @@
         "humanagent-mcp.notifications.showStartup": {
           "type": "boolean",
           "default": true,
-          "description": "Show startup notification when HumanAgent MCP extension is activated"
+          "description": "HumanAgent MCP extension is new - I would appreciate any issues or suggestions logged @"
         }
       }
     }

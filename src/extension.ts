@@ -162,10 +162,11 @@ export async function activate(context: vscode.ExtensionContext) {
 	
 	if (showStartupNotification) {
 		vscode.window.showInformationMessage(
-			'HumanAgent MCP Extension Started Successfully! 🚀',
+			'HumanAgent MCP Extension is a new tool - please report any issues or suggestions on GitHub!',
 			'Open Chat',
 			'Show Status',
-			'Don\'t Show Again'
+			'Report Issues'
+			// 'Don\'t Show Again'
 		).then(selection => {
 			switch (selection) {
 				case 'Open Chat':
@@ -174,10 +175,13 @@ export async function activate(context: vscode.ExtensionContext) {
 				case 'Show Status':
 					vscode.commands.executeCommand('humanagent-mcp.showStatus');
 					break;
-				case 'Don\'t Show Again':
-					notificationConfig.update('notifications.showStartup', false, vscode.ConfigurationTarget.Global);
-					vscode.window.showInformationMessage('Startup notifications disabled. You can re-enable them in settings.');
+				case 'Report Issues':
+					vscode.env.openExternal(vscode.Uri.parse('https://github.com/3DTek-xyz/HumanAgent-MCP/issues'));
 					break;
+				// case 'Don\'t Show Again':
+				// 	notificationConfig.update('notifications.showStartup', false, vscode.ConfigurationTarget.Global);
+				// 	vscode.window.showInformationMessage('Startup notifications disabled. You can re-enable them in settings.');
+				// 	break;
 			}
 		});
 	}
