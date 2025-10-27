@@ -156,6 +156,32 @@ export async function activate(context: vscode.ExtensionContext) {
 	// Auto-start server and register session (no mcp.json dependency)
 	await ensureServerAndRegisterSession(workspaceSessionId);
 
+	// Show startup notification
+	const notificationConfig = vscode.workspace.getConfiguration('humanagent-mcp');
+	const showStartupNotification = notificationConfig.get<boolean>('notifications.showStartup', true);
+	
+	if (showStartupNotification) {
+		vscode.window.showInformationMessage(
+			'HumanAgent MCP Extension Started Successfully! 🚀',
+			'Open Chat',
+			'Show Status',
+			'Don\'t Show Again'
+		).then(selection => {
+			switch (selection) {
+				case 'Open Chat':
+					vscode.commands.executeCommand('humanagent-mcp.chatView.focus');
+					break;
+				case 'Show Status':
+					vscode.commands.executeCommand('humanagent-mcp.showStatus');
+					break;
+				case 'Don\'t Show Again':
+					notificationConfig.update('notifications.showStartup', false, vscode.ConfigurationTarget.Global);
+					vscode.window.showInformationMessage('Startup notifications disabled. You can re-enable them in settings.');
+					break;
+			}
+		});
+	}
+
 	// Restore the persisted session name after server is running (with retry)
 	setTimeout(async () => {
 		try {
