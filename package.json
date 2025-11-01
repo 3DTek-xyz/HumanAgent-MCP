@@ -57,6 +57,11 @@
         "command": "humanagent-mcp.restartServer",
         "title": "Restart MCP Server",
         "icon": "$(debug-restart)"
+      },
+      {
+        "command": "humanagent-mcp.reportIssue",
+        "title": "Report Issue / Suggestion",
+        "icon": "$(github)"
       }
     ],
     "viewsContainers": {
@@ -107,6 +112,11 @@
         },
         {
           "command": "humanagent-mcp.configureMcp",
+          "when": "view == humanagent-mcp.chatSessions",
+          "group": "navigation"
+        },
+        {
+          "command": "humanagent-mcp.reportIssue",
           "when": "view == humanagent-mcp.chatSessions",
           "group": "navigation"
         }

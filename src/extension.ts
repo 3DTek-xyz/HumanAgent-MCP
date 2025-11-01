@@ -57,17 +57,22 @@ function getWorkspaceSessionId(context: vscode.ExtensionContext): string {
 	const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
 	const workspaceKey = workspaceRoot ? `workspace-${crypto.createHash('md5').update(workspaceRoot).digest('hex')}` : 'no-workspace';
 	
+	// Check if running in Extension Development Host
+	const isDevHost = context.extensionMode === vscode.ExtensionMode.Development;
+	const devSuffix = isDevHost ? '-dev' : '';
+	const stateKey = `sessionId-${workspaceKey}${devSuffix}`;
+	
 	// Try to get existing session ID from global state
-	let sessionId = context.globalState.get<string>(`sessionId-${workspaceKey}`);
+	let sessionId = context.globalState.get<string>(stateKey);
 	
 	if (!sessionId) {
 		// Generate new UUID-based session ID
-		sessionId = `session-${crypto.randomUUID()}`;
+		sessionId = `session-${crypto.randomUUID()}${devSuffix}`;
 		// Store it persistently
-		context.globalState.update(`sessionId-${workspaceKey}`, sessionId);
-		console.log(`Generated new workspace session ID: ${sessionId} for ${workspaceKey}`);
+		context.globalState.update(stateKey, sessionId);
+		console.log(`Generated new workspace session ID: ${sessionId} for ${workspaceKey}${isDevHost ? ' (dev host)' : ''}`);
 	} else {
-		console.log(`Retrieved existing workspace session ID: ${sessionId} for ${workspaceKey}`);
+		console.log(`Retrieved existing workspace session ID: ${sessionId} for ${workspaceKey}${isDevHost ? ' (dev host)' : ''}`);
 	}
 	
 	return sessionId;
@@ -328,6 +333,11 @@ export async function activate(context: vscode.ExtensionContext) {
 		}
 	});
 
+	// Register report issue command
+	const reportIssueCommand = vscode.commands.registerCommand('humanagent-mcp.reportIssue', () => {
+		vscode.env.openExternal(vscode.Uri.parse('https://github.com/benharper/HumanAgent-MCP/issues'));
+	});
+
 	// Add all disposables to context
 	context.subscriptions.push(
 		treeView,
@@ -338,7 +348,8 @@ export async function activate(context: vscode.ExtensionContext) {
 		startServerCommand,
 		stopServerCommand,
 		restartServerCommand,
-		configureMcpCommand
+		configureMcpCommand,
+		reportIssueCommand
 	);
 
 	// Show welcome message

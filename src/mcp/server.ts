@@ -301,8 +301,8 @@ export class McpServer extends EventEmitter {
           },
           timeout: {
             type: 'number',
-            description: 'Timeout in seconds to wait for human response (default: 300)',
-            default: 300
+            description: 'Timeout in seconds to wait for human response (default: 600)',
+            default: 600
           }
         },
         required: ['message']
@@ -1230,6 +1230,18 @@ export class McpServer extends EventEmitter {
             border-bottom: 2px solid var(--vscode-button-background);
         }
 
+        .tab.has-new-message {
+            background-color: var(--vscode-button-background);
+            color: var(--vscode-button-foreground);
+            position: relative;
+        }
+
+        .tab.has-new-message::after {
+            content: '💬';
+            margin-left: 6px;
+            font-size: 12px;
+        }
+
         .content {
             flex: 1;
             display: flex;
@@ -1403,6 +1415,10 @@ export class McpServer extends EventEmitter {
             // Update active tab
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.classList.toggle('active', tab.dataset.session === sessionId);
+                // Remove new message indicator when switching to that tab
+                if (tab.dataset.session === sessionId) {
+                    tab.classList.remove('has-new-message');
+                }
             });
             
             // Update active chat container
@@ -1411,6 +1427,17 @@ export class McpServer extends EventEmitter {
             });
             
             activeSessionId = sessionId;
+        }
+
+        // Function to highlight tabs with new messages
+        function highlightTabWithNewMessage(sessionId) {
+            // Only highlight if it's not the currently active session
+            if (sessionId !== activeSessionId) {
+                const tab = document.querySelector(\`[data-session="\${sessionId}"].tab\`);
+                if (tab && !tab.classList.contains('active')) {
+                    tab.classList.add('has-new-message');
+                }
+            }
         }
         
         // Message sending
@@ -1706,8 +1733,12 @@ export class McpServer extends EventEmitter {
                     // Handle different types of updates
                     if (data.type === 'chat_message' && data.sessionId && data.message) {
                         addMessageToUI(data.sessionId, data.message.sender, data.message.content, data.message.source, data.message.timestamp);
+                        // Highlight tab if not currently active
+                        highlightTabWithNewMessage(data.sessionId);
                     } else if (data.type === 'message' && data.sessionId) {
                         addMessageToUI(data.sessionId, data.role || 'assistant', data.content, null, null);
+                        // Highlight tab if not currently active
+                        highlightTabWithNewMessage(data.sessionId);
                     } else if (data.type === 'request-state-change' && data.data) {
                         // Handle request state changes for input control
                         console.log('Web interface received request-state-change:', data.data);

@@ -82,11 +82,6 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
     // AI messages are now handled by SSE events - no need to store locally
     this.updateWebview();
     
-    // Play notification sound if enabled
-    if (this.notificationSettings.enableSound) {
-      await this.playNotificationSound();
-    }
-    
     // Trigger flashing animation if enabled
     if (this.notificationSettings.enableFlashing) {
       this.triggerFlashingBorder();
@@ -153,10 +148,7 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
           vscode.commands.executeCommand('humanagent-mcp.showStatus');
           break;
         case 'playNotificationSound':
-          // Play sound from extension side (Node.js) when webview requests it
-          if (this.notificationSettings.enableSound) {
-            await this.playNotificationSound();
-          }
+          // Sound removed - only play on AI tool calls
           break;
         case 'sessionNameUpdated':
           // Handle session name update from SSE event
@@ -896,9 +888,8 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
                 document.body.classList.remove('flashing');
               }, 2000);
             } else if (message.type === 'playSound') {
-              // Play notification sound
-              console.log('Playing notification sound...');
-              playNotificationBeep();
+              // Sound removed - only play on AI tool calls
+              console.log('Sound trigger removed - only playing on AI tool calls');
             } else if (message.command === 'updateOverrideFileExists') {
               // Update override file existence and refresh cog menu
               window.overrideFileExists = message.exists;
@@ -1053,8 +1044,7 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
                 }
               }
               
-              // Play notification
-              playNotificationBeep();
+              // Sound removed - only play on AI tool calls
               
               // Flash border
               document.body.classList.add('flashing');
@@ -1097,10 +1087,7 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
               // Use unified addMessageToUI function
               addMessageToUI(message);
               
-              // Play notification for assistant messages
-              if (message.sender === 'agent') {
-                playNotificationBeep();
-              }
+              // Sound removed - only play on AI tool calls
             }
           }
 
