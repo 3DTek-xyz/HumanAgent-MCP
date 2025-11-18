@@ -23,3 +23,8 @@ Thumbs.db
 *.log
 # macOS files
 .DS_Store
+
+# Large media files
+*.mov
+*.mp4
+*.avi

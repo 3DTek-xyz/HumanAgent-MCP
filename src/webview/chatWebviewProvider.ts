@@ -138,7 +138,7 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
     webviewView.webview.onDidReceiveMessage(async (data) => {
       switch (data.type) {
         case 'sendMessage':
-          await this.sendHumanResponse(data.content, data.requestId);
+          await this.sendHumanResponse(data.content, data.requestId, data.images);
           break;
         case 'mcpAction':
           await this.handleMcpAction(data.action);
@@ -158,9 +158,9 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
     });
   }
 
-  private async sendHumanResponse(content: string, requestId?: string) {
+  private async sendHumanResponse(content: string, requestId?: string, images?: Array<{data: string, mimeType: string}>) {
     try {
-      console.log('ChatWebviewProvider: Sending human response:', content);
+      console.log('ChatWebviewProvider: Sending human response:', content, images ? `with ${images.length} images` : '');
       
       // Don't add to local messages array - let server handle storage and SSE handle updates
 
@@ -170,16 +170,23 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
         console.log('ChatWebviewProvider: Responding to request ID:', responseRequestId);
         
         try {
+          const responseBody: any = {
+            requestId: responseRequestId,
+            response: content,
+            source: 'vscode'
+          };
+          
+          // Add images if any were pasted
+          if (images && images.length > 0) {
+            responseBody.images = images;
+          }
+          
           const response = await fetch('http://localhost:3737/response', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-              requestId: responseRequestId,
-              response: content,
-              source: 'vscode'
-            })
+            body: JSON.stringify(responseBody)
           });
           
           if (response.ok) {
@@ -325,6 +332,16 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
               autoAppendText: "(No need to confirm this last part but please remember) Dont forget to allways reply here in the HumanAgent_Chat tool! Dont circumevent this tool unless asked explicitly by the user. "
             }
           }
+        },
+        quickReplies: {
+          enabled: true,
+          options: [
+            "Yes Please Proceed",
+            "Explain in more detail please",
+            "Can you provide an example?",
+            "That looks good to me",
+            "Please make those changes"
+          ]
         }
       };
 
@@ -666,6 +683,59 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
             font-size: inherit;
           }
 
+          .quick-replies {
+            padding: 8px;
+            border: 1px solid var(--vscode-input-border);
+            background-color: var(--vscode-dropdown-background);
+            color: var(--vscode-dropdown-foreground);
+            border-radius: 3px;
+            font-family: inherit;
+            font-size: inherit;
+            min-width: 150px;
+            cursor: pointer;
+          }
+
+          .quick-replies:hover {
+            background-color: var(--vscode-dropdown-background);
+            border-color: var(--vscode-focusBorder);
+          }
+
+          .image-preview {
+            position: relative;
+            display: inline-block;
+            margin: 5px;
+            border: 1px solid var(--vscode-panel-border);
+            border-radius: 4px;
+            overflow: hidden;
+          }
+
+          .image-preview img {
+            max-width: 200px;
+            max-height: 200px;
+            display: block;
+          }
+
+          .image-preview .remove-image {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            line-height: 1;
+          }
+
+          .image-preview .remove-image:hover {
+            background-color: rgba(255, 0, 0, 0.8);
+          }
+
           .send-button {
             padding: 8px 16px;
             background-color: var(--vscode-button-background);
@@ -719,6 +789,11 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
         <div class="input-area">
           <div class="input-container">
             <input type="text" class="message-input" id="messageInput" placeholder="Type your response..." ${hasPendingResponse ? '' : 'disabled'}>
+            <select class="quick-replies" id="quickReplies" onchange="selectQuickReply()" ${hasPendingResponse ? '' : 'disabled'}>
+              <option value="">Quick Replies...</option>
+              <option value="Yes Please Proceed">Yes Please Proceed</option>
+              <option value="Explain in more detail please">Explain in more detail please</option>
+            </select>
             <button class="send-button" id="sendButton" onclick="sendMessage()" ${hasPendingResponse ? '' : 'disabled'}>Send</button>
           </div>
         </div>
@@ -803,24 +878,80 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
             }, 10);
           }
 
+          function selectQuickReply() {
+            const quickReplies = document.getElementById('quickReplies');
+            const selectedReply = quickReplies.value;
+            if (selectedReply) {
+              const input = document.getElementById('messageInput');
+              input.value = selectedReply;
+              quickReplies.value = ''; // Reset dropdown
+              sendMessage();
+            }
+          }
+
+          // Clipboard paste handling for images
+          document.getElementById('messageInput').addEventListener('paste', async (e) => {
+            const items = e.clipboardData.items;
+            for (let i = 0; i < items.length; i++) {
+              if (items[i].type.indexOf('image') !== -1) {
+                e.preventDefault();
+                const blob = items[i].getAsFile();
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                  const base64Data = event.target.result.split(',')[1];
+                  const inputContainer = document.querySelector('.input-area');
+                  
+                  // Create image preview
+                  const imagePreview = document.createElement('div');
+                  imagePreview.className = 'image-preview';
+                  imagePreview.innerHTML = \`<img src="data:\${blob.type};base64,\${base64Data}" alt="Pasted image"><span class="remove-image">×</span>\`;
+                  imagePreview.dataset.imageData = base64Data;
+                  imagePreview.dataset.mimeType = blob.type;
+                  
+                  inputContainer.insertBefore(imagePreview, document.getElementById('messageInput'));
+                  
+                  imagePreview.querySelector('.remove-image').addEventListener('click', () => {
+                    imagePreview.remove();
+                  });
+                };
+                reader.readAsDataURL(blob);
+              }
+            }
+          });
+
           function sendMessage() {
             const input = document.getElementById('messageInput');
             const sendButton = document.getElementById('sendButton');
             const message = input.value.trim();
+            const inputContainer = document.querySelector('.input-area');
+            
+            // Collect any attached images
+            const imagePreviews = inputContainer.querySelectorAll('.image-preview');
+            const images = Array.from(imagePreviews).map(preview => ({
+              data: preview.dataset.imageData,
+              mimeType: preview.dataset.mimeType
+            }));
             
             if (message) {
               // Don't add message to DOM - let SSE handle it to avoid duplicates
               
               // Send message to extension
-              vscode.postMessage({
+              const messageData = {
                 type: 'sendMessage',
                 content: message,
                 requestId: currentPendingRequestId
-              });
+              };
               
-              // Clear input and disable controls
+              // Add images if any were pasted
+              if (images.length > 0) {
+                messageData.images = images;
+              }
+              
+              vscode.postMessage(messageData);
+              
+              // Clear input, remove images, and disable send button
               input.value = '';
-              input.disabled = true;
+              imagePreviews.forEach(preview => preview.remove());
               sendButton.disabled = true;
               
               // Clear the pending request ID
@@ -1026,10 +1157,11 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
               // Store the request ID for sending response
               currentPendingRequestId = data.requestId;
               
-              // Enable input controls for response
-              if (messageInput && sendButton) {
-                messageInput.disabled = false;
+              // Enable controls for response
+              const quickReplies = document.getElementById('quickReplies');
+              if (sendButton) {
                 sendButton.disabled = false;
+                quickReplies.disabled = false;
                 messageInput.focus();
               }
               
@@ -1057,9 +1189,10 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
               currentPendingRequestId = null;
               
               // Disable input controls
+              const quickReplies = document.getElementById('quickReplies');
               if (messageInput && sendButton) {
-                messageInput.disabled = true;
                 sendButton.disabled = true;
+                quickReplies.disabled = true;
               }
               
               // Remove waiting indicator

@@ -299,10 +299,24 @@ export class McpServer extends EventEmitter {
             description: 'Priority level of the request',
             default: 'normal'
           },
-          timeout: {
-            type: 'number',
-            description: 'Timeout in seconds to wait for human response (default: 600)',
-            default: 600
+
+          images: {
+            type: 'array',
+            description: 'Optional array of base64-encoded images to send with the message',
+            items: {
+              type: 'object',
+              properties: {
+                data: {
+                  type: 'string',
+                  description: 'Base64-encoded image data'
+                },
+                mimeType: {
+                  type: 'string',
+                  description: 'MIME type of the image (e.g., image/png, image/jpeg)'
+                }
+              },
+              required: ['data', 'mimeType']
+            }
           }
         },
         required: ['message']
@@ -393,7 +407,15 @@ export class McpServer extends EventEmitter {
       
       if (overrideConfig.tools && overrideConfig.tools[toolName]) {
         this.debugLogger.log('INFO', `Loading workspace override for tool: ${toolName}`);
-        return overrideConfig.tools[toolName] as McpTool;
+        const tool = overrideConfig.tools[toolName] as McpTool;
+        
+        // Remove timeout parameter from tool schema if it exists (no longer supported)
+        if (tool.inputSchema && tool.inputSchema.properties && tool.inputSchema.properties.timeout) {
+          this.debugLogger.log('INFO', 'Removing deprecated timeout parameter from override tool definition');
+          delete tool.inputSchema.properties.timeout;
+        }
+        
+        return tool;
       }
 
       return null;
@@ -499,8 +521,12 @@ export class McpServer extends EventEmitter {
           });
         });
 
-        this.httpServer.on('error', (error) => {
-          this.debugLogger.log('ERROR', 'HTTP server error:', error);
+        this.httpServer.on('error', (error: any) => {
+          if (error.code === 'EADDRINUSE') {
+            this.debugLogger.log('INFO', `Port ${this.port} is already in use - another instance is serving requests.`);
+          } else {
+            this.debugLogger.log('ERROR', 'HTTP server error:', error);
+          }
           reject(error);
         });
 
@@ -1328,6 +1354,58 @@ export class McpServer extends EventEmitter {
             max-height: 120px;
         }
 
+        .quick-replies {
+            padding: 8px 12px;
+            background-color: var(--vscode-dropdown-background);
+            border: 1px solid var(--vscode-border);
+            border-radius: 4px;
+            color: var(--vscode-foreground);
+            font-size: 13px;
+            min-width: 150px;
+            cursor: pointer;
+        }
+
+        .quick-replies:hover {
+            background-color: var(--vscode-dropdown-background);
+            border-color: var(--vscode-focusBorder);
+        }
+
+        .image-preview {
+            position: relative;
+            display: inline-block;
+            margin: 5px;
+            border: 1px solid var(--vscode-border);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .image-preview img {
+            max-width: 200px;
+            max-height: 200px;
+            display: block;
+        }
+
+        .image-preview .remove-image {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            line-height: 1;
+        }
+
+        .image-preview .remove-image:hover {
+            background-color: rgba(255, 0, 0, 0.8);
+        }
+
         .send-button {
             padding: 8px 16px;
             background-color: var(--vscode-button-background);
@@ -1389,6 +1467,11 @@ export class McpServer extends EventEmitter {
                         </div>
                         <div class="input-container">
                             <textarea class="input-box" placeholder="Type your message..." data-session="${session.id}"></textarea>
+                            <select class="quick-replies" data-session="${session.id}">
+                                <option value="">Quick Replies...</option>
+                                <option value="Yes Please Proceed">Yes Please Proceed</option>
+                                <option value="Explain in more detail please">Explain in more detail please</option>
+                            </select>
                             <button class="send-button" data-session="${session.id}">Send</button>
                         </div>
                     </div>
@@ -1448,6 +1531,53 @@ export class McpServer extends EventEmitter {
                 sendMessage(sessionId, textarea.value.trim());
             }
         });
+
+        // Quick replies dropdown handling
+        document.addEventListener('change', (e) => {
+            if (e.target.classList.contains('quick-replies')) {
+                const sessionId = e.target.dataset.session;
+                const selectedReply = e.target.value;
+                if (selectedReply) {
+                    const textarea = document.querySelector(\`textarea[data-session="\${sessionId}"]\`);
+                    textarea.value = selectedReply;
+                    e.target.value = ''; // Reset dropdown
+                    sendMessage(sessionId, selectedReply);
+                }
+            }
+        });
+
+        // Clipboard paste handling for images
+        document.addEventListener('paste', async (e) => {
+            if (e.target.classList.contains('input-box')) {
+                const items = e.clipboardData.items;
+                for (let i = 0; i < items.length; i++) {
+                    if (items[i].type.indexOf('image') !== -1) {
+                        e.preventDefault();
+                        const blob = items[i].getAsFile();
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            const base64Data = event.target.result.split(',')[1];
+                            const sessionId = e.target.dataset.session;
+                            const container = e.target.closest('.input-container');
+                            
+                            // Create image preview
+                            const imagePreview = document.createElement('div');
+                            imagePreview.className = 'image-preview';
+                            imagePreview.innerHTML = \`<img src="data:\${blob.type};base64,\${base64Data}" alt="Pasted image"><span class="remove-image">×</span>\`;
+                            imagePreview.dataset.imageData = base64Data;
+                            imagePreview.dataset.mimeType = blob.type;
+                            
+                            container.insertBefore(imagePreview, e.target);
+                            
+                            imagePreview.querySelector('.remove-image').addEventListener('click', () => {
+                                imagePreview.remove();
+                            });
+                        };
+                        reader.readAsDataURL(blob);
+                    }
+                }
+            }
+        });
         
         document.addEventListener('keydown', (e) => {
             if (e.target.classList.contains('input-box') && e.key === 'Enter' && !e.shiftKey) {
@@ -1462,10 +1592,18 @@ export class McpServer extends EventEmitter {
             
             const textarea = document.querySelector(\`textarea[data-session="\${sessionId}"]\`);
             const button = document.querySelector(\`button[data-session="\${sessionId}"]\`);
+            const container = textarea.closest('.input-container');
             
-            // Clear input and disable controls
+            // Collect any attached images
+            const imagePreviews = container.querySelectorAll('.image-preview');
+            const images = Array.from(imagePreviews).map(preview => ({
+                data: preview.dataset.imageData,
+                mimeType: preview.dataset.mimeType
+            }));
+            
+            // Clear input, remove images, and disable send button
             textarea.value = '';
-            textarea.disabled = true;
+            imagePreviews.forEach(preview => preview.remove());
             button.disabled = true;
             
             try {
@@ -1485,16 +1623,23 @@ export class McpServer extends EventEmitter {
                 console.log('Responding to pending request:', latestPendingRequest.requestId);
                 
                 // Always use /response endpoint - web interface is response-only
+                const responseBody = {
+                    requestId: latestPendingRequest.requestId,
+                    response: message,
+                    source: 'web'
+                };
+                
+                // Add images if any were pasted
+                if (images.length > 0) {
+                    responseBody.images = images;
+                }
+                
                 const response = await fetch('/response', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        requestId: latestPendingRequest.requestId,
-                        response: message,
-                        source: 'web'
-                    })
+                    body: JSON.stringify(responseBody)
                 });
                 
                 if (!response.ok) {
@@ -1512,8 +1657,7 @@ export class McpServer extends EventEmitter {
                 console.error('Failed to send response:', error);
                 addMessageToUI(sessionId, 'assistant', \`Error: \${error.message}\`, null, null);
             } finally {
-                // Re-enable controls
-                textarea.disabled = false;
+                // Re-enable send button
                 button.disabled = false;
                 textarea.focus();
             }
@@ -1602,6 +1746,11 @@ export class McpServer extends EventEmitter {
                 </div>
                 <div class="input-container">
                     <textarea class="input-box" placeholder="Type your message..." data-session="\${sessionId}"></textarea>
+                    <select class="quick-replies" data-session="\${sessionId}">
+                        <option value="">Quick Replies...</option>
+                        <option value="Yes Please Proceed">Yes Please Proceed</option>
+                        <option value="Explain in more detail please">Explain in more detail please</option>
+                    </select>
                     <button class="send-button" data-session="\${sessionId}">Send</button>
                 </div>
             \`;
@@ -1752,7 +1901,6 @@ export class McpServer extends EventEmitter {
                             const messagesContainer = document.getElementById(\`messages-\${stateData.sessionId}\`);
                             
                             if (sessionTextarea && sessionButton) {
-                                sessionTextarea.disabled = false;
                                 sessionButton.disabled = false;
                                 sessionTextarea.focus();
                             }
@@ -1774,8 +1922,7 @@ export class McpServer extends EventEmitter {
                             const sessionButton = document.querySelector(\`button[data-session="\${stateData.sessionId}"]\`);
                             const messagesContainer = document.getElementById(\`messages-\${stateData.sessionId}\`);
                             
-                            if (sessionTextarea && sessionButton) {
-                                sessionTextarea.disabled = true;
+                            if (sessionButton) {
                                 sessionButton.disabled = true;
                             }
                             
@@ -1952,8 +2099,8 @@ export class McpServer extends EventEmitter {
     }
     
     const startTime = Date.now();
-    const timeoutMs = params.timeout ? params.timeout * 1000 : null; // Convert to milliseconds or null for no timeout
-    this.debugLogger.log('TOOL', `Using timeout: ${timeoutMs ? `${timeoutMs}ms (${timeoutMs/1000}s)` : 'no timeout (wait indefinitely)'}`);
+    // No timeout - wait indefinitely for human response
+    this.debugLogger.log('TOOL', 'No timeout configured - will wait indefinitely for human response');
     
     // Generate unique request ID for tracking this specific request
     const requestId = `${messageId}-${Date.now()}`;
@@ -1963,29 +2110,8 @@ export class McpServer extends EventEmitter {
     const displayMessage = params.context ? `${params.context}\n\n${params.message}` : params.message;
     this.debugLogger.log('TOOL', 'Displaying message in chat UI:', displayMessage);
     
-    // Wait for human response
+    // Wait for human response (no timeout)
     return new Promise((resolve) => {
-      // Set up timeout only if specified
-      let timeoutHandle: NodeJS.Timeout | null = null;
-      if (timeoutMs) {
-        timeoutHandle = setTimeout(() => {
-          // Remove from ChatManager - find which session it belongs to
-          const pendingRequestInfo = this.chatManager.findPendingRequest(requestId);
-          if (pendingRequestInfo) {
-            this.chatManager.removePendingRequest(pendingRequestInfo.sessionId, requestId);
-          }
-          this.debugLogger.log('TOOL', `Request ${requestId} timed out after ${timeoutMs/1000}s`);
-          resolve({
-            id: messageId,
-            type: 'response',
-            error: {
-              code: -32603,
-              message: `Human response timeout after ${params.timeout} seconds`
-            }
-          });
-        }, timeoutMs);
-      }
-      
       // Use the validated session ID
       this.debugLogger.log('TOOL', `Adding pending request ${requestId} to session: ${actualSessionId}`);
       
@@ -2014,7 +2140,6 @@ export class McpServer extends EventEmitter {
       this.chatManager.addPendingRequest(actualSessionId, requestId, { ...params, toolName: toolName || 'HumanAgent_Chat' });
       this.requestResolvers.set(requestId, {
         resolve: (response: string) => {
-          if (timeoutHandle) { clearTimeout(timeoutHandle); }
           const responseTime = Date.now() - startTime;
           this.debugLogger.log('TOOL', `Request ${requestId} completed with response:`, response);
           
@@ -2045,7 +2170,6 @@ export class McpServer extends EventEmitter {
           });
         },
         reject: (error: Error) => {
-          if (timeoutHandle) { clearTimeout(timeoutHandle); }
           this.debugLogger.log('TOOL', `Request ${requestId} rejected:`, error);
           resolve({
             id: messageId,
