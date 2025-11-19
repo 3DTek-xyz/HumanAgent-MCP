@@ -636,6 +636,42 @@ export class McpServer extends EventEmitter {
             this.debugLogger.log('HTTP', `Added sessionId ${sessionId} to MCP message params`);
           }
           
+          // Special handling for HumanAgent_Chat tool to prevent undici timeout
+          // This tool can wait indefinitely for human response, so we need to:
+          // 1. Send HTTP headers immediately (stops undici's 5-minute headersTimeout)
+          // 2. Send keepalive data every 4 minutes (resets undici's 5-minute bodyTimeout)
+          if (message.method === 'tools/call' && message.params?.name === 'HumanAgent_Chat') {
+            this.debugLogger.log('HTTP', 'HumanAgent_Chat detected - using streaming response to prevent timeout');
+            
+            // Send headers immediately to stop headersTimeout
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.setHeader('Transfer-Encoding', 'chunked');
+            this.debugLogger.log('HTTP', 'Sent immediate headers for HumanAgent_Chat');
+            
+            // Start keepalive to reset bodyTimeout every 4 minutes
+            // Note: We write a space character which is valid JSON whitespace and gets ignored
+            const keepaliveInterval = setInterval(() => {
+              if (!res.destroyed) {
+                res.write(' '); // Write whitespace to reset bodyTimeout
+                this.debugLogger.log('HTTP', 'Sent keepalive for HumanAgent_Chat');
+              } else {
+                clearInterval(keepaliveInterval);
+              }
+            }, 4 * 60 * 1000); // 4 minutes (undici timeout is 5 minutes)
+            
+            // Wait for human response (this can take any amount of time now)
+            const response = await this.handleMessage(message);
+            
+            // Cleanup keepalive and send final response
+            clearInterval(keepaliveInterval);
+            this.debugLogger.log('HTTP', 'HumanAgent_Chat response received, sending to client');
+            const responseJson = JSON.stringify(response);
+            res.end(responseJson); // This sends the actual JSON response
+            return;
+          }
+          
+          // Normal handling for all other tools/methods
           const response = await this.handleMessage(message);
           this.debugLogger.log('HTTP', 'Response from handleMessage:', response);
 
