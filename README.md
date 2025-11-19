@@ -14,3 +14,7 @@ For more information see https://github.com/3DTek-xyz/HumanAgent-MCP/blob/master
 ![HumanAgent MCP Extension Demo](high-res-demo.gif)
 
 *Complete demonstration of the HumanAgent MCP extension in action - showing real-time human-AI collaboration*
+
+## Medium Article
+https://medium.com/@harperbenwilliam/stop-the-ai-chaos-why-human-in-the-loop-beats-fully-autonomous-coding-agents-eeb0ae17fde9
+
