@@ -21,6 +21,8 @@ Thumbs.db
 
 # Logs
 *.log
+response-debug.txt
+
 # macOS files
 .DS_Store
 
