@@ -65,6 +65,38 @@ Access all workspace chats in one browser tab at `http://localhost:3737/HumanAge
 
 Press F5 to debug - dev mode uses port 3738, production uses 3737. No conflicts.
 
+## Privacy & Telemetry
+
+This extension collects **anonymous usage data** to help improve the product:
+
+**What we track:**
+- Extension activation/deactivation
+- Feature usage (chat opened, messages sent/received)
+- Error diagnostics (error types, not content)
+- Session metrics (message counts, not content)
+- Extension version, VS Code version, OS platform
+- Days since installation
+
+**What we DON'T track:**
+- ❌ Your message content
+- ❌ Your name, email, or any personal data
+- ❌ Workspace paths or file names
+- ❌ Any identifiable information
+
+**Your privacy:**
+- Respects VS Code's telemetry setting
+- To disable: Settings → Telemetry → Level → Off
+- Fully GDPR compliant
+- Uses Google Analytics 4 for anonymous metrics
+
+**Why telemetry?**
+- Helps us understand which features are used
+- Identifies bugs and errors to fix
+- Measures engagement and retention
+- Guides future development priorities
+
+For questions: [GitHub Issues](https://github.com/3DTek-xyz/HumanAgent-MCP/issues)
+
 ## More Info
 
 See [README-Additional.md](README-Additional.md) for technical details
