@@ -184,7 +184,9 @@ export class ServerManager {
                     ...process.env,
                     // Pass logging configuration from extension settings
                     HUMANAGENT_LOGGING_ENABLED: this.options.loggingEnabled ? 'true' : 'false',
-                    HUMANAGENT_LOGGING_LEVEL: this.options.loggingLevel || 'INFO'
+                    HUMANAGENT_LOGGING_LEVEL: this.options.loggingLevel || 'INFO',
+                    // Pass port to standalone server
+                    HUMANAGENT_MCP_PORT: this.options.port.toString()
                 }
             });
 

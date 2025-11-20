@@ -20,7 +20,7 @@ export class McpConfigManager {
   private static readonly SERVER_NAME = 'humanagent-mcp';
   private static readonly GLOBAL_CONFIG_KEY = 'mcp.servers';
   
-  constructor(private workspaceRoot?: string, private extensionPath?: string) {
+  constructor(private workspaceRoot?: string, private extensionPath?: string, private port: number = 3737) {
     if (!extensionPath) {
       throw new Error('Extension path is required');
     }
@@ -71,7 +71,7 @@ export class McpConfigManager {
       // Configure our MCP server (HTTP transport) - no sessionId in URL
       const serverConfig: any = {
         type: 'http',
-        url: 'http://127.0.0.1:3737/mcp'
+        url: `http://127.0.0.1:${this.port}/mcp`
       };
 
       // Add our server to the config
@@ -98,7 +98,7 @@ export class McpConfigManager {
       // Configure our MCP server (HTTP transport) - no sessionId in URL
       const serverConfig: any = {
         type: 'http',
-        url: 'http://127.0.0.1:3737/mcp'
+        url: `http://127.0.0.1:${this.port}/mcp`
       };
 
       // Get current global MCP servers configuration

@@ -12,6 +12,7 @@ let chatTreeProvider: ChatTreeProvider;
 let mcpConfigManager: McpConfigManager;
 let workspaceSessionId: string;
 let serverManager: ServerManager;
+let SERVER_PORT: number; // Dynamic port: 3738 for dev, 3737 for production
 
 // MCP Server Definition Provider for VS Code native MCP integration
 class HumanAgentMcpProvider implements vscode.McpServerDefinitionProvider {
@@ -19,11 +20,11 @@ class HumanAgentMcpProvider implements vscode.McpServerDefinitionProvider {
     readonly onDidChangeMcpServerDefinitions = this._onDidChangeMcpServerDefinitions.event;
     private serverVersion: string = Date.now().toString();
 
-    constructor(private sessionId: string) {}
+    constructor(private sessionId: string, private port: number) {}
 
     provideMcpServerDefinitions(token: vscode.CancellationToken): vscode.ProviderResult<vscode.McpHttpServerDefinition[]> {
         // Use separate endpoint for MCP tools to avoid SSE conflicts with webview
-        const serverUrl = `http://127.0.0.1:3737/mcp-tools?sessionId=${this.sessionId}`;
+        const serverUrl = `http://127.0.0.1:${this.port}/mcp-tools?sessionId=${this.sessionId}`;
         const serverUri = vscode.Uri.parse(serverUrl);
         const server = new vscode.McpHttpServerDefinition('HumanAgent MCP', serverUri, {}, this.serverVersion);
         console.log(`HumanAgent MCP: Using separate MCP tools endpoint to avoid SSE conflicts (version: ${this.serverVersion})`);
@@ -111,17 +112,21 @@ async function restoreSessionName(context: vscode.ExtensionContext, sessionId: s
 }
 
 export async function activate(context: vscode.ExtensionContext) {
-	console.log('HumanAgent MCP extension is now active!');
+	console.log('HumanAgent MCP extension activated!');
+
+	// Determine port based on extension mode (dev vs production)
+	SERVER_PORT = context.extensionMode === vscode.ExtensionMode.Development ? 3738 : 3737;
+	console.log(`Using port ${SERVER_PORT} (${context.extensionMode === vscode.ExtensionMode.Development ? 'development' : 'production'} mode);`);
 
 	// Generate or retrieve persistent workspace session ID
 	workspaceSessionId = getWorkspaceSessionId(context);
 
 	// Initialize MCP Configuration Manager
 	const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
-	mcpConfigManager = new McpConfigManager(workspaceRoot, context.extensionPath);
+	mcpConfigManager = new McpConfigManager(workspaceRoot, context.extensionPath, SERVER_PORT);
 
 	// Initialize and register VS Code native MCP provider
-	mcpProvider = new HumanAgentMcpProvider(workspaceSessionId);
+	mcpProvider = new HumanAgentMcpProvider(workspaceSessionId, SERVER_PORT);
 	context.subscriptions.push(vscode.lm.registerMcpServerDefinitionProvider('humanagent-mcp.server', mcpProvider));
 	console.log('HumanAgent MCP: Registered MCP server definition provider');
 
@@ -144,7 +149,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	
 	const serverOptions: any = {
 		serverPath: serverPath,
-		port: 3737,
+		port: SERVER_PORT,
 		host: '127.0.0.1',
 		loggingEnabled: loggingEnabled,
 		loggingLevel: loggingLevel
@@ -208,7 +213,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 
 	// Initialize Chat Webview Provider (no internal server dependency)
-	const chatWebviewProvider = new ChatWebviewProvider(context.extensionUri, null, mcpConfigManager, workspaceSessionId, context, mcpProvider);
+	const chatWebviewProvider = new ChatWebviewProvider(context.extensionUri, null, mcpConfigManager, workspaceSessionId, context, mcpProvider, SERVER_PORT);
 	context.subscriptions.push(
 		vscode.window.registerWebviewViewProvider(ChatWebviewProvider.viewType, chatWebviewProvider)
 	);
@@ -255,6 +260,8 @@ export async function activate(context: vscode.ExtensionContext) {
 			const success = await serverManager.ensureServerRunning();
 			if (success) {
 				vscode.window.showInformationMessage('HumanAgent MCP Server started successfully!');
+				// Notify webview to reset reconnection backoff and try immediately
+				chatWebviewProvider.notifyServerStarted();
 			} else {
 				vscode.window.showErrorMessage('Failed to start HumanAgent MCP Server. Check the logs for details.');
 			}
@@ -265,11 +272,47 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	const stopServerCommand = vscode.commands.registerCommand('humanagent-mcp.stopServer', async () => {
 		try {
-			const success = await serverManager.stopServer();
-			if (success) {
+			// First try HTTP shutdown endpoint (works from any VS Code window or client)
+			try {
+				const http = require('http');
+				const options = {
+					hostname: '127.0.0.1',
+					port: SERVER_PORT,
+					path: '/shutdown',
+					method: 'POST',
+					timeout: 5000
+				};
+
+				await new Promise<void>((resolve, reject) => {
+					const req = http.request(options, (res: any) => {
+						let data = '';
+						res.on('data', (chunk: any) => data += chunk);
+						res.on('end', () => {
+							if (res.statusCode === 200) {
+								resolve();
+							} else {
+								reject(new Error(`HTTP ${res.statusCode}`));
+							}
+						});
+					});
+					req.on('error', reject);
+					req.on('timeout', () => {
+						req.destroy();
+						reject(new Error('Request timeout'));
+					});
+					req.end();
+				});
+
 				vscode.window.showInformationMessage('HumanAgent MCP Server stopped successfully!');
-			} else {
-				vscode.window.showWarningMessage('Server may not have been running or failed to stop cleanly.');
+			} catch (httpError) {
+				// Fallback to PID kill if HTTP fails
+				console.log('HTTP shutdown failed, trying PID kill:', httpError);
+				const success = await serverManager.stopServer();
+				if (success) {
+					vscode.window.showInformationMessage('HumanAgent MCP Server stopped successfully!');
+				} else {
+					vscode.window.showWarningMessage('Server may not have been running or failed to stop cleanly.');
+				}
 			}
 		} catch (error) {
 			vscode.window.showErrorMessage(`Failed to stop server: ${error}`);
@@ -283,6 +326,8 @@ export async function activate(context: vscode.ExtensionContext) {
 			const success = await serverManager.ensureServerRunning();
 			if (success) {
 				vscode.window.showInformationMessage('HumanAgent MCP Server restarted successfully!');
+				// Notify webview to reset reconnection backoff and try immediately
+				chatWebviewProvider.notifyServerStarted();
 			} else {
 				vscode.window.showErrorMessage('Failed to restart HumanAgent MCP Server. Check the logs for details.');
 			}
@@ -410,7 +455,7 @@ async function isPortInUse(port: number): Promise<boolean> {
 // Check if MCP server is accessible and responding with retry
 async function isServerAccessible(): Promise<boolean> {
 	try {
-		const response = await fetch('http://127.0.0.1:3737/sessions', {
+		const response = await fetch(`http://127.0.0.1:${SERVER_PORT}/sessions`, {
 			method: 'GET',
 			signal: AbortSignal.timeout(5000) // 5 second timeout
 		});
@@ -422,7 +467,7 @@ async function isServerAccessible(): Promise<boolean> {
 		await new Promise(resolve => setTimeout(resolve, 3000));
 		
 		try {
-			const retryResponse = await fetch('http://127.0.0.1:3737/sessions', {
+			const retryResponse = await fetch(`http://127.0.0.1:${SERVER_PORT}/sessions`, {
 				method: 'GET',
 				signal: AbortSignal.timeout(5000)
 			});
@@ -442,7 +487,7 @@ async function isServerAccessible(): Promise<boolean> {
 // Check if session exists on server by testing a simple MCP call with retry
 async function validateSessionWithServer(sessionId: string): Promise<boolean> {
 	try {
-		const response = await fetch('http://127.0.0.1:3737/mcp', {
+		const response = await fetch(`http://127.0.0.1:${SERVER_PORT}/mcp`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ 
@@ -466,7 +511,7 @@ async function validateSessionWithServer(sessionId: string): Promise<boolean> {
 		await new Promise(resolve => setTimeout(resolve, 3000));
 		
 		try {
-			const retryResponse = await fetch('http://127.0.0.1:3737/mcp', {
+			const retryResponse = await fetch(`http://127.0.0.1:${SERVER_PORT}/mcp`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ 
@@ -516,7 +561,7 @@ async function registerSessionWithStandaloneServer(sessionId: string, forceRereg
 	};
 	
 	try {
-		const response = await fetch('http://127.0.0.1:3737/sessions/register', {
+		const response = await fetch(`http://127.0.0.1:${SERVER_PORT}/sessions/register`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(requestBody)
@@ -536,7 +581,7 @@ async function registerSessionWithStandaloneServer(sessionId: string, forceRereg
 		await new Promise(resolve => setTimeout(resolve, 3000));
 		
 		try {
-			const retryResponse = await fetch('http://127.0.0.1:3737/sessions/register', {
+			const retryResponse = await fetch(`http://127.0.0.1:${SERVER_PORT}/sessions/register`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(requestBody)
@@ -560,7 +605,7 @@ async function registerSessionWithStandaloneServer(sessionId: string, forceRereg
 // Unregister session with standalone server via HTTP
 async function unregisterSessionWithStandaloneServer(sessionId: string): Promise<void> {
 	try {
-		const response = await fetch('http://127.0.0.1:3737/sessions/unregister', {
+		const response = await fetch(`http://127.0.0.1:${SERVER_PORT}/sessions/unregister`, {
 			method: 'DELETE',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ sessionId })

@@ -127,8 +127,11 @@ export class McpServer extends EventEmitter {
   private sseClients: Map<string, http.ServerResponse> = new Map(); // Per-session SSE connections (VS Code webviews)
   private webInterfaceConnections: Set<http.ServerResponse> = new Set(); // Web interface connections (all browsers)
 
-  constructor(private sessionId?: string, private workspacePath?: string) {
+  constructor(private sessionId?: string, private workspacePath?: string, port?: number) {
     super();
+    if (port) {
+      this.port = port;
+    }
     this.debugLogger = new DebugLogger(this.workspacePath);
     this.chatManager = new ChatManager(this.debugLogger); // Initialize centralized chat management with logging
     
@@ -583,6 +586,10 @@ export class McpServer extends EventEmitter {
       // Session management, response, tools, reload, messages, and chat endpoints
       await this.handleSessionEndpoint(req, res);
       return;
+    } else if (req.url === '/shutdown' && req.method === 'POST') {
+      // Server shutdown endpoint - allows any client to gracefully stop the server
+      await this.handleShutdownEndpoint(req, res);
+      return;
     } else {
       this.debugLogger.log('HTTP', `404 - Invalid endpoint: ${req.url}`);
       res.statusCode = 404;
@@ -820,6 +827,30 @@ export class McpServer extends EventEmitter {
     // Session termination - could be implemented if needed
     res.statusCode = 405;
     res.end('Method Not Allowed');
+  }
+
+  private async handleShutdownEndpoint(req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
+    this.debugLogger.log('INFO', 'Shutdown request received via HTTP');
+    
+    try {
+      // Send success response immediately before shutting down
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ success: true, message: 'Server shutting down...' }));
+      
+      // Give response time to send before stopping
+      setTimeout(async () => {
+        this.debugLogger.log('INFO', 'Initiating server shutdown...');
+        await this.stop();
+        process.exit(0);
+      }, 500);
+      
+    } catch (error) {
+      this.debugLogger.log('ERROR', 'Shutdown error:', error);
+      res.statusCode = 500;
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ success: false, error: String(error) }));
+    }
   }
 
   private async handleMcpToolsEndpoint(req: http.IncomingMessage, res: http.ServerResponse, reqUrl: URL): Promise<void> {
@@ -1260,11 +1291,37 @@ export class McpServer extends EventEmitter {
             padding: 10px 15px;
             background-color: var(--vscode-panel-background);
             border-bottom: 1px solid var(--vscode-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .header h1 {
             font-size: 16px;
             font-weight: 600;
+        }
+
+        .shutdown-button {
+            background-color: #d73a49;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background-color 0.2s;
+        }
+
+        .shutdown-button:hover {
+            background-color: #cb2431;
+        }
+
+        .shutdown-button svg {
+            width: 16px;
+            height: 16px;
         }
 
         .tabs-container {
@@ -1485,6 +1542,12 @@ export class McpServer extends EventEmitter {
     <div class="container">
         <div class="header">
             <h1><span class="status-indicator"></span>HumanAgent Multi-Session Chat</h1>
+            <button class="shutdown-button" onclick="shutdownServer()" title="Stop Server">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M8 0a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0V1a1 1 0 0 1 1-1z"/>
+                    <path d="M11.5 3.5a5 5 0 1 1-7 0 1 1 0 0 1 1.4-1.4 3 3 0 1 0 4.2 0 1 1 0 0 1 1.4 1.4z"/>
+                </svg>
+            </button>
         </div>
         
         <div class="tabs-container" id="tabs">
@@ -1521,6 +1584,30 @@ export class McpServer extends EventEmitter {
         let activeSessionId = '${sessions[0]?.id || ''}';
         
         // Web interface is stateless - gets pending requests from server state
+        
+        // Server shutdown function
+        async function shutdownServer() {
+            if (!confirm('Are you sure you want to stop the server? This will disconnect all clients.')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('/shutdown', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                if (response.ok) {
+                    alert('Server is shutting down...');
+                    // Close the window after a moment
+                    setTimeout(() => window.close(), 1000);
+                } else {
+                    alert('Failed to stop server: ' + response.statusText);
+                }
+            } catch (error) {
+                alert('Error stopping server: ' + error.message);
+            }
+        }
         
         // Tab switching
         document.getElementById('tabs').addEventListener('click', (e) => {
@@ -1692,11 +1779,11 @@ export class McpServer extends EventEmitter {
             } catch (error) {
                 console.error('Failed to send response:', error);
                 addMessageToUI(sessionId, 'assistant', \`Error: \${error.message}\`, null, null);
-            } finally {
-                // Re-enable send button
+                // Re-enable button only on error since we won't get SSE state update
                 button.disabled = false;
-                textarea.focus();
             }
+            // Note: Button is re-enabled by SSE 'waiting_for_response' state, not here
+            textarea.focus();
         }
         
         function addMessageToUI(sessionId, role, content, source, timestamp) {

@@ -27,7 +27,8 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
     mcpConfigManager?: McpConfigManager,
     private readonly workspaceSessionId?: string,
     private readonly context?: vscode.ExtensionContext,
-    private readonly mcpProvider?: any
+    private readonly mcpProvider?: any,
+    private readonly port: number = 3737
   ) {
     this.mcpServer = mcpServer;
     this.mcpConfigManager = mcpConfigManager;
@@ -117,6 +118,14 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
     this.updateWebview();
   }
 
+  public notifyServerStarted() {
+    if (this._view) {
+      this._view.webview.postMessage({
+        type: 'serverStarted'
+      });
+    }
+  }
+
   resolveWebviewView(webviewView: vscode.WebviewView, context: vscode.WebviewViewResolveContext, _token: vscode.CancellationToken) {
     this._view = webviewView;
 
@@ -181,7 +190,7 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
             responseBody.images = images;
           }
           
-          const response = await fetch('http://localhost:3737/response', {
+          const response = await fetch(`http://localhost:${this.port}/response`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -279,7 +288,7 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
       }
 
       // Get current tool configuration from server - NO FALLBACKS!
-      const response = await fetch('http://localhost:3737/tools');
+      const response = await fetch(`http://localhost:${this.port}/tools`);
       if (!response.ok) {
         throw new Error(`Failed to fetch tools from server: ${response.status}`);
       }
@@ -406,6 +415,12 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
         case 'openWebView':
           await this.openWebInterface();
           break;
+        case 'reportIssue':
+          vscode.env.openExternal(vscode.Uri.parse('https://github.com/3DTek-xyz/HumanAgent-MCP/issues/new'));
+          break;
+        case 'requestFeature':
+          vscode.env.openExternal(vscode.Uri.parse('https://github.com/3DTek-xyz/HumanAgent-MCP/issues/new'));
+          break;
       }
       
       // Update status after action
@@ -443,7 +458,7 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
       }
 
       // Send session name to server
-      const response = await fetch('http://localhost:3737/sessions/name', {
+      const response = await fetch(`http://localhost:${this.port}/sessions/name`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -495,7 +510,7 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
 
   private async openWebInterface() {
     try {
-      const webUrl = 'http://localhost:3737/HumanAgent';
+      const webUrl = `http://localhost:${this.port}/HumanAgent`;
       
       // Open in external browser
       await vscode.env.openExternal(vscode.Uri.parse(webUrl));
@@ -788,7 +803,7 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
 
         <div class="input-area">
           <div class="input-container">
-            <input type="text" class="message-input" id="messageInput" placeholder="Type your response..." ${hasPendingResponse ? '' : 'disabled'}>
+            <input type="text" class="message-input" id="messageInput" placeholder="Type your response...">
             <select class="quick-replies" id="quickReplies" onchange="selectQuickReply()" ${hasPendingResponse ? '' : 'disabled'}>
               <option value="">Quick Replies...</option>
               <option value="Yes Please Proceed">Yes Please Proceed</option>
@@ -968,12 +983,11 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
               { text: '📊 Show Status', action: 'requestServerStatus' },
               { text: window.overrideFileExists ? '📁 Recreate Override File' : '📁 Create Override File', action: 'overridePrompt' },
               { text: '📝 Name This Chat', action: 'nameSession' },
-              { text: '🌐 Open Web View', action: 'openWebView' }
+              { text: '🌐 Open Web View', action: 'openWebView' },
+              { text: '⚙️ Configure MCP', action: 'configure' },
+              { text: '🐛 Report Issue', action: 'reportIssue' },
+              { text: '💡 Request Feature', action: 'requestFeature' }
             ];
-            
-            // Override file changes require VS Code restart/reload to take effect
-            
-            options.push({ text: '⚙️ Configure MCP', action: 'configure' });
             
             return options;
           }
@@ -1025,12 +1039,49 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
               // Update override file existence and refresh cog menu
               window.overrideFileExists = message.exists;
               console.log('Updated overrideFileExists to:', message.exists);
+            } else if (message.type === 'serverStarted') {
+              // Server was manually started - reset backoff and reconnect immediately
+              console.log('🚀 Server started - resetting reconnection backoff and reconnecting immediately');
+              reconnectAttempts = 0;
+              if (reconnectTimeout) {
+                clearTimeout(reconnectTimeout);
+              }
+              connectionInProgress = false;
+              setupSSEConnection();
             }
           });
 
           // Set up SSE connection for real-time server events
           let currentEventSource = null;
           let connectionInProgress = false;
+          let reconnectAttempts = 0;
+          let reconnectTimeout = null;
+          const MAX_RECONNECT_DELAY = 30000; // 30 seconds max
+          const BASE_RECONNECT_DELAY = 1000; // Start at 1 second
+          
+          function updateConnectionStatus(connected, error = false) {
+            const statusElement = document.getElementById('server-status-text');
+            const statusDot = document.querySelector('.status-dot');
+            
+            if (statusElement) {
+              if (connected) {
+                statusElement.textContent = 'HumanAgent MCP Server (Connected)';
+                if (statusDot) statusDot.style.backgroundColor = '#4caf50';
+              } else if (error) {
+                statusElement.textContent = 'HumanAgent MCP Server (Disconnected)';
+                if (statusDot) statusDot.style.backgroundColor = '#f44336';
+              } else {
+                statusElement.textContent = 'HumanAgent MCP Server (Connecting...)';
+                if (statusDot) statusDot.style.backgroundColor = '#ff9800';
+              }
+            }
+          }
+          
+          function getReconnectDelay() {
+            // Exponential backoff: 1s, 2s, 4s, 8s, 16s, 30s, 30s, ...
+            const delay = Math.min(BASE_RECONNECT_DELAY * Math.pow(2, reconnectAttempts), MAX_RECONNECT_DELAY);
+            return delay;
+          }
           
           function setupSSEConnection() {
             if (connectionInProgress) {
@@ -1048,7 +1099,7 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
               }
               
               console.log('Setting up SSE connection to MCP server for session:', sessionId);
-              const eventSource = new EventSource(\`http://localhost:3737/mcp?sessionId=\${sessionId}\`);
+              const eventSource = new EventSource(\`http://localhost:${this.port}/mcp?sessionId=\${sessionId}\`);
               currentEventSource = eventSource;
               
               // Enhanced connection health monitoring
@@ -1072,7 +1123,12 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
                   console.error('  - Reconnecting...');
                   eventSource.close();
                   connectionInProgress = false;
-                  setTimeout(setupSSEConnection, 1000);
+                  updateConnectionStatus(false, true);
+                  const delay = getReconnectDelay();
+                  reconnectAttempts++;
+                  console.log('🔄 Reconnecting after heartbeat timeout in ' + (delay/1000) + 's (attempt #' + reconnectAttempts + ')...');
+                  if (reconnectTimeout) clearTimeout(reconnectTimeout);
+                  reconnectTimeout = setTimeout(setupSSEConnection, delay);
                 }, 25000); // Timeout after 25 seconds (2.5x heartbeat interval)
               }
               
@@ -1084,6 +1140,8 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
                 connectionStartTime = Date.now();
                 messageCount = 0;
                 connectionInProgress = false; // Connection successful, allow future connections
+                reconnectAttempts = 0; // Reset backoff on successful connection
+                updateConnectionStatus(true);
                 resetHeartbeatTimeout();
               };
               
@@ -1131,10 +1189,25 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
                 const stateNames = ['CONNECTING', 'OPEN', 'CLOSED'];
                 console.error('   EventSource state:', stateNames[eventSource.readyState] || 'UNKNOWN');
                 
-                // Reset connection state and try to reconnect after 5 seconds
+                // CRITICAL: Close the EventSource to prevent automatic browser reconnection
+                eventSource.close();
+                
+                // Update status to disconnected
+                updateConnectionStatus(false, true);
+                
+                // Reset connection state and try to reconnect with exponential backoff
                 connectionInProgress = false;
-                console.log('🔄 Reconnecting SSE in 5 seconds...');
-                setTimeout(setupSSEConnection, 5000);
+                const delay = getReconnectDelay();
+                reconnectAttempts++;
+                
+                console.log('🔄 Reconnecting SSE in ' + (delay/1000) + 's (attempt #' + reconnectAttempts + ')...');
+                
+                // Clear any existing reconnect timeout
+                if (reconnectTimeout) {
+                  clearTimeout(reconnectTimeout);
+                }
+                
+                reconnectTimeout = setTimeout(setupSSEConnection, delay);
               };
               
             } catch (error) {
@@ -1188,9 +1261,9 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
               // Clear pending request
               currentPendingRequestId = null;
               
-              // Disable input controls
+              // Disable send button and quick replies (but keep text input enabled)
               const quickReplies = document.getElementById('quickReplies');
-              if (messageInput && sendButton) {
+              if (sendButton) {
                 sendButton.disabled = true;
                 quickReplies.disabled = true;
               }
@@ -1245,7 +1318,7 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
           // Load conversation history from server
           async function loadConversationHistory() {
             try {
-              const response = await fetch('http://127.0.0.1:3737/sessions/${this.workspaceSessionId}/messages');
+              const response = await fetch('http://127.0.0.1:${this.port}/sessions/${this.workspaceSessionId}/messages');
               if (response.ok) {
                 const data = await response.json();
                 const messagesContainer = document.getElementById('messages');

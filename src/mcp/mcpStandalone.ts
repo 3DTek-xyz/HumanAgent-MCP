@@ -15,7 +15,9 @@ class StandaloneMcpServer {
     // Use the parent directory of the dist folder as workspace path
     // This ensures log file is created where it can be properly cleared
     const workspacePath = require('path').resolve(__dirname, '..');
-    this.server = new McpServer(undefined, workspacePath);
+    // Get port from environment variable (set by ServerManager)
+    const port = process.env.HUMANAGENT_MCP_PORT ? parseInt(process.env.HUMANAGENT_MCP_PORT) : undefined;
+    this.server = new McpServer(undefined, workspacePath, port);
   }
 
   async start(): Promise<void> {
