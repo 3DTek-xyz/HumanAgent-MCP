@@ -28,7 +28,7 @@ class HumanAgentMcpProvider implements vscode.McpServerDefinitionProvider {
         // Use separate endpoint for MCP tools to avoid SSE conflicts with webview
         const serverUrl = `http://127.0.0.1:${this.port}/mcp-tools?sessionId=${this.sessionId}`;
         const serverUri = vscode.Uri.parse(serverUrl);
-        const server = new vscode.McpHttpServerDefinition('HumanAgent MCP', serverUri, {}, this.serverVersion);
+        const server = new vscode.McpHttpServerDefinition('HumanAgentMCP', serverUri, {}, this.serverVersion);
         console.log(`HumanAgent MCP: Using separate MCP tools endpoint to avoid SSE conflicts (version: ${this.serverVersion})`);
         return [server];
     }

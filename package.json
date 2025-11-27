@@ -2,7 +2,7 @@
   "name": "humanagent-mcp",
   "displayName": "HumanAgent MCP",
   "description": "MCP server for chatting with a human agent",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "publisher": "3DTek-xyz",
   "icon": "HumanAgent_Icon_Square.png",
   "repository": {

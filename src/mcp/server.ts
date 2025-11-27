@@ -136,7 +136,7 @@ export class McpServer extends EventEmitter {
     this.chatManager = new ChatManager(this.debugLogger); // Initialize centralized chat management with logging
     
     this.config = {
-      name: 'HumanAgent MCP Server',
+      name: 'HumanAgentMCP',
       description: 'MCP server for chatting with human agents',
       version: '1.0.0',
       capabilities: {
@@ -1444,7 +1444,8 @@ export class McpServer extends EventEmitter {
             font-size: 13px;
             resize: none;
             min-height: 36px;
-            max-height: 120px;
+            max-height: 200px;
+            overflow-y: auto;
         }
 
         .quick-replies {
@@ -1702,6 +1703,22 @@ export class McpServer extends EventEmitter {
             }
         });
         
+        // Auto-grow textarea as user types
+        function autoGrowTextarea(textarea) {
+            textarea.style.height = '36px'; // Reset to min height
+            if (textarea.value) {
+                const newHeight = Math.min(textarea.scrollHeight, 200); // Max 200px
+                textarea.style.height = newHeight + 'px';
+            }
+        }
+
+        // Listen for input on all textareas
+        document.addEventListener('input', (e) => {
+            if (e.target.classList.contains('input-box')) {
+                autoGrowTextarea(e.target);
+            }
+        });
+
         document.addEventListener('keydown', (e) => {
             if (e.target.classList.contains('input-box') && e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -1724,8 +1741,9 @@ export class McpServer extends EventEmitter {
                 mimeType: preview.dataset.mimeType
             }));
             
-            // Clear input, remove images, and disable send button
+            // Clear input, remove images, reset height, and disable send button
             textarea.value = '';
+            textarea.style.height = '36px'; // Reset to min height
             imagePreviews.forEach(preview => preview.remove());
             button.disabled = true;
             
