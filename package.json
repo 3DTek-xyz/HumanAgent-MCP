@@ -142,7 +142,12 @@
         },
         "humanagent-mcp.logging.level": {
           "type": "string",
-          "enum": ["ERROR", "WARN", "INFO", "DEBUG"],
+          "enum": [
+            "ERROR",
+            "WARN",
+            "INFO",
+            "DEBUG"
+          ],
           "default": "INFO",
           "description": "Set the logging level for HumanAgent MCP server"
         },
@@ -152,7 +157,7 @@
           "description": "Enable audio notifications when AI agents send messages"
         },
         "humanagent-mcp.notifications.enableFlashing": {
-          "type": "boolean", 
+          "type": "boolean",
           "default": true,
           "description": "Enable visual flashing notifications when AI agents send messages"
         },
@@ -190,6 +195,7 @@
     "webpack-cli": "^6.0.1"
   },
   "dependencies": {
+    "mockttp": "^4.2.1",
     "node-wav-player": "^1.0.0"
   }
 }

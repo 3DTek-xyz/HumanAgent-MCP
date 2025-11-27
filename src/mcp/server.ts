@@ -6,6 +6,7 @@ import * as os from 'os';
 import * as crypto from 'crypto';
 import { McpMessage, McpServerConfig, HumanAgentSession, ChatMessage, McpTool, HumanAgentChatToolParams, HumanAgentChatToolResult } from './types';
 import { ChatManager } from './chatManager';
+import { ProxyServer } from './proxyServer';
 
 // File logging utility
 class DebugLogger {
@@ -126,6 +127,7 @@ export class McpServer extends EventEmitter {
   private chatManager: ChatManager; // Centralized chat and session management
   private sseClients: Map<string, http.ServerResponse> = new Map(); // Per-session SSE connections (VS Code webviews)
   private webInterfaceConnections: Set<http.ServerResponse> = new Set(); // Web interface connections (all browsers)
+  private proxyServer: ProxyServer; // Integrated proxy server
 
   constructor(private sessionId?: string, private workspacePath?: string, port?: number) {
     super();
@@ -134,6 +136,7 @@ export class McpServer extends EventEmitter {
     }
     this.debugLogger = new DebugLogger(this.workspacePath);
     this.chatManager = new ChatManager(this.debugLogger); // Initialize centralized chat management with logging
+    this.proxyServer = new ProxyServer(); // Initialize proxy server
     
     this.config = {
       name: 'HumanAgentMCP',
@@ -466,6 +469,25 @@ export class McpServer extends EventEmitter {
 
     this.debugLogger.log('INFO', '=== MCP SERVER STARTING ===');
     await this.startHttpServer();
+    
+    // Start proxy server
+    try {
+      const proxyPort = await this.proxyServer.start();
+      this.debugLogger.log('INFO', `Proxy server started on port ${proxyPort}`);
+      
+      // Set up proxy event forwarding
+      this.proxyServer.on('log-added', (logEntry) => {
+        this.sendToWebInterface('proxy-log', logEntry);
+      });
+      
+      this.proxyServer.on('log-updated', (logEntry) => {
+        this.sendToWebInterface('proxy-log-update', logEntry);
+      });
+    } catch (error) {
+      this.debugLogger.log('WARN', 'Failed to start proxy server:', error);
+      // Continue without proxy - non-critical
+    }
+    
     this.isRunning = true;
     this.emit('server-started', this.config);
   }
@@ -477,6 +499,14 @@ export class McpServer extends EventEmitter {
 
     try {
       this.debugLogger.log('INFO', 'Stopping MCP server...');
+      
+      // Stop proxy server
+      try {
+        await this.proxyServer.stop();
+        this.debugLogger.log('INFO', 'Proxy server stopped');
+      } catch (error) {
+        this.debugLogger.log('WARN', 'Error stopping proxy server:', error);
+      }
       
       if (this.httpServer) {
         await new Promise<void>((resolve, reject) => {
@@ -581,6 +611,10 @@ export class McpServer extends EventEmitter {
     } else if (req.url === '/HumanAgent') {
       // Web interface for multi-session chat
       await this.handleWebInterface(req, res);
+      return;
+    } else if (req.url?.startsWith('/proxy')) {
+      // Proxy server endpoints
+      await this.handleProxyEndpoint(req, res);
       return;
     } else if (req.url?.startsWith('/sessions') || req.url === '/response' || req.url?.startsWith('/tools') || req.url?.startsWith('/debug') || req.url === '/reload' || req.url?.startsWith('/messages/')) {
       // Session management, response, tools, reload, messages, and chat endpoints
@@ -1210,6 +1244,33 @@ export class McpServer extends EventEmitter {
           data: error instanceof Error ? error.message : String(error)
         }
       };
+    }
+  }
+
+  private async handleProxyEndpoint(req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
+    const url = new URL(req.url!, `http://${req.headers.host}`);
+    
+    // Handle different proxy endpoints
+    if (url.pathname === '/proxy/status') {
+      // Get proxy status
+      const status = this.proxyServer.getStatus();
+      res.setHeader('Content-Type', 'application/json');
+      res.statusCode = 200;
+      res.end(JSON.stringify(status));
+    } else if (url.pathname === '/proxy/logs') {
+      // Get proxy logs
+      const logs = this.proxyServer.getLogs();
+      res.setHeader('Content-Type', 'application/json');
+      res.statusCode = 200;
+      res.end(JSON.stringify(logs));
+    } else if (url.pathname === '/proxy/clear' && req.method === 'POST') {
+      // Clear proxy logs
+      this.proxyServer.clearLogs();
+      res.statusCode = 200;
+      res.end(JSON.stringify({ success: true }));
+    } else {
+      res.statusCode = 404;
+      res.end('Not Found');
     }
   }
 
