@@ -218,6 +218,23 @@ export async function activate(context: vscode.ExtensionContext) {
 		showCollapseAll: true
 	});
 
+	// Update proxy status in tree view periodically
+	const updateProxyStatus = async () => {
+		try {
+			const serverStatus = await serverManager.getServerStatus();
+			chatTreeProvider.updateProxyStatus(serverStatus.proxy);
+		} catch (error) {
+			console.error('Failed to update proxy status:', error);
+		}
+	};
+	
+	// Initial update
+	updateProxyStatus();
+	
+	// Update every 10 seconds
+	const proxyStatusInterval = setInterval(updateProxyStatus, 10000);
+	context.subscriptions.push({ dispose: () => clearInterval(proxyStatusInterval) });
+
 	// Initialize Chat Webview Provider (no internal server dependency)
 	const chatWebviewProvider = new ChatWebviewProvider(context.extensionUri, null, mcpConfigManager, workspaceSessionId, context, mcpProvider, SERVER_PORT, telemetryService);
 	context.subscriptions.push(
@@ -251,15 +268,22 @@ export async function activate(context: vscode.ExtensionContext) {
 		// Get detailed server status
 		const serverStatus = await serverManager.getServerStatus();
 		
-		vscode.window.showInformationMessage(
+		let statusMessage = 
 			`HumanAgent MCP Server Status:\n` +
 			`- Running: ${serverStatus.isRunning ? '✅' : '❌'}\n` +
 			`- PID: ${serverStatus.pid || 'N/A'}\n` +
 			`- Port: ${serverStatus.port}\n` +
 			`- Host: ${serverStatus.host}\n` +
 			`- Session: ${workspaceSessionId}\n` +
-			`- Registration: Native Provider ✅`
-		);
+			`- Registration: Native Provider ✅`;
+		
+		if (serverStatus.proxy) {
+			statusMessage += `\n\nProxy Server:\n` +
+				`- Running: ${serverStatus.proxy.running ? '✅' : '❌'}\n` +
+				`- Port: ${serverStatus.proxy.port || 'N/A'}`;
+		}
+		
+		vscode.window.showInformationMessage(statusMessage);
 	});
 
 	// Create server management commands
@@ -357,6 +381,18 @@ export async function activate(context: vscode.ExtensionContext) {
 		}
 		
 		options.push('📊 Show Status');
+		
+		// Proxy options
+		if (serverStatus.proxy?.running) {
+			const currentProxySetting = vscode.workspace.getConfiguration().get('http.proxy');
+			const proxyUrl = `http://127.0.0.1:${serverStatus.proxy.port}`;
+			
+			if (currentProxySetting === proxyUrl) {
+				options.push('🔌 Disable Proxy');
+			} else {
+				options.push('🔌 Enable Proxy');
+			}
+		}
 
 		const action = await vscode.window.showQuickPick(options, {
 			placeHolder: 'Choose MCP Server action:'
@@ -379,6 +415,19 @@ export async function activate(context: vscode.ExtensionContext) {
 					break;
 				case '📊 Show Status':
 					vscode.commands.executeCommand('humanagent-mcp.showStatus');
+					break;
+				case '🔌 Enable Proxy':
+					if (serverStatus.proxy?.running) {
+						const proxyUrl = `http://127.0.0.1:${serverStatus.proxy.port}`;
+						await vscode.workspace.getConfiguration().update('http.proxy', proxyUrl, vscode.ConfigurationTarget.Global);
+						vscode.window.showInformationMessage(`Proxy enabled: ${proxyUrl}`);
+						updateProxyStatus(); // Refresh status display
+					}
+					break;
+				case '🔌 Disable Proxy':
+					await vscode.workspace.getConfiguration().update('http.proxy', undefined, vscode.ConfigurationTarget.Global);
+					vscode.window.showInformationMessage('Proxy disabled');
+					updateProxyStatus(); // Refresh status display
 					break;
 			}
 		} catch (error) {

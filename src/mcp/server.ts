@@ -8,6 +8,10 @@ import { McpMessage, McpServerConfig, HumanAgentSession, ChatMessage, McpTool, H
 import { ChatManager } from './chatManager';
 import { ProxyServer } from './proxyServer';
 
+// Read version from package.json
+const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, '../../package.json'), 'utf8'));
+const VERSION = packageJson.version;
+
 // File logging utility
 class DebugLogger {
   private logPath: string = '';
@@ -141,7 +145,7 @@ export class McpServer extends EventEmitter {
     this.config = {
       name: 'HumanAgentMCP',
       description: 'MCP server for chatting with human agents',
-      version: '1.0.0',
+      version: VERSION,
       capabilities: {
         chat: true,
         tools: true,
@@ -1495,6 +1499,60 @@ export class McpServer extends EventEmitter {
             gap: 10px;
         }
 
+        .proxy-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 15px;
+        }
+
+        .proxy-container.active {
+            display: flex;
+        }
+
+        .proxy-container:not(.active) {
+            display: none;
+        }
+
+        .proxy-log {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: var(--vscode-panel-background);
+            border-radius: 4px;
+            border-left: 3px solid var(--vscode-button-background);
+        }
+
+        .proxy-log-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 11px;
+            opacity: 0.8;
+        }
+
+        .proxy-log-method {
+            font-weight: 600;
+            color: var(--vscode-button-background);
+        }
+
+        .proxy-log-url {
+            font-family: monospace;
+            word-break: break-all;
+        }
+
+        .proxy-log-status {
+            font-weight: 600;
+        }
+
+        .proxy-log-status.success {
+            color: #28a745;
+        }
+
+        .proxy-log-status.error {
+            color: #d73a49;
+        }
+
         .input-box {
             flex: 1;
             padding: 8px 12px;
@@ -1616,6 +1674,7 @@ export class McpServer extends EventEmitter {
             ${sessions.length === 0 ? '' : sessions.map((session, index) => 
                 `<div class="tab ${index === 0 ? 'active' : ''}" data-session="${session.id}">${session.title}</div>`
             ).join('')}
+            <div class="tab" data-session="proxy">📊 Proxy Logs</div>
         </div>
         
         <div class="content">
@@ -1638,6 +1697,13 @@ export class McpServer extends EventEmitter {
                     </div>
                 `).join('')
             }
+            <div class="proxy-container" data-session="proxy">
+                <div class="messages" id="proxy-logs">
+                    <div style="opacity: 0.6; text-align: center; padding: 20px;">
+                        Proxy logs will appear here when requests are made through the proxy.
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1694,7 +1760,17 @@ export class McpServer extends EventEmitter {
                 container.classList.toggle('active', container.dataset.session === sessionId);
             });
             
+            // Update active proxy container
+            document.querySelectorAll('.proxy-container').forEach(container => {
+                container.classList.toggle('active', container.dataset.session === sessionId);
+            });
+            
             activeSessionId = sessionId;
+            
+            // Load proxy logs if switching to proxy tab
+            if (sessionId === 'proxy') {
+                loadProxyLogs();
+            }
         }
 
         // Function to highlight tabs with new messages
@@ -1901,6 +1977,82 @@ export class McpServer extends EventEmitter {
             // Line breaks are preserved and handled by CSS white-space: pre-wrap
         }
         
+        // Proxy log functions
+        async function loadProxyLogs() {
+            try {
+                const response = await fetch('/proxy/logs');
+                const logs = await response.json();
+                
+                const proxyLogsContainer = document.getElementById('proxy-logs');
+                proxyLogsContainer.innerHTML = '';
+                
+                if (logs.length === 0) {
+                    proxyLogsContainer.innerHTML = '<div style="opacity: 0.6; text-align: center; padding: 20px;">No proxy logs yet. Requests will appear here when traffic goes through the proxy.</div>';
+                } else {
+                    logs.forEach(log => addProxyLogToUI(log, false));
+                }
+            } catch (error) {
+                console.error('Failed to load proxy logs:', error);
+            }
+        }
+        
+        function addProxyLogToUI(logEntry, prepend = true) {
+            const proxyLogsContainer = document.getElementById('proxy-logs');
+            if (!proxyLogsContainer) return;
+            
+            // Remove placeholder if exists
+            const placeholder = proxyLogsContainer.querySelector('div[style*="opacity: 0.6"]');
+            if (placeholder) {
+                placeholder.remove();
+            }
+            
+            const logDiv = document.createElement('div');
+            logDiv.className = 'proxy-log';
+            logDiv.dataset.logId = logEntry.id;
+            
+            const statusClass = logEntry.responseStatus >= 200 && logEntry.responseStatus < 300 ? 'success' : 'error';
+            const statusText = logEntry.responseStatus ? logEntry.responseStatus : 'Pending';
+            const duration = logEntry.duration ? \`\${logEntry.duration}ms\` : '-';
+            
+            logDiv.innerHTML = \`
+                <div class="proxy-log-header">
+                    <span class="proxy-log-method">\${logEntry.method}</span>
+                    <span class="proxy-log-status \${statusClass}">\${statusText}</span>
+                    <span>\${duration}</span>
+                </div>
+                <div class="proxy-log-url">\${escapeHtml(logEntry.url)}</div>
+            \`;
+            
+            if (prepend) {
+                proxyLogsContainer.insertBefore(logDiv, proxyLogsContainer.firstChild);
+            } else {
+                proxyLogsContainer.appendChild(logDiv);
+            }
+            
+            // Keep only last 200 logs
+            while (proxyLogsContainer.children.length > 200) {
+                proxyLogsContainer.removeChild(proxyLogsContainer.lastChild);
+            }
+        }
+        
+        function updateProxyLogInUI(logEntry) {
+            const logDiv = document.querySelector(\`[data-log-id="\${logEntry.id}"]\`);
+            if (!logDiv) return;
+            
+            const statusClass = logEntry.responseStatus >= 200 && logEntry.responseStatus < 300 ? 'success' : 'error';
+            const statusText = logEntry.responseStatus || 'Pending';
+            const duration = logEntry.duration ? \`\${logEntry.duration}ms\` : '-';
+            
+            logDiv.innerHTML = \`
+                <div class="proxy-log-header">
+                    <span class="proxy-log-method">\${logEntry.method}</span>
+                    <span class="proxy-log-status \${statusClass}">\${statusText}</span>
+                    <span>\${duration}</span>
+                </div>
+                <div class="proxy-log-url">\${escapeHtml(logEntry.url)}</div>
+            \`;
+        }
+        
         function updateSessionTabName(sessionId, newName) {
             // Update the tab title for the specified session
             const tabElement = document.querySelector(\`[data-session="\${sessionId}"]\`);
@@ -2081,8 +2233,14 @@ export class McpServer extends EventEmitter {
                     const data = JSON.parse(event.data);
                     console.log('Real-time update:', data);
                     
+                    // Handle proxy log updates
+                    if (data.type === 'proxy-log') {
+                        addProxyLogToUI(data.data);
+                    } else if (data.type === 'proxy-log-update') {
+                        updateProxyLogInUI(data.data);
+                    }
                     // Handle different types of updates
-                    if (data.type === 'chat_message' && data.sessionId && data.message) {
+                    else if (data.type === 'chat_message' && data.sessionId && data.message) {
                         addMessageToUI(data.sessionId, data.message.sender, data.message.content, data.message.source, data.message.timestamp);
                         // Highlight tab if not currently active
                         highlightTabWithNewMessage(data.sessionId);

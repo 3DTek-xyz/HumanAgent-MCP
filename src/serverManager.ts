@@ -267,16 +267,34 @@ export class ServerManager {
         port: number;
         host: string;
         serverPath: string;
+        proxy?: {
+            running: boolean;
+            port: number;
+        };
     }> {
         const isRunning = await this.isServerRunning();
         const pid = await this.getStoredPid();
+        
+        // Fetch proxy status from server if running
+        let proxyStatus: { running: boolean; port: number } | undefined;
+        if (isRunning) {
+            try {
+                const response = await fetch(`http://${this.options.host}:${this.options.port}/proxy/status`);
+                if (response.ok) {
+                    proxyStatus = await response.json();
+                }
+            } catch (error) {
+                this.log('Failed to fetch proxy status:', error);
+            }
+        }
         
         return {
             isRunning,
             pid: pid && await this.isProcessRunning(pid) ? pid : undefined,
             port: this.options.port,
             host: this.options.host!,
-            serverPath: this.options.serverPath
+            serverPath: this.options.serverPath,
+            proxy: proxyStatus
         };
     }
 
