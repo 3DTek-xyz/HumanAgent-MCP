@@ -43,11 +43,6 @@
         "title": "Open Chat Session"
       },
       {
-        "command": "humanagent-mcp.configureMcp",
-        "title": "Configure MCP Server",
-        "icon": "$(settings-gear)"
-      },
-      {
         "command": "humanagent-mcp.startServer",
         "title": "Start MCP Server",
         "icon": "$(play)"
@@ -111,11 +106,6 @@
         },
         {
           "command": "humanagent-mcp.refreshSessions",
-          "when": "view == humanagent-mcp.chatSessions",
-          "group": "navigation"
-        },
-        {
-          "command": "humanagent-mcp.configureMcp",
           "when": "view == humanagent-mcp.chatSessions",
           "group": "navigation"
         },

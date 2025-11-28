@@ -1,5 +1,7 @@
 import { EventEmitter } from 'events';
 import * as Mockttp from 'mockttp';
+import * as fs from 'fs';
+import * as path from 'path';
 
 /**
  * ProxyLogEntry represents a single HTTP request/response captured by the proxy
@@ -15,6 +17,7 @@ export interface ProxyLogEntry {
     responseHeaders?: Record<string, string | string[]>;
     responseBody?: string;
     duration?: number;
+    protocol?: string; // 'http' | 'https'
 }
 
 /**
@@ -27,37 +30,61 @@ export class ProxyServer extends EventEmitter {
     private logs: ProxyLogEntry[] = [];
     private maxLogs: number = 200; // FIFO buffer size
     private isRunning: boolean = false;
+    private httpsOptions?: { keyPath: string; certPath: string };
 
     constructor() {
         super();
     }
 
     /**
-     * Start the proxy server on a dynamic port
+     * Start the proxy server on a dynamic port with optional HTTPS support
+     * @param httpsOptions Optional HTTPS configuration with keyPath and certPath
      */
-    async start(): Promise<number> {
+    async start(httpsOptions?: { keyPath: string; certPath: string }): Promise<number> {
         if (this.isRunning) {
             console.log('[ProxyServer] Already running');
             return this.port;
         }
 
         try {
-            // Create Mockttp instance
-            this.mockttpServer = Mockttp.getLocal({
+            this.httpsOptions = httpsOptions;
+            
+            // Build Mockttp configuration
+            const config: any = {
                 cors: true,
                 recordTraffic: false // We'll handle logging ourselves
-            });
+            };
+            
+            // Add HTTPS support if key/cert paths provided
+            if (httpsOptions?.keyPath && httpsOptions?.certPath) {
+                // Mockttp requires cert/key content as strings, not paths
+                const certContent = fs.readFileSync(httpsOptions.certPath, 'utf8');
+                const keyContent = fs.readFileSync(httpsOptions.keyPath, 'utf8');
+                
+                config.https = {
+                    cert: certContent,
+                    key: keyContent
+                };
+                console.log(`[ProxyServer] HTTPS enabled with CA cert from: ${httpsOptions.certPath}`);
+            }
+
+            // Create Mockttp instance
+            this.mockttpServer = Mockttp.getLocal(config);
 
             // Set up request/response interceptors
             await this.mockttpServer.forAnyRequest().thenPassThrough({
                 beforeRequest: async (req) => {
+                    // Detect protocol from request URL
+                    const protocol = req.url.startsWith('https://') ? 'https' : 'http';
+                    
                     const logEntry: ProxyLogEntry = {
                         id: this.generateLogId(),
                         timestamp: Date.now(),
                         method: req.method,
                         url: req.url,
                         requestHeaders: { ...req.headers } as Record<string, string | string[]>,
-                        requestBody: req.body?.buffer ? req.body.buffer.toString('utf8') : undefined
+                        requestBody: req.body?.buffer ? req.body.buffer.toString('utf8') : undefined,
+                        protocol: protocol
                     };
 
                     // Store entry temporarily (will be completed on response)

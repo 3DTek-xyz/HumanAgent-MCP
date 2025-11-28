@@ -7,10 +7,61 @@ import * as crypto from 'crypto';
 import { McpMessage, McpServerConfig, HumanAgentSession, ChatMessage, McpTool, HumanAgentChatToolParams, HumanAgentChatToolResult } from './types';
 import { ChatManager } from './chatManager';
 import { ProxyServer } from './proxyServer';
+import { generateCACertificate } from 'mockttp';
 
-// Read version from package.json
-const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, '../../package.json'), 'utf8'));
-const VERSION = packageJson.version;
+// Version injected by webpack DefinePlugin at build time
+declare const __PACKAGE_VERSION__: string;
+const VERSION = __PACKAGE_VERSION__;
+
+/**
+ * Initialize HTTPS proxy CA certificate (generate or load cached)
+ * @param storagePath - Path to store certificate (from VS Code globalStorage or fallback to temp)
+ */
+async function initializeProxyCA(storagePath?: string): Promise<{ keyPath: string; certPath: string }> {
+  // Use provided storage path or fallback to temp directory
+  const caCacheDir = storagePath 
+    ? path.join(storagePath, 'proxy-ca')
+    : path.join(os.tmpdir(), 'humanagent-proxy');
+    
+  const caPath = path.join(caCacheDir, 'ca.pem');
+  const keyPath = path.join(caCacheDir, 'ca.key');
+  
+  // Ensure cache directory exists
+  if (!fs.existsSync(caCacheDir)) {
+    fs.mkdirSync(caCacheDir, { recursive: true });
+    console.log(`[ProxyServer] Created certificate storage directory: ${caCacheDir}`);
+  }
+  
+  // Check if CA already generated and cached
+  if (fs.existsSync(caPath) && fs.existsSync(keyPath)) {
+    console.log('[ProxyServer] Using cached HTTPS proxy CA');
+    console.log(`[ProxyServer] Certificate location: ${caPath}`);
+    return { keyPath, certPath: caPath };
+  }
+  
+  // Generate new CA certificate
+  console.log('[ProxyServer] Generating new HTTPS proxy CA certificate...');
+  try {
+    const ca = await generateCACertificate({
+      subject: {
+        commonName: 'HumanAgent Proxy CA - Testing Only',
+        organizationName: 'HumanAgent'
+      },
+      bits: 2048
+    });
+    
+    fs.writeFileSync(caPath, ca.cert);
+    fs.writeFileSync(keyPath, ca.key);
+    
+    console.log('[ProxyServer] HTTPS proxy CA certificate generated and cached');
+    console.log(`[ProxyServer] Certificate location: ${caPath}`);
+    
+    return { keyPath, certPath: caPath };
+  } catch (error) {
+    console.error('[ProxyServer] Failed to generate CA certificate:', error);
+    throw error;
+  }
+}
 
 // File logging utility
 class DebugLogger {
@@ -474,10 +525,17 @@ export class McpServer extends EventEmitter {
     this.debugLogger.log('INFO', '=== MCP SERVER STARTING ===');
     await this.startHttpServer();
     
-    // Start proxy server
+    // Start proxy server with HTTPS support
     try {
-      const proxyPort = await this.proxyServer.start();
-      this.debugLogger.log('INFO', `Proxy server started on port ${proxyPort}`);
+      // Get certificate storage path from environment variable (passed by extension)
+      const certStoragePath = process.env.HUMANAGENT_CERT_STORAGE_PATH;
+      const httpsOptions = await initializeProxyCA(certStoragePath);
+      const proxyPort = await this.proxyServer.start(httpsOptions);
+      
+      // Trust CA for all spawned processes
+      process.env.NODE_EXTRA_CA_CERTS = httpsOptions.certPath;
+      
+      this.debugLogger.log('INFO', `Proxy server started on port ${proxyPort} with HTTPS support`);
       
       // Set up proxy event forwarding
       this.proxyServer.on('log-added', (logEntry) => {
@@ -1521,6 +1579,15 @@ export class McpServer extends EventEmitter {
             background-color: var(--vscode-panel-background);
             border-radius: 4px;
             border-left: 3px solid var(--vscode-button-background);
+            transition: background-color 0.2s;
+        }
+
+        .proxy-log:hover {
+            background-color: var(--vscode-list-hoverBackground);
+        }
+
+        .proxy-log-summary {
+            cursor: pointer;
         }
 
         .proxy-log-header {
@@ -1551,6 +1618,38 @@ export class McpServer extends EventEmitter {
 
         .proxy-log-status.error {
             color: #d73a49;
+        }
+
+        .proxy-log-details {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--vscode-border);
+        }
+
+        .proxy-log-section {
+            margin-bottom: 15px;
+        }
+
+        .proxy-log-section h4 {
+            margin: 0 0 5px 0;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--vscode-button-background);
+        }
+
+        .proxy-log-section pre {
+            margin: 5px 0;
+            padding: 8px;
+            background-color: var(--vscode-editor-background);
+            border-radius: 3px;
+            font-size: 11px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .proxy-log-section b {
+            color: var(--vscode-button-background);
         }
 
         .input-box {
@@ -2009,18 +2108,57 @@ export class McpServer extends EventEmitter {
             const logDiv = document.createElement('div');
             logDiv.className = 'proxy-log';
             logDiv.dataset.logId = logEntry.id;
+            logDiv.style.cursor = 'pointer';
             
             const statusClass = logEntry.responseStatus >= 200 && logEntry.responseStatus < 300 ? 'success' : 'error';
             const statusText = logEntry.responseStatus ? logEntry.responseStatus : 'Pending';
             const duration = logEntry.duration ? \`\${logEntry.duration}ms\` : '-';
             
+            // Format headers for display
+            const formatHeaders = (headers) => {
+                if (!headers || Object.keys(headers).length === 0) return '<i>No headers</i>';
+                return Object.entries(headers)
+                    .map(([key, value]) => \`<div><b>\${escapeHtml(key)}:</b> \${escapeHtml(String(value))}</div>\`)
+                    .join('');
+            };
+            
+            // Format body for display
+            const formatBody = (body) => {
+                if (!body) return '<i>No body</i>';
+                if (typeof body === 'object') {
+                    return '<pre>' + escapeHtml(JSON.stringify(body, null, 2)) + '</pre>';
+                }
+                return '<pre>' + escapeHtml(String(body)) + '</pre>';
+            };
+            
             logDiv.innerHTML = \`
-                <div class="proxy-log-header">
-                    <span class="proxy-log-method">\${logEntry.method}</span>
-                    <span class="proxy-log-status \${statusClass}">\${statusText}</span>
-                    <span>\${duration}</span>
+                <div class="proxy-log-summary" onclick="toggleProxyLogDetails('\${logEntry.id}')">
+                    <div class="proxy-log-header">
+                        <span class="proxy-log-method">\${logEntry.method}</span>
+                        <span class="proxy-log-status \${statusClass}">\${statusText}</span>
+                        <span>\${duration}</span>
+                        <span style="float: right;">▼</span>
+                    </div>
+                    <div class="proxy-log-url">\${escapeHtml(logEntry.url)}</div>
                 </div>
-                <div class="proxy-log-url">\${escapeHtml(logEntry.url)}</div>
+                <div class="proxy-log-details" id="proxy-log-details-\${logEntry.id}" style="display: none;">
+                    <div class="proxy-log-section">
+                        <h4>Request Headers</h4>
+                        \${formatHeaders(logEntry.requestHeaders)}
+                    </div>
+                    <div class="proxy-log-section">
+                        <h4>Request Body</h4>
+                        \${formatBody(logEntry.requestBody)}
+                    </div>
+                    <div class="proxy-log-section">
+                        <h4>Response Headers</h4>
+                        \${formatHeaders(logEntry.responseHeaders)}
+                    </div>
+                    <div class="proxy-log-section">
+                        <h4>Response Body</h4>
+                        \${formatBody(logEntry.responseBody)}
+                    </div>
+                </div>
             \`;
             
             if (prepend) {
@@ -2032,6 +2170,20 @@ export class McpServer extends EventEmitter {
             // Keep only last 200 logs
             while (proxyLogsContainer.children.length > 200) {
                 proxyLogsContainer.removeChild(proxyLogsContainer.lastChild);
+            }
+        }
+        
+        function toggleProxyLogDetails(logId) {
+            const details = document.getElementById(\`proxy-log-details-\${logId}\`);
+            const arrow = document.querySelector(\`[data-log-id="\${logId}"] .proxy-log-summary span[style*="float"]\`);
+            if (details && arrow) {
+                if (details.style.display === 'none') {
+                    details.style.display = 'block';
+                    arrow.textContent = '▲';
+                } else {
+                    details.style.display = 'none';
+                    arrow.textContent = '▼';
+                }
             }
         }
         

@@ -11,6 +11,7 @@ export interface ServerManagerOptions {
     logFile?: string;
     loggingEnabled?: boolean;
     loggingLevel?: string;
+    certStoragePath?: string;
 }
 
 export class ServerManager {
@@ -186,7 +187,9 @@ export class ServerManager {
                     HUMANAGENT_LOGGING_ENABLED: this.options.loggingEnabled ? 'true' : 'false',
                     HUMANAGENT_LOGGING_LEVEL: this.options.loggingLevel || 'INFO',
                     // Pass port to standalone server
-                    HUMANAGENT_MCP_PORT: this.options.port.toString()
+                    HUMANAGENT_MCP_PORT: this.options.port.toString(),
+                    // Pass certificate storage path to MCP server
+                    HUMANAGENT_CERT_STORAGE_PATH: this.options.certStoragePath || ''
                 }
             });
 
