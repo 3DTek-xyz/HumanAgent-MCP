@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSONata Rule Builder - Visual JSON Transformation</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .builder-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        select, input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .preview-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #007acc;
+        }
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        .btn {
+            background: #007acc;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .btn:hover {
+            background: #005a9e;
+        }
+        .btn-secondary {
+            background: #6c757d;
+        }
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+        .step {
+            margin-bottom: 25px;
+            padding: 20px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+        }
+        .step-header {
+            color: #007acc;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        .example-data {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #ffc107;
+            margin-bottom: 20px;
+        }
+        .test-results {
+            margin-top: 20px;
+            padding: 15px;
+            background: #d1ecf1;
+            border-radius: 6px;
+            border-left: 4px solid #17a2b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="builder-container">
+        <h1>🎯 JSONata Rule Builder</h1>
+        <p>Build powerful JSON transformations without learning JSONata syntax!</p>
+
+        <!-- Step 1: Target Selection -->
+        <div class="step">
+            <div class="step-header">Step 1: Select What to Transform</div>
+            
+            <div class="form-group">
+                <label for="target-field">Target Field Path</label>
+                <select id="target-field" onchange="updatePreview()">
+                    <option value="messages[].content">Message Content</option>
+                    <option value="messages[].role">Message Role</option>
+                    <option value="model">Model Name</option>
+                    <option value="temperature">Temperature</option>
+                    <option value="custom">Custom Path...</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="custom-path-group" style="display: none;">
+                <label for="custom-path">Custom JSONata Path</label>
+                <input type="text" id="custom-path" placeholder="e.g., messages[role='user'].content" onchange="updatePreview()">
+            </div>
+        </div>
+
+        <!-- Step 2: Condition Selection -->
+        <div class="step">
+            <div class="step-header">Step 2: Set Conditions (When to Apply)</div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="condition-field">Condition Field</label>
+                    <select id="condition-field" onchange="updatePreview()">
+                        <option value="role">Message Role</option>
+                        <option value="content">Message Content</option>
+                        <option value="none">No Condition</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="condition-operator">Condition</label>
+                    <select id="condition-operator" onchange="updatePreview()">
+                        <option value="equals">Equals</option>
+                        <option value="contains">Contains</option>
+                        <option value="startsWith">Starts With</option>
+                        <option value="endsWith">Ends With</option>
+                        <option value="regex">Matches Regex</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="condition-value">Condition Value</label>
+                <input type="text" id="condition-value" placeholder="e.g., user" onchange="updatePreview()">
+            </div>
+        </div>
+
+        <!-- Step 3: Transformation -->
+        <div class="step">
+            <div class="step-header">Step 3: Define Transformation</div>
+            
+            <div class="form-group">
+                <label for="transform-type">Transformation Type</label>
+                <select id="transform-type" onchange="updatePreview()">
+                    <option value="replace">Replace Text/Regex</option>
+                    <option value="set">Set Fixed Value</option>
+                    <option value="append">Append Text</option>
+                    <option value="prepend">Prepend Text</option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="search-value">Search For</label>
+                    <input type="text" id="search-value" placeholder="e.g., <userRequest>.*?</userRequest>" onchange="updatePreview()">
+                    <small>Use regex patterns like &lt;userRequest&gt;.*?&lt;/userRequest&gt;</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="replace-value">Replace With</label>
+                    <input type="text" id="replace-value" placeholder="e.g., <userRequest>Tell Me A Joke</userRequest>" onchange="updatePreview()">
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Data -->
+        <div class="step">
+            <div class="step-header">Step 4: Test with Sample Data</div>
+            
+            <div class="example-data">
+                <strong>💡 Tip:</strong> Paste your actual request JSON here to test the transformation
+            </div>
+
+            <div class="form-group">
+                <label for="test-json">Sample JSON Data</label>
+                <textarea id="test-json" rows="8" onchange="updatePreview()">
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a helpful assistant."
+    },
+    {
+      "role": "user", 
+      "content": "<userRequest>BLAH BLAH BLAH</userRequest>"
+    }
+  ],
+  "model": "gpt-4",
+  "temperature": 0
+}</textarea>
+            </div>
+
+            <button class="btn" onclick="testTransformation()">🧪 Test Transformation</button>
+            <button class="btn btn-secondary" onclick="loadProxiedData()">📋 Load from Proxy Log</button>
+        </div>
+
+        <!-- Generated JSONata Expression -->
+        <div class="preview-section">
+            <h3>Generated JSONata Expression</h3>
+            <div class="code-block" id="jsonata-expression">
+                // JSONata expression will appear here
+            </div>
+            
+            <h3>Proxy Rule Configuration</h3>
+            <div class="code-block" id="proxy-config">
+                URL Pattern: https://api.individual.githubcopilot.com/chat/completions
+                Rule Type: JSONata Transform
+                Expression: (generated above)
+            </div>
+
+            <button class="btn" onclick="copyExpression()">📋 Copy Expression</button>
+            <button class="btn" onclick="applyToProxyRule()">✅ Apply to Proxy Rule</button>
+        </div>
+
+        <!-- Test Results -->
+        <div class="test-results" id="test-results" style="display: none;">
+            <h4>🔍 Transformation Results</h4>
+            <div id="test-output"></div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize with default values
+        document.getElementById('condition-field').value = 'role';
+        document.getElementById('condition-value').value = 'user';
+        document.getElementById('search-value').value = '<userRequest>.*?</userRequest>';
+        document.getElementById('replace-value').value = '<userRequest>Tell Me A Joke</userRequest>';
+
+        function updatePreview() {
+            const targetField = document.getElementById('target-field').value;
+            const conditionField = document.getElementById('condition-field').value;
+            const conditionOperator = document.getElementById('condition-operator').value;
+            const conditionValue = document.getElementById('condition-value').value;
+            const transformType = document.getElementById('transform-type').value;
+            const searchValue = document.getElementById('search-value').value;
+            const replaceValue = document.getElementById('replace-value').value;
+
+            // Show/hide custom path input
+            const customPathGroup = document.getElementById('custom-path-group');
+            customPathGroup.style.display = targetField === 'custom' ? 'block' : 'none';
+
+            // Generate JSONata expression
+            let expression = '';
+            
+            if (targetField === 'messages[].content') {
+                // Building expression for message content transformation
+                let condition = '';
+                if (conditionField !== 'none' && conditionValue) {
+                    switch (conditionOperator) {
+                        case 'equals':
+                            condition = `${conditionField}="${conditionValue}"`;
+                            break;
+                        case 'contains':
+                            condition = `$contains(${conditionField}, "${conditionValue}")`;
+                            break;
+                        case 'startsWith':
+                            condition = `$substring(${conditionField}, 0, ${conditionValue.length})="${conditionValue}"`;
+                            break;
+                        case 'regex':
+                            condition = `$match(${conditionField}, /${conditionValue}/)`;
+                            break;
+                    }
+                }
+
+                if (transformType === 'replace' && searchValue && replaceValue) {
+                    expression = `{
+  "messages": messages.(
+    ${condition ? condition + ' ? ' : ''}
+    {
+      "role": role,
+      "content": $replace(content, /${searchValue}/s, "${replaceValue}"),
+      $: $ ~> |$| {"content": undefined}, ["role", "content"]|
+    }${condition ? ' : $' : ''}
+  ),
+  $: $ ~> |$| {"messages": undefined}, ["messages"]|
+}`;
+                }
+            }
+
+            // Display the expression
+            document.getElementById('jsonata-expression').textContent = expression || '// Configure options above to generate JSONata expression';
+            
+            // Update proxy config
+            document.getElementById('proxy-config').textContent = `URL Pattern: https://api.individual.githubcopilot.com/chat/completions
+Rule Type: JSONata Transform  
+Expression: ${expression ? 'See above' : 'Not configured'}`;
+        }
+
+        function testTransformation() {
+            const testJson = document.getElementById('test-json').value;
+            const expression = document.getElementById('jsonata-expression').textContent;
+            
+            document.getElementById('test-results').style.display = 'block';
+            document.getElementById('test-output').innerHTML = `
+                <strong>Original JSON:</strong>
+                <pre>${testJson}</pre>
+                <strong>JSONata Expression:</strong>
+                <pre>${expression}</pre>
+                <strong>Result:</strong>
+                <pre>// Would need JSONata library to execute
+// This shows the concept - actual execution requires JSONata integration</pre>
+            `;
+        }
+
+        function loadProxiedData() {
+            // In real implementation, this would load from proxy logs
+            alert('In the real implementation, this would load captured request data from your proxy logs');
+        }
+
+        function copyExpression() {
+            const expression = document.getElementById('jsonata-expression').textContent;
+            navigator.clipboard.writeText(expression);
+            alert('JSONata expression copied to clipboard!');
+        }
+
+        function applyToProxyRule() {
+            const expression = document.getElementById('jsonata-expression').textContent;
+            if (!expression || expression.includes('Configure options')) {
+                alert('❌ Please configure your transformation first!');
+                return;
+            }
+            
+            // Create rule object
+            const rule = {
+                pattern: 'https://api.individual.githubcopilot.com/chat/completions',
+                type: 'jsonata',
+                expression: expression,
+                description: 'Rule created from visual builder'
+            };
+            
+            // Send to parent window
+            if (window.opener && !window.opener.closed) {
+                window.opener.postMessage({
+                    type: 'ADD_PROXY_RULE',
+                    rule: rule
+                }, '*');
+                alert('✅ Rule sent to proxy server!\\n\\nCheck the main interface to see your new rule.');
+            } else {
+                // Fallback - copy the rule configuration
+                const ruleConfig = JSON.stringify(rule, null, 2);
+                navigator.clipboard.writeText(ruleConfig);
+                alert('✅ Rule configuration copied to clipboard!\\n\\nPaste it into the proxy rule form manually.');
+            }
+        }
+
+        // Handle incoming data from parent window
+        window.addEventListener('message', function(event) {
+            if (event.data && event.data.type === 'POPULATE_BUILDER') {
+                const { logId, jsonData, url } = event.data;
+                
+                // Auto-fill the test JSON area with the captured data
+                document.getElementById('test-json').value = JSON.stringify(jsonData, null, 2);
+                
+                // Try to detect patterns in the JSON
+                if (jsonData.messages && Array.isArray(jsonData.messages)) {
+                    // Detected messages array - set up for message transformation
+                    const userMessage = jsonData.messages.find(msg => msg.role === 'user');
+                    if (userMessage && userMessage.content && userMessage.content.includes('<userRequest>')) {
+                        document.getElementById('operation-type').value = 'replace';
+                        document.getElementById('target-field').value = 'messages[0].content';
+                        document.getElementById('replacement-type').value = 'regex';
+                        document.getElementById('replacement-value').value = '<userRequest>MODIFIED REQUEST</userRequest>';
+                        
+                        // Show a notification
+                        setTimeout(() => {
+                            alert(`🎯 Detected userRequest pattern in log ${logId}!\\n\\nAuto-configured for content replacement.\\nAdjust the settings below and test your transformation.`);
+                        }, 500);
+                    }
+                } else if (jsonData.content) {
+                    // Simple content field
+                    document.getElementById('target-field').value = 'content';
+                }
+                
+                // Add a banner showing the source
+                const banner = document.createElement('div');
+                banner.innerHTML = `
+                    <div style="background: linear-gradient(135deg, #007acc, #0099ff); 
+                               color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px;
+                               text-align: center; font-weight: 600;">
+                        📊 Building Rule from Proxy Log #${logId}
+                        <br><small style="opacity: 0.9;">URL: ${url}</small>
+                    </div>
+                `;
+                document.querySelector('.builder-container').insertBefore(banner, document.querySelector('.builder-container').firstChild);
+                
+                // Update preview immediately
+                updatePreview();
+            }
+        });
+
+        // Initialize the preview
+        updatePreview();
+    </script>
+</body>
+</html>

@@ -314,13 +314,13 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
 
     const proxyUrl = `http://127.0.0.1:${status.proxy.port}`;
     await vscode.workspace.getConfiguration().update('http.proxy', proxyUrl, vscode.ConfigurationTarget.Global);
-    vscode.window.showInformationMessage(`✅ Proxy enabled: ${proxyUrl}`);
+    // Proxy enabled silently
     await this.updateServerStatus();
   }
 
   private async disableProxy() {
     await vscode.workspace.getConfiguration().update('http.proxy', undefined, vscode.ConfigurationTarget.Global);
-    vscode.window.showInformationMessage('Proxy disabled');
+    // Proxy disabled silently
     await this.updateServerStatus();
   }
 

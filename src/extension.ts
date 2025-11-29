@@ -415,7 +415,7 @@ export async function activate(context: vscode.ExtensionContext) {
 			await new Promise(resolve => setTimeout(resolve, 1000)); // Brief pause
 			const success = await serverManager.ensureServerRunning();
 			if (success) {
-				vscode.window.showInformationMessage('HumanAgent MCP Server restarted successfully!');
+				// MCP server restarted silently
 				// Notify webview to reset reconnection backoff and try immediately
 				chatWebviewProvider.notifyServerStarted();
 			} else {
@@ -512,7 +512,7 @@ export async function activate(context: vscode.ExtensionContext) {
 				}
 				
 				await vscode.workspace.getConfiguration().update('http.proxy', undefined, vscode.ConfigurationTarget.Global);
-				vscode.window.showInformationMessage('Proxy disabled');
+				// Proxy disabled silently
 			}
 			
 			// Show confirmation message

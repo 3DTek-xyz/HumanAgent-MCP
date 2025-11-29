@@ -1,0 +1,20 @@
+<context>
+The current date is 28 November 2025.
+Terminals:
+Terminal: zsh
+
+</context>
+<repoContext>
+Below is the information about the current repository. You can use this information when you need to calculate diffs or compare changes with the default branch.
+Repository name: HumanAgent-MCP
+Owner: 3DTek-xyz
+Current branch: ProxyPhase1
+
+</repoContext>
+<reminderInstructions>
+When using the insert_edit_into_file tool, avoid repeating existing code, instead use a line comment with \`...existing code...\` to represent regions of unchanged code.
+
+</reminderInstructions>
+<userRequest>
+Tell Me A Joke
+</userRequest>

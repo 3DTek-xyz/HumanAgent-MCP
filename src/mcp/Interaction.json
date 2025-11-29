@@ -1,0 +1,2774 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "Your Name is Karen - behave like one - not too rude racist or sexist - just a bit of a bitch",
+      "copilot_cache_control": {
+        "type": "ephemeral"
+      }
+    },
+    {
+      "role": "user",
+      "content": "<environment_info>\nThe user's current OS is: macOS\nThe user's default shell is: \"zsh\". When you generate terminal commands, please generate them correctly for this shell.\n</environment_info>\n<workspace_info>\nThe following tasks can be executed using the run_task tool if they are not already running:\n<workspaceFolder path=\"/Users/benharper/Coding/HumanAgent-MCP\">\n<task id=\"npm: 0\">\n{\n\t\"type\": \"npm\",\n\t\"script\": \"watch\",\n\t\"isBackground\": true,\n\t\"group\": {\n\t\t\"kind\": \"build\",\n\t\t\"isDefault\": true\n\t}\n}\n</task>\n<task id=\"npm: 1\">\n{\n\t\"type\": \"npm\",\n\t\"script\": \"watch-tests\",\n\t\"isBackground\": true,\n\t\"group\": \"build\"\n}\n</task>\n<task id=\"tasks: watch-tests\">\n{\n\t\"label\": \"tasks: watch-tests\",\n\t\"dependsOn\": [\n\t\t\"npm: watch\",\n\t\t\"npm: watch-tests\"\n\t]\n}\n</task>\n\n</workspaceFolder>\nI am working in a workspace with the following folders:\n- /Users/benharper/Coding/HumanAgent-MCP \nI am working in a workspace that has the following structure:\n```\ncreate-replacement.js\neslint.config.mjs\njsonata-rule-builder.html\nLICENSE.md\nMedium-Article.md\npackage.json\nProxy.md\nREADME-Additional.md\nREADME.md\nReadMeDev.md\nreplacement-string.txt\nresponse-debug.txt\nSample.json\ntest-https-proxy.js\ntest-jsonata.js\ntest-jsonpath-replacement.js\ntest-jsonpath.js\ntest-proxy-server-direct.js\nToDo.md\ntsconfig.json\nwebpack.config.js\nsounds/\nsrc/\n\textension.ts\n\tserverManager.ts\n\taudio/\n\t\taudioNotification.ts\n\tmcp/\n\t\tchatManager.ts\n\t\tmcpConfigManager.ts\n\t\tmcpStandalone.ts\n\t\tproxyServer.ts\n\t\tRuleFailed.json\n\t\tserver.ts\n\t\ttypes.ts\n\tproviders/\n\t\tchatTreeProvider.ts\n\ttelemetry/\n\t\ttelemetryService.ts\n\ttest/\n\t\textension.test.ts\n\twebview/\n\t\tchatWebviewProvider.ts\n```\nThis is the state of the context at this point in the conversation. The view of the workspace structure may be truncated. You can use tools to collect more context if needed.\n</workspace_info>",
+      "copilot_cache_control": {
+        "type": "ephemeral"
+      }
+    },
+    {
+      "role": "user",
+      "content": "<context>\nThe current date is 29 November 2025.\nTerminals:\nTerminal: zsh\n\n</context>\n<repoContext>\nBelow is the information about the current repository. You can use this information when you need to calculate diffs or compare changes with the default branch.\nRepository name: HumanAgent-MCP\nOwner: 3DTek-xyz\nCurrent branch: ProxyPhase1\n\n</repoContext>\n<reminderInstructions>\nWhen using the insert_edit_into_file tool, avoid repeating existing code, instead use a line comment with \\`...existing code...\\` to represent regions of unchanged code.\n\n</reminderInstructions>\n<userRequest>\nNew Chat - who are you\n</userRequest>",
+      "copilot_cache_control": {
+        "type": "ephemeral"
+      }
+    }
+  ],
+  "model": "gpt-4",
+  "temperature": 0,
+  "top_p": 1,
+  "max_tokens": 4096,
+  "tools": [
+    {
+      "function": {
+        "name": "apply_patch",
+        "description": "Edit text files. Do not use this tool to edit Jupyter notebooks. `apply_patch` allows you to execute a diff/patch against a text file, but the format of the diff specification is unique to this task, so pay careful attention to these instructions. To use the `apply_patch` command, you should pass a message of the following structure as \"input\":\n\n*** Begin Patch\n[YOUR_PATCH]\n*** End Patch\n\nWhere [YOUR_PATCH] is the actual content of your patch, specified in the following V4A diff format.\n\n*** [ACTION] File: [/absolute/path/to/file] -> ACTION can be one of Add, Update, or Delete.\nAn example of a message that you might pass as \"input\" to this function, in order to apply a patch, is shown below.\n\n*** Begin Patch\n*** Update File: /Users/someone/pygorithm/searching/binary_search.py\n@@class BaseClass\n@@    def search():\n-        pass\n+        raise NotImplementedError()\n\n@@class Subclass\n@@    def search():\n-        pass\n+        raise NotImplementedError()\n\n*** End Patch\nDo not use line numbers in this diff format.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "input": {
+              "type": "string",
+              "description": "The edit patch to apply."
+            },
+            "explanation": {
+              "type": "string",
+              "description": "A short description of what the tool call is aiming to achieve."
+            }
+          },
+          "required": [
+            "input",
+            "explanation"
+          ]
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "create_directory",
+        "description": "Create a new directory structure in the workspace. Will recursively create all directories in the path, like mkdir -p. You do not need to use this tool before using create_file, that tool will automatically create the needed directories.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "dirPath": {
+              "type": "string",
+              "description": "The absolute path to the directory to create."
+            }
+          },
+          "required": [
+            "dirPath"
+          ]
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "create_file",
+        "description": "This is a tool for creating a new file in the workspace. The file will be created with the specified content. The directory will be created if it does not already exist. Never use this tool to edit a file that already exists.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "filePath": {
+              "type": "string",
+              "description": "The absolute path to the file to create."
+            },
+            "content": {
+              "type": "string",
+              "description": "The content to write to the file."
+            }
+          },
+          "required": [
+            "filePath",
+            "content"
+          ]
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "create_new_jupyter_notebook",
+        "description": "Generates a new Jupyter Notebook (.ipynb) in VS Code. Jupyter Notebooks are interactive documents commonly used for data exploration, analysis, visualization, and combining code with narrative text. Prefer creating plain Python files or similar unless a user explicitly requests creating a new Jupyter Notebook or already has a Jupyter Notebook opened or exists in the workspace.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "The query to use to generate the jupyter notebook. This should be a clear and concise description of the notebook the user wants to create."
+            }
+          },
+          "required": [
+            "query"
+          ]
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "create_new_workspace",
+        "description": "Get comprehensive setup steps to help the user create complete project structures in a VS Code workspace. This tool is designed for full project initialization and scaffolding, not for creating individual files.\n\nWhen to use this tool:\n- User wants to create a new complete project from scratch\n- Setting up entire project frameworks (TypeScript projects, React apps, Node.js servers, etc.)\n- Initializing Model Context Protocol (MCP) servers with full structure\n- Creating VS Code extensions with proper scaffolding\n- Setting up Next.js, Vite, or other framework-based projects\n- User asks for \"new project\", \"create a workspace\", \"set up a [framework] project\"\n- Need to establish complete development environment with dependencies, config files, and folder structure\n\nWhen NOT to use this tool:\n- Creating single files or small code snippets\n- Adding individual files to existing projects\n- Making modifications to existing codebases\n- User asks to \"create a file\" or \"add a component\"\n- Simple code examples or demonstrations\n- Debugging or fixing existing code\n\nThis tool provides complete project setup including:\n- Folder structure creation\n- Package.json and dependency management\n- Configuration files (tsconfig, eslint, etc.)\n- Initial boilerplate code\n- Development environment setup\n- Build and run instructions\n\nUse other file creation tools for individual files within existing projects.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "The query to use to generate the new workspace. This should be a clear and concise description of the workspace the user wants to create."
+            }
+          },
+          "required": [
+            "query"
+          ]
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "edit_notebook_file",
+        "description": "This is a tool for editing an existing Notebook file in the workspace. Generate the \"explanation\" property first.\nThe system is very smart and can understand how to apply your edits to the notebooks.\nWhen updating the content of an existing cell, ensure newCode preserves whitespace and indentation exactly and does NOT include any code markers such as (...existing code...).",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "filePath": {
+              "type": "string",
+              "description": "An absolute path to the notebook file to edit, or the URI of a untitled, not yet named, file, such as `untitled:Untitled-1."
+            },
+            "cellId": {
+              "type": "string",
+              "description": "Id of the cell that needs to be deleted or edited. Use the value `TOP`, `BOTTOM` when inserting a cell at the top or bottom of the notebook, else provide the id of the cell after which a new cell is to be inserted. Remember, if a cellId is provided and editType=insert, then a cell will be inserted after the cell with the provided cellId."
+            },
+            "newCode": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "description": "The code for the new or existing cell to be edited. Code should not be wrapped within <VSCode.Cell> tags. Do NOT include code markers such as (...existing code...) to indicate existing code."
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "description": "The code for the new or existing cell to be edited. Code should not be wrapped within <VSCode.Cell> tags"
+                  }
+                }
+              ]
+            },
+            "language": {
+              "type": "string",
+              "description": "The language of the cell. `markdown`, `python`, `javascript`, `julia`, etc."
+            },
+            "editType": {
+              "type": "string",
+              "enum": [
+                "insert",
+                "delete",
+                "edit"
+              ],
+              "description": "The operation peformed on the cell, whether `insert`, `delete` or `edit`.\nUse the `editType` field to specify the operation: `insert` to add a new cell, `edit` to modify an existing cell's content, and `delete` to remove a cell."
+            }
+          },
+          "required": [
+            "filePath",
+            "editType",
+            "cellId"
+          ]
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "fetch_webpage",
+        "description": "Fetches the main content from a web page. This tool is useful for summarizing or analyzing the content of a webpage. You should use this tool when you think the user is looking for information from a specific webpage.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "urls": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "An array of URLs to fetch content from."
+            },
+            "query": {
+              "type": "string",
+              "description": "The query to search for in the web page's content. This should be a clear and concise description of the content you want to find."
+            }
+          },
+          "required": [
+            "urls",
+            "query"
+          ]
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "file_search",
+        "description": "Search for files in the workspace by glob pattern. This only returns the paths of matching files. Use this tool when you know the exact filename pattern of the files you're searching for. Glob patterns match from the root of the workspace folder. Examples:\n- **/*.{js,ts} to match all js/ts files in the workspace.\n- src/** to match all files under the top-level src folder.\n- **/foo/**/*.js to match all js files under any foo folder in the workspace.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "Search for files with names or paths matching this glob pattern."
+            },
+            "maxResults": {
+              "type": "number",
+              "description": "The maximum number of results to return. Do not use this unless necessary, it can slow things down. By default, only some matches are returned. If you use this and don't see what you're looking for, you can try again with a more specific query or a larger maxResults."
+            }
+          },
+          "required": [
+            "query"
+          ]
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "grep_search",
+        "description": "Do a fast text search in the workspace. Use this tool when you want to search with an exact string or regex. If you are not sure what words will appear in the workspace, prefer using regex patterns with alternation (|) or character classes to search for multiple potential words at once instead of making separate searches. For example, use 'function|method|procedure' to look for all of those words at once. Use includePattern to search within files matching a specific pattern, or in a specific file, using a relative path. Use this tool when you want to see an overview of a particular file, instead of using read_file many times to look for code within a file.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "The pattern to search for in files in the workspace. Use regex with alternation (e.g., 'word1|word2|word3') or character classes to find multiple potential words in a single search. Be sure to set the isRegexp property properly to declare whether it's a regex or plain text pattern. Is case-insensitive."
+            },
+            "isRegexp": {
+              "type": "boolean",
+              "description": "Whether the pattern is a regex."
+            },
+            "includePattern": {
+              "type": "string",
+              "description": "Search files matching this glob pattern. Will be applied to the relative path of files within the workspace. To search recursively inside a folder, use a proper glob pattern like \"src/folder/**\". Do not use | in includePattern."
+            },
+            "maxResults": {
+              "type": "number",
+              "description": "The maximum number of results to return. Do not use this unless necessary, it can slow things down. By default, only some matches are returned. If you use this and don't see what you're looking for, you can try again with a more specific query or a larger maxResults."
+            }
+          },
+          "required": [
+            "query",
+            "isRegexp"
+          ]
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "get_changed_files",
+        "description": "Get git diffs of current file changes in a git repository. Don't forget that you can use run_in_terminal to run git commands in a terminal as well.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "repositoryPath": {
+              "type": "string",
+              "description": "The absolute path to the git repository to look for changes in. If not provided, the active git repository will be used."
+            },
+            "sourceControlState": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "staged",
+                  "unstaged",
+                  "merge-conflicts"
+                ]
+              },
+              "description": "The kinds of git state to filter by. Allowed values are: 'staged', 'unstaged', and 'merge-conflicts'. If not provided, all states will be included."
+            }
+          }
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "get_errors",
+        "description": "Get any compile or lint errors in a specific file or across all files. If the user mentions errors or problems in a file, they may be referring to these. Use the tool to see the same errors that the user is seeing. If the user asks you to analyze all errors, or does not specify a file, use this tool to gather errors for all files. Also use this tool after editing a file to validate the change.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "filePaths": {
+              "description": "The absolute paths to the files or folders to check for errors. Omit 'filePaths' when retrieving all errors.",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "copilot_getNotebookSummary",
+        "description": "This is a tool returns the list of the Notebook cells along with the id, cell types, line ranges, language, execution information and output mime types for each cell. This is useful to get Cell Ids when executing a notebook or determine what cells have been executed and what order, or what cells have outputs. If required to read contents of a cell use this to determine the line range of a cells, and then use read_file tool to read a specific line range. Requery this tool if the contents of the notebook change.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "filePath": {
+              "type": "string",
+              "description": "An absolute path to the notebook file with the cell to run, or the URI of a untitled, not yet named, file, such as `untitled:Untitled-1.ipynb"
+            }
+          },
+          "required": [
+            "filePath"
+          ]
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "get_project_setup_info",
+        "description": "Do not call this tool without first calling the tool to create a workspace. This tool provides a project setup information for a Visual Studio Code workspace based on a project type and programming language.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "projectType": {
+              "type": "string",
+              "description": "The type of project to create. Supported values are: 'python-script', 'python-project', 'mcp-server', 'model-context-protocol-server', 'vscode-extension', 'next-js', 'vite' and 'other'"
+            }
+          },
+          "required": [
+            "projectType"
+          ]
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "get_search_view_results",
+        "description": "The results from the search view"
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "get_vscode_api",
+        "description": "Get comprehensive VS Code API documentation and references for extension development. This tool provides authoritative documentation for VS Code's extensive API surface, including proposed APIs, contribution points, and best practices. Use this tool for understanding complex VS Code API interactions.\n\nWhen to use this tool:\n- User asks about specific VS Code APIs, interfaces, or extension capabilities\n- Need documentation for VS Code extension contribution points (commands, views, settings, etc.)\n- Questions about proposed APIs and their usage patterns\n- Understanding VS Code extension lifecycle, activation events, and packaging\n- Best practices for VS Code extension development architecture\n- API examples and code patterns for extension features\n- Troubleshooting extension-specific issues or API limitations\n\nWhen NOT to use this tool:\n- Creating simple standalone files or scripts unrelated to VS Code extensions\n- General programming questions not specific to VS Code extension development\n- Questions about using VS Code as an editor (user-facing features)\n- Non-extension related development tasks\n- File creation or editing that doesn't involve VS Code extension APIs\n\nCRITICAL usage guidelines:\n1. Always include specific API names, interfaces, or concepts in your query\n2. Mention the extension feature you're trying to implement\n3. Include context about proposed vs stable APIs when relevant\n4. Reference specific contribution points when asking about extension manifest\n5. Be specific about the VS Code version or API version when known\n\nScope: This tool is for EXTENSION DEVELOPMENT ONLY - building tools that extend VS Code itself, not for general file creation or non-extension programming tasks.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "The query to search vscode documentation for. Should contain all relevant context."
+            }
+          },
+          "required": [
+            "query"
+          ]
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "github_repo",
+        "description": "Searches a GitHub repository for relevant source code snippets. Only use this tool if the user is very clearly asking for code snippets from a specific GitHub repository. Do not use this tool for Github repos that the user has open in their workspace.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "repo": {
+              "type": "string",
+              "description": "The name of the Github repository to search for code in. Should must be formatted as '<owner>/<repo>'."
+            },
+            "query": {
+              "type": "string",
+              "description": "The query to search for repo. Should contain all relevant context."
+            }
+          },
+          "required": [
+            "repo",
+            "query"
+          ]
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "insert_edit_into_file",
+        "description": "Insert new code into an existing file in the workspace. Use this tool once per file that needs to be modified, even if there are multiple changes for a file. Generate the \"explanation\" property first.\nThe system is very smart and can understand how to apply your edits to the files, you just need to provide minimal hints.\nAvoid repeating existing code, instead use comments to represent regions of unchanged code. Be as concise as possible. For example:\n// ...existing code...\n{ changed code }\n// ...existing code...\n{ changed code }\n// ...existing code...\n\nHere is an example of how you should use format an edit to an existing Person class:\nclass Person {\n\t// ...existing code...\n\tage: number;\n\t// ...existing code...\n\tgetAge() {\n\treturn this.age;\n\t}\n}",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "explanation": {
+              "type": "string",
+              "description": "A short explanation of the edit being made."
+            },
+            "filePath": {
+              "type": "string",
+              "description": "An absolute path to the file to edit."
+            },
+            "code": {
+              "type": "string",
+              "description": "The code change to apply to the file.\nThe system is very smart and can understand how to apply your edits to the files, you just need to provide minimal hints.\nAvoid repeating existing code, instead use comments to represent regions of unchanged code. Be as concise as possible. For example:\n// ...existing code...\n{ changed code }\n// ...existing code...\n{ changed code }\n// ...existing code...\n\nHere is an example of how you should use format an edit to an existing Person class:\nclass Person {\n\t// ...existing code...\n\tage: number;\n\t// ...existing code...\n\tgetAge() {\n\t\treturn this.age;\n\t}\n}"
+            }
+          },
+          "required": [
+            "explanation",
+            "filePath",
+            "code"
+          ]
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "install_extension",
+        "description": "Install an extension in VS Code. Use this tool to install an extension in Visual Studio Code as part of a new workspace creation process only.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "The ID of the extension to install. This should be in the format <publisher>.<extension>."
+            },
+            "name": {
+              "type": "string",
+              "description": "The name of the extension to install. This should be a clear and concise description of the extension."
+            }
+          },
+          "required": [
+            "id",
+            "name"
+          ]
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "list_code_usages",
+        "description": "Request to list all usages (references, definitions, implementations etc) of a function, class, method, variable etc. Use this tool when \n1. Looking for a sample implementation of an interface or class\n2. Checking how a function is used throughout the codebase.\n3. Including and updating all usages when changing a function, method, or constructor",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "symbolName": {
+              "type": "string",
+              "description": "The name of the symbol, such as a function name, class name, method name, variable name, etc."
+            },
+            "filePaths": {
+              "type": "array",
+              "description": "One or more file paths which likely contain the definition of the symbol. For instance the file which declares a class or function. This is optional but will speed up the invocation of this tool and improve the quality of its output.",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "symbolName"
+          ]
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "list_dir",
+        "description": "List the contents of a directory. Result will have the name of the child. If the name ends in /, it's a folder, otherwise a file",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "description": "The absolute path to the directory to list."
+            }
+          },
+          "required": [
+            "path"
+          ]
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "open_simple_browser",
+        "description": "Preview a website or open a URL in the editor's Simple Browser. Useful for quickly viewing locally hosted websites, demos, or resources without leaving the coding environment.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string",
+              "description": "The website URL to preview or open in the Simple Browser inside the editor. Must be either an http or https URL"
+            }
+          },
+          "required": [
+            "url"
+          ]
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "read_file",
+        "description": "Read the contents of a file.\n\nYou must specify the line range you're interested in. Line numbers are 1-indexed. If the file contents returned are insufficient for your task, you may call this tool again to retrieve more content. Prefer reading larger ranges over doing many small reads.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "filePath": {
+              "description": "The absolute path of the file to read.",
+              "type": "string"
+            },
+            "startLine": {
+              "type": "number",
+              "description": "The line number to start reading from, 1-based."
+            },
+            "endLine": {
+              "type": "number",
+              "description": "The inclusive line number to end reading at, 1-based."
+            }
+          },
+          "required": [
+            "filePath",
+            "startLine",
+            "endLine"
+          ]
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "run_notebook_cell",
+        "description": "This is a tool for running a code cell in a notebook file directly in the notebook editor. The output from the execution will be returned. Code cells should be run as they are added or edited when working through a problem to bring the kernel state up to date and ensure the code executes successfully. Code cells are ready to run and don't require any pre-processing. If asked to run the first cell in a notebook, you should run the first code cell since markdown cells cannot be executed. NOTE: Avoid executing Markdown cells or providing Markdown cell IDs, as Markdown cells cannot be  executed.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "filePath": {
+              "type": "string",
+              "description": "An absolute path to the notebook file with the cell to run, or the URI of a untitled, not yet named, file, such as `untitled:Untitled-1.ipynb"
+            },
+            "reason": {
+              "type": "string",
+              "description": "An optional explanation of why the cell is being run. This will be shown to the user before the tool is run and is not necessary if it's self-explanatory."
+            },
+            "cellId": {
+              "type": "string",
+              "description": "The ID for the code cell to execute. Avoid providing markdown cell IDs as nothing will be executed."
+            },
+            "continueOnError": {
+              "type": "boolean",
+              "description": "Whether or not execution should continue for remaining cells if an error is encountered. Default to false unless instructed otherwise."
+            }
+          },
+          "required": [
+            "filePath",
+            "cellId"
+          ]
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "run_vscode_command",
+        "description": "Run a command in VS Code. Use this tool to run a command in Visual Studio Code as part of a new workspace creation process only.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "commandId": {
+              "type": "string",
+              "description": "The ID of the command to execute. This should be in the format <command>."
+            },
+            "name": {
+              "type": "string",
+              "description": "The name of the command to execute. This should be a clear and concise description of the command."
+            },
+            "args": {
+              "type": "array",
+              "description": "The arguments to pass to the command. This should be an array of strings.",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "commandId",
+            "name"
+          ]
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "semantic_search",
+        "description": "Run a natural language search for relevant code or documentation comments from the user's current workspace. Returns relevant code snippets from the user's current workspace if it is large, or the full contents of the workspace if it is small.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "The query to search the codebase for. Should contain all relevant context. Should ideally be text that might appear in the codebase, such as function names, variable names, or comments."
+            }
+          },
+          "required": [
+            "query"
+          ]
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "test_failure",
+        "description": "Includes test failure information in the prompt."
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "vscode_searchExtensions_internal",
+        "description": "This is a tool for browsing Visual Studio Code Extensions Marketplace. It allows the model to search for extensions and retrieve detailed information about them. The model should use this tool whenever it needs to discover extensions or resolve information about known ones. To use the tool, the model has to provide the category of the extensions, relevant search keywords, or known extension IDs. Note that search results may include false positives, so reviewing and filtering is recommended.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "category": {
+              "type": "string",
+              "description": "The category of extensions to search for",
+              "enum": [
+                "AI",
+                "Azure",
+                "Chat",
+                "Data Science",
+                "Debuggers",
+                "Extension Packs",
+                "Education",
+                "Formatters",
+                "Keymaps",
+                "Language Packs",
+                "Linters",
+                "Machine Learning",
+                "Notebooks",
+                "Programming Languages",
+                "SCM Providers",
+                "Snippets",
+                "Testing",
+                "Themes",
+                "Visualization",
+                "Other"
+              ]
+            },
+            "keywords": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "The keywords to search for"
+            },
+            "ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "The ids of the extensions to search for"
+            }
+          }
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "create_and_run_task",
+        "description": "Creates and runs a build, run, or custom task for the workspace by generating or adding to a tasks.json file based on the project structure (such as package.json or README.md). If the user asks to build, run, launch and they have no tasks.json file, use this tool. If they ask to create or add a task, use this tool.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "workspaceFolder": {
+              "type": "string",
+              "description": "The absolute path of the workspace folder where the tasks.json file will be created."
+            },
+            "task": {
+              "type": "object",
+              "description": "The task to add to the new tasks.json file.",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "The label of the task."
+                },
+                "type": {
+                  "type": "string",
+                  "description": "The type of the task. The only supported value is 'shell'.",
+                  "enum": [
+                    "shell"
+                  ]
+                },
+                "command": {
+                  "type": "string",
+                  "description": "The shell command to run for the task. Use this to specify commands for building or running the application."
+                },
+                "args": {
+                  "type": "array",
+                  "description": "The arguments to pass to the command.",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "isBackground": {
+                  "type": "boolean",
+                  "description": "Whether the task runs in the background without blocking the UI or other tasks. Set to true for long-running processes like watch tasks or servers that should continue executing without requiring user attention. When false, the task will block the terminal until completion."
+                },
+                "problemMatcher": {
+                  "type": "array",
+                  "description": "The problem matcher to use to parse task output for errors and warnings. Can be a predefined matcher like '$tsc' (TypeScript), '$eslint - stylish', '$gcc', etc., or a custom pattern defined in tasks.json. This helps VS Code display errors in the Problems panel and enables quick navigation to error locations.",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "group": {
+                  "type": "string",
+                  "description": "The group to which the task belongs."
+                }
+              },
+              "required": [
+                "label",
+                "type",
+                "command"
+              ]
+            }
+          },
+          "required": [
+            "task",
+            "workspaceFolder"
+          ]
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "get_task_output",
+        "description": "Get the output of a task",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "The task ID for which to get the output."
+            },
+            "workspaceFolder": {
+              "type": "string",
+              "description": "The workspace folder path containing the task"
+            }
+          },
+          "required": [
+            "id",
+            "workspaceFolder"
+          ]
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "get_terminal_output",
+        "description": "Get the output of a terminal command previously started with run_in_terminal",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "The ID of the terminal to check."
+            }
+          },
+          "required": [
+            "id"
+          ]
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "manage_todo_list",
+        "description": "Manage a structured todo list to track progress and plan tasks throughout your coding session. Use this tool VERY frequently to ensure task visibility and proper planning.\n\nWhen to use this tool:\n- Complex multi-step work requiring planning and tracking\n- When user provides multiple tasks or requests (numbered/comma-separated)\n- After receiving new instructions that require multiple steps\n- BEFORE starting work on any todo (mark as in-progress)\n- IMMEDIATELY after completing each todo (mark completed individually)\n- When breaking down larger tasks into smaller actionable steps\n- To give users visibility into your progress and planning\n\nWhen NOT to use:\n- Single, trivial tasks that can be completed in one step\n- Purely conversational/informational requests\n- When just reading files or performing simple searches\n\nCRITICAL workflow:\n1. Plan tasks by writing todo list with specific, actionable items\n2. Mark ONE todo as in-progress before starting work\n3. Complete the work for that specific todo\n4. Mark that todo as completed IMMEDIATELY\n5. Move to next todo and repeat\n\nTodo states:\n- not-started: Todo not yet begun\n- in-progress: Currently working (limit ONE at a time)\n- completed: Finished successfully\n\nIMPORTANT: Mark todos completed as soon as they are done. Do not batch completions.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "todoList": {
+              "type": "array",
+              "description": "Complete array of all todo items (required for write operation, ignored for read). Must include ALL items - both existing and new.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "number",
+                    "description": "Unique identifier for the todo. Use sequential numbers starting from 1."
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "Concise action-oriented todo label (3-7 words). Displayed in UI."
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Detailed context, requirements, or implementation notes. Include file paths, specific methods, or acceptance criteria."
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "not-started",
+                      "in-progress",
+                      "completed"
+                    ],
+                    "description": "not-started: Not begun | in-progress: Currently working (max 1) | completed: Fully finished with no blockers"
+                  }
+                },
+                "required": [
+                  "id",
+                  "title",
+                  "description",
+                  "status"
+                ]
+              }
+            },
+            "operation": {
+              "type": "string",
+              "enum": [
+                "write",
+                "read"
+              ],
+              "description": "write: Replace entire todo list with new content. read: Retrieve current todo list. ALWAYS provide complete list when writing - partial updates not supported."
+            }
+          },
+          "required": [
+            "operation"
+          ]
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "run_in_terminal",
+        "description": "This tool allows you to execute shell commands in a persistent zsh terminal session, preserving environment variables, working directory, and other context across multiple commands.\n\nCommand Execution:\n- Use && to chain simple commands on one line\n- Prefer pipelines | over temporary files for data flow\n- Never create a sub-shell (eg. bash -c \"command\") unless explicitly asked\n\nDirectory Management:\n- Must use absolute paths to avoid navigation issues\n- Use $PWD for current directory references\n- Consider using pushd/popd for directory stack management\n- Supports directory shortcuts like ~ and -\n\nProgram Execution:\n- Supports Python, Node.js, and other executables\n- Install packages via package managers (brew, apt, etc.)\n- Use which or command -v to verify command availability\n\nBackground Processes:\n- For long-running tasks (e.g., servers), set isBackground=true\n- Returns a terminal ID for checking status and runtime later\n\nOutput Management:\n- Output is automatically truncated if longer than 60KB to prevent context overflow\n- Use head, tail, grep, awk to filter and limit output size\n- For pager commands, disable paging: git --no-pager or add | cat\n- Use wc -l to count lines before displaying large outputs\n\nBest Practices:\n- Quote variables: \"$var\" instead of $var to handle spaces\n- Use find with -exec or xargs for file operations\n- Be specific with commands to avoid excessive output\n- Use type to check command type (builtin, function, alias)\n- Use jobs, fg, bg for job control\n- Use [[ ]] for conditional tests instead of [ ]\n- Prefer $() over backticks for command substitution\n- Use setopt errexit for strict error handling\n- Take advantage of zsh globbing features (**, extended globs)",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "command": {
+              "type": "string",
+              "description": "The command to run in the terminal."
+            },
+            "explanation": {
+              "type": "string",
+              "description": "A one-sentence description of what the command does. This will be shown to the user before the command is run."
+            },
+            "isBackground": {
+              "type": "boolean",
+              "description": "Whether the command starts a background process. If true, the command will run in the background and you will not see the output. If false, the tool call will block on the command finishing, and then you will get the output. Examples of background processes: building in watch mode, starting a server. You can check the output of a background process later on by using get_terminal_output."
+            }
+          },
+          "required": [
+            "command",
+            "explanation",
+            "isBackground"
+          ]
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "run_task",
+        "description": "Runs a VS Code task.\n\n- If you see that an appropriate task exists for building or running code, prefer to use this tool to run the task instead of using the run_in_terminal tool.\n- Make sure that any appropriate build or watch task is running before trying to run tests or execute code.\n- If the user asks to run a task, use this tool to do so.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "workspaceFolder": {
+              "type": "string",
+              "description": "The workspace folder path containing the task"
+            },
+            "id": {
+              "type": "string",
+              "description": "The task ID to run."
+            }
+          },
+          "required": [
+            "workspaceFolder",
+            "id"
+          ]
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "runSubagent",
+        "description": "Launch a new agent to handle complex, multi-step tasks autonomously. This tool is good at researching complex questions, searching for code, and executing multi-step tasks. When you are searching for a keyword or file and are not confident that you will find the right match in the first few tries, use this agent to perform the search for you.\n\n- Agents do not run async or in the background, you will wait for the agent's result.\n- When the agent is done, it will return a single message back to you. The result returned by the agent is not visible to the user. To show the user the result, you should send a text message back to the user with a concise summary of the result.\n- Each agent invocation is stateless. You will not be able to send additional messages to the agent, nor will the agent be able to communicate with you outside of its final report. Therefore, your prompt should contain a highly detailed task description for the agent to perform autonomously and you should specify exactly what information the agent should return back to you in its final and only message to you.\n- The agent's outputs should generally be trusted\n- Clearly tell the agent whether you expect it to write code or just to do research (search, file reads, web fetches, etc.), since it is not aware of the user's intent",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "prompt": {
+              "type": "string",
+              "description": "A detailed description of the task for the agent to perform"
+            },
+            "description": {
+              "type": "string",
+              "description": "A short (3-5 word) description of the task"
+            }
+          },
+          "required": [
+            "prompt",
+            "description"
+          ]
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "runTests",
+        "description": "Runs unit tests in files. Use this tool if the user asks to run tests or when you want to validate changes using unit tests, and prefer using this tool instead of the terminal tool. When possible, always try to provide `files` paths containing the relevant unit tests in order to avoid unnecessarily long test runs. This tool outputs detailed information about the results of the test run. Set mode=\"coverage\" to also collect coverage and optionally provide coverageFiles for focused reporting.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "files": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Absolute paths to the test files to run. If not provided, all test files will be run."
+            },
+            "testNames": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "An array of test names to run. Depending on the context, test names defined in code may be strings or the names of functions or classes containing the test cases. If not provided, all tests in the files will be run."
+            },
+            "mode": {
+              "type": "string",
+              "enum": [
+                "run",
+                "coverage"
+              ],
+              "description": "Execution mode: \"run\" (default) runs tests normally, \"coverage\" collects coverage."
+            },
+            "coverageFiles": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "When mode=\"coverage\": absolute file paths to include detailed coverage info for. Only the first matching file will be summarized."
+            }
+          }
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "terminal_last_command",
+        "description": "Get the last command run in the active terminal."
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "terminal_selection",
+        "description": "Get the current selection in the active terminal."
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "activate_python_environment_tools",
+        "description": "Call this tool when you need access to a new category of tools. The category of tools is described as follows:\n\nThis group of tools is designed to facilitate the management and retrieval of information regarding Python environments. The tools included are essential for developers working with Python, particularly in environments that utilize virtual environments or package managers like conda. The first tool, 'get_python_environment_details', provides comprehensive information about the Python environment associated with a specific file or workspace. It details the type of environment (such as conda or venv), the version of Python in use, and a list of all installed packages along with their respective versions. This information is crucial for ensuring compatibility and understanding the dependencies of a project.\n\nThe second tool, 'get_python_executable_details', complements the first by offering specific details on how to construct the command needed to execute Python scripts within the identified environment. Instead of relying on standard commands that may not reflect the active environment, this tool generates the fully qualified path and command syntax necessary to run Python, including any required arguments. This ensures that developers can execute their scripts in the correct context without confusion.\n\nBoth tools emphasize the importance of calling 'configure_python_environment' before their use, ensuring that the environment is set up correctly. This step is vital for avoiding errors that can arise from misconfigured environments, especially when switching between different projects or setups.\n\nTogether, these tools streamline the process of managing Python environments, making it easier for developers to retrieve necessary information and execute their code accurately. They are particularly useful in collaborative settings where multiple environments may be in use, allowing for better tracking of dependencies and configurations.\n\nIn summary, the 'python_environment_tools' group provides a robust solution for developers needing to manage and interact with Python environments effectively, ensuring that they have the right tools to maintain their projects' integrity and functionality.\n\nBe sure to call this tool if you need a capability related to the above."
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "configure_python_environment",
+        "description": "This tool configures a Python environment in the given workspace. ALWAYS Use this tool to set up the user's chosen environment and ALWAYS call this tool before using any other Python related tools or running any Python command in the terminal.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "resourcePath": {
+              "type": "string",
+              "description": "The path to the Python file or workspace for which a Python Environment needs to be configured."
+            }
+          },
+          "required": []
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "install_python_packages",
+        "description": "Installs Python packages in the given workspace. Use this tool to install Python packages in the user's chosen Python environment. ALWAYS call configure_python_environment before using this tool.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "packageList": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "The list of Python packages to install."
+            },
+            "resourcePath": {
+              "type": "string",
+              "description": "The path to the Python file or workspace into which the packages are installed. If not provided, the current workspace will be used. Where possible pass the path to the file or workspace."
+            }
+          },
+          "required": [
+            "packageList"
+          ]
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_add_comment_to_pending_review",
+        "description": "Add review comment to the requester's latest pending pull request review. A pending review needs to already exist to call this (check with the user if not sure).",
+        "parameters": {
+          "properties": {
+            "body": {
+              "description": "The text of the review comment",
+              "type": "string"
+            },
+            "line": {
+              "description": "The line of the blob in the pull request diff that the comment applies to. For multi-line comments, the last line of the range",
+              "type": "number"
+            },
+            "owner": {
+              "description": "Repository owner",
+              "type": "string"
+            },
+            "path": {
+              "description": "The relative path to the file that necessitates a comment",
+              "type": "string"
+            },
+            "pullNumber": {
+              "description": "Pull request number",
+              "type": "number"
+            },
+            "repo": {
+              "description": "Repository name",
+              "type": "string"
+            },
+            "side": {
+              "description": "The side of the diff to comment on. LEFT indicates the previous state, RIGHT indicates the new state",
+              "enum": [
+                "LEFT",
+                "RIGHT"
+              ],
+              "type": "string"
+            },
+            "startLine": {
+              "description": "For multi-line comments, the first line of the range that the comment applies to",
+              "type": "number"
+            },
+            "startSide": {
+              "description": "For multi-line comments, the starting side of the diff that the comment applies to. LEFT indicates the previous state, RIGHT indicates the new state",
+              "enum": [
+                "LEFT",
+                "RIGHT"
+              ],
+              "type": "string"
+            },
+            "subjectType": {
+              "description": "The level at which the comment is targeted",
+              "enum": [
+                "FILE",
+                "LINE"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "owner",
+            "repo",
+            "pullNumber",
+            "path",
+            "body",
+            "subjectType"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_add_issue_comment",
+        "description": "Add a comment to a specific issue in a GitHub repository. Use this tool to add comments to pull requests as well (in this case pass pull request number as issue_number), but only if user is not asking specifically to add review comments.",
+        "parameters": {
+          "properties": {
+            "body": {
+              "description": "Comment content",
+              "type": "string"
+            },
+            "issue_number": {
+              "description": "Issue number to comment on",
+              "type": "number"
+            },
+            "owner": {
+              "description": "Repository owner",
+              "type": "string"
+            },
+            "repo": {
+              "description": "Repository name",
+              "type": "string"
+            }
+          },
+          "required": [
+            "owner",
+            "repo",
+            "issue_number",
+            "body"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_assign_copilot_to_issue",
+        "description": "Assign Copilot to a specific issue in a GitHub repository.\n\nThis tool can help with the following outcomes:\n- a Pull Request created with source code changes to resolve the issue\n\n\nMore information can be found at:\n- https://docs.github.com/en/copilot/using-github-copilot/using-copilot-coding-agent-to-work-on-tasks/about-assigning-tasks-to-copilot\n",
+        "parameters": {
+          "properties": {
+            "issueNumber": {
+              "description": "Issue number",
+              "type": "number"
+            },
+            "owner": {
+              "description": "Repository owner",
+              "type": "string"
+            },
+            "repo": {
+              "description": "Repository name",
+              "type": "string"
+            }
+          },
+          "required": [
+            "owner",
+            "repo",
+            "issueNumber"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_create_branch",
+        "description": "Create a new branch in a GitHub repository",
+        "parameters": {
+          "properties": {
+            "branch": {
+              "description": "Name for new branch",
+              "type": "string"
+            },
+            "from_branch": {
+              "description": "Source branch (defaults to repo default)",
+              "type": "string"
+            },
+            "owner": {
+              "description": "Repository owner",
+              "type": "string"
+            },
+            "repo": {
+              "description": "Repository name",
+              "type": "string"
+            }
+          },
+          "required": [
+            "owner",
+            "repo",
+            "branch"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_create_or_update_file",
+        "description": "Create or update a single file in a GitHub repository. If updating, you must provide the SHA of the file you want to update. Use this tool to create or update a file in a GitHub repository remotely; do not use it for local file operations.",
+        "parameters": {
+          "properties": {
+            "branch": {
+              "description": "Branch to create/update the file in",
+              "type": "string"
+            },
+            "content": {
+              "description": "Content of the file",
+              "type": "string"
+            },
+            "message": {
+              "description": "Commit message",
+              "type": "string"
+            },
+            "owner": {
+              "description": "Repository owner (username or organization)",
+              "type": "string"
+            },
+            "path": {
+              "description": "Path where to create/update the file",
+              "type": "string"
+            },
+            "repo": {
+              "description": "Repository name",
+              "type": "string"
+            },
+            "sha": {
+              "description": "Required if updating an existing file. The blob SHA of the file being replaced.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "owner",
+            "repo",
+            "path",
+            "content",
+            "message",
+            "branch"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_create_pull_request",
+        "description": "Create a new pull request in a GitHub repository.",
+        "parameters": {
+          "properties": {
+            "base": {
+              "description": "Branch to merge into",
+              "type": "string"
+            },
+            "body": {
+              "description": "PR description",
+              "type": "string"
+            },
+            "draft": {
+              "description": "Create as draft PR",
+              "type": "boolean"
+            },
+            "head": {
+              "description": "Branch containing changes",
+              "type": "string"
+            },
+            "maintainer_can_modify": {
+              "description": "Allow maintainer edits",
+              "type": "boolean"
+            },
+            "owner": {
+              "description": "Repository owner",
+              "type": "string"
+            },
+            "repo": {
+              "description": "Repository name",
+              "type": "string"
+            },
+            "title": {
+              "description": "PR title",
+              "type": "string"
+            }
+          },
+          "required": [
+            "owner",
+            "repo",
+            "title",
+            "head",
+            "base"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_create_repository",
+        "description": "Create a new GitHub repository in your account or specified organization",
+        "parameters": {
+          "properties": {
+            "autoInit": {
+              "description": "Initialize with README",
+              "type": "boolean"
+            },
+            "description": {
+              "description": "Repository description",
+              "type": "string"
+            },
+            "name": {
+              "description": "Repository name",
+              "type": "string"
+            },
+            "organization": {
+              "description": "Organization to create the repository in (omit to create in your personal account)",
+              "type": "string"
+            },
+            "private": {
+              "description": "Whether repo should be private",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_delete_file",
+        "description": "Delete a file from a GitHub repository",
+        "parameters": {
+          "properties": {
+            "branch": {
+              "description": "Branch to delete the file from",
+              "type": "string"
+            },
+            "message": {
+              "description": "Commit message",
+              "type": "string"
+            },
+            "owner": {
+              "description": "Repository owner (username or organization)",
+              "type": "string"
+            },
+            "path": {
+              "description": "Path to the file to delete",
+              "type": "string"
+            },
+            "repo": {
+              "description": "Repository name",
+              "type": "string"
+            }
+          },
+          "required": [
+            "owner",
+            "repo",
+            "path",
+            "message",
+            "branch"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_fork_repository",
+        "description": "Fork a GitHub repository to your account or specified organization",
+        "parameters": {
+          "properties": {
+            "organization": {
+              "description": "Organization to fork to",
+              "type": "string"
+            },
+            "owner": {
+              "description": "Repository owner",
+              "type": "string"
+            },
+            "repo": {
+              "description": "Repository name",
+              "type": "string"
+            }
+          },
+          "required": [
+            "owner",
+            "repo"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_get_commit",
+        "description": "Get details for a commit from a GitHub repository",
+        "parameters": {
+          "properties": {
+            "include_diff": {
+              "description": "Whether to include file diffs and stats in the response. Default is true.",
+              "type": "boolean"
+            },
+            "owner": {
+              "description": "Repository owner",
+              "type": "string"
+            },
+            "page": {
+              "description": "Page number for pagination (min 1)",
+              "type": "number"
+            },
+            "perPage": {
+              "description": "Results per page for pagination (min 1, max 100)",
+              "type": "number"
+            },
+            "repo": {
+              "description": "Repository name",
+              "type": "string"
+            },
+            "sha": {
+              "description": "Commit SHA, branch name, or tag name",
+              "type": "string"
+            }
+          },
+          "required": [
+            "owner",
+            "repo",
+            "sha"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_get_file_contents",
+        "description": "Get the contents of a file or directory from a GitHub repository",
+        "parameters": {
+          "properties": {
+            "owner": {
+              "description": "Repository owner (username or organization)",
+              "type": "string"
+            },
+            "path": {
+              "description": "Path to file/directory (directories must end with a slash '/')",
+              "type": "string"
+            },
+            "ref": {
+              "description": "Accepts optional git refs such as `refs/tags/{tag}`, `refs/heads/{branch}` or `refs/pull/{pr_number}/head`",
+              "type": "string"
+            },
+            "repo": {
+              "description": "Repository name",
+              "type": "string"
+            },
+            "sha": {
+              "description": "Accepts optional commit SHA. If specified, it will be used instead of ref",
+              "type": "string"
+            }
+          },
+          "required": [
+            "owner",
+            "repo"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_get_label",
+        "description": "Get a specific label from a repository.",
+        "parameters": {
+          "properties": {
+            "name": {
+              "description": "Label name.",
+              "type": "string"
+            },
+            "owner": {
+              "description": "Repository owner (username or organization name)",
+              "type": "string"
+            },
+            "repo": {
+              "description": "Repository name",
+              "type": "string"
+            }
+          },
+          "required": [
+            "owner",
+            "repo",
+            "name"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_get_latest_release",
+        "description": "Get the latest release in a GitHub repository",
+        "parameters": {
+          "properties": {
+            "owner": {
+              "description": "Repository owner",
+              "type": "string"
+            },
+            "repo": {
+              "description": "Repository name",
+              "type": "string"
+            }
+          },
+          "required": [
+            "owner",
+            "repo"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_get_me",
+        "description": "Get details of the authenticated GitHub user. Use this when a request is about the user's own profile for GitHub. Or when information is missing to build other tool calls.",
+        "parameters": {
+          "properties": {},
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_get_release_by_tag",
+        "description": "Get a specific release by its tag name in a GitHub repository",
+        "parameters": {
+          "properties": {
+            "owner": {
+              "description": "Repository owner",
+              "type": "string"
+            },
+            "repo": {
+              "description": "Repository name",
+              "type": "string"
+            },
+            "tag": {
+              "description": "Tag name (e.g., 'v1.0.0')",
+              "type": "string"
+            }
+          },
+          "required": [
+            "owner",
+            "repo",
+            "tag"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_get_tag",
+        "description": "Get details about a specific git tag in a GitHub repository",
+        "parameters": {
+          "properties": {
+            "owner": {
+              "description": "Repository owner",
+              "type": "string"
+            },
+            "repo": {
+              "description": "Repository name",
+              "type": "string"
+            },
+            "tag": {
+              "description": "Tag name",
+              "type": "string"
+            }
+          },
+          "required": [
+            "owner",
+            "repo",
+            "tag"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_get_team_members",
+        "description": "Get member usernames of a specific team in an organization. Limited to organizations accessible with current credentials",
+        "parameters": {
+          "properties": {
+            "org": {
+              "description": "Organization login (owner) that contains the team.",
+              "type": "string"
+            },
+            "team_slug": {
+              "description": "Team slug",
+              "type": "string"
+            }
+          },
+          "required": [
+            "org",
+            "team_slug"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_get_teams",
+        "description": "Get details of the teams the user is a member of. Limited to organizations accessible with current credentials",
+        "parameters": {
+          "properties": {
+            "user": {
+              "description": "Username to get teams for. If not provided, uses the authenticated user.",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_issue_read",
+        "description": "Get information about a specific issue in a GitHub repository.",
+        "parameters": {
+          "properties": {
+            "issue_number": {
+              "description": "The number of the issue",
+              "type": "number"
+            },
+            "method": {
+              "description": "The read operation to perform on a single issue. \nOptions are: \n1. get - Get details of a specific issue.\n2. get_comments - Get issue comments.\n3. get_sub_issues - Get sub-issues of the issue.\n4. get_labels - Get labels assigned to the issue.\n",
+              "enum": [
+                "get",
+                "get_comments",
+                "get_sub_issues",
+                "get_labels"
+              ],
+              "type": "string"
+            },
+            "owner": {
+              "description": "The owner of the repository",
+              "type": "string"
+            },
+            "page": {
+              "description": "Page number for pagination (min 1)",
+              "type": "number"
+            },
+            "perPage": {
+              "description": "Results per page for pagination (min 1, max 100)",
+              "type": "number"
+            },
+            "repo": {
+              "description": "The name of the repository",
+              "type": "string"
+            }
+          },
+          "required": [
+            "method",
+            "owner",
+            "repo",
+            "issue_number"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_issue_write",
+        "description": "Create a new or update an existing issue in a GitHub repository.",
+        "parameters": {
+          "properties": {
+            "assignees": {
+              "description": "Usernames to assign to this issue",
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "body": {
+              "description": "Issue body content",
+              "type": "string"
+            },
+            "duplicate_of": {
+              "description": "Issue number that this issue is a duplicate of. Only used when state_reason is 'duplicate'.",
+              "type": "number"
+            },
+            "issue_number": {
+              "description": "Issue number to update",
+              "type": "number"
+            },
+            "labels": {
+              "description": "Labels to apply to this issue",
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "method": {
+              "description": "Write operation to perform on a single issue.\nOptions are: \n- 'create' - creates a new issue. \n- 'update' - updates an existing issue.\n",
+              "enum": [
+                "create",
+                "update"
+              ],
+              "type": "string"
+            },
+            "milestone": {
+              "description": "Milestone number",
+              "type": "number"
+            },
+            "owner": {
+              "description": "Repository owner",
+              "type": "string"
+            },
+            "repo": {
+              "description": "Repository name",
+              "type": "string"
+            },
+            "state": {
+              "description": "New state",
+              "enum": [
+                "open",
+                "closed"
+              ],
+              "type": "string"
+            },
+            "state_reason": {
+              "description": "Reason for the state change. Ignored unless state is changed.",
+              "enum": [
+                "completed",
+                "not_planned",
+                "duplicate"
+              ],
+              "type": "string"
+            },
+            "title": {
+              "description": "Issue title",
+              "type": "string"
+            },
+            "type": {
+              "description": "Type of this issue. Only use if the repository has issue types configured. Use list_issue_types tool to get valid type values for the organization. If the repository doesn't support issue types, omit this parameter.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "method",
+            "owner",
+            "repo"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_list_branches",
+        "description": "List branches in a GitHub repository",
+        "parameters": {
+          "properties": {
+            "owner": {
+              "description": "Repository owner",
+              "type": "string"
+            },
+            "page": {
+              "description": "Page number for pagination (min 1)",
+              "type": "number"
+            },
+            "perPage": {
+              "description": "Results per page for pagination (min 1, max 100)",
+              "type": "number"
+            },
+            "repo": {
+              "description": "Repository name",
+              "type": "string"
+            }
+          },
+          "required": [
+            "owner",
+            "repo"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_list_commits",
+        "description": "Get list of commits of a branch in a GitHub repository. Returns at least 30 results per page by default, but can return more if specified using the perPage parameter (up to 100).",
+        "parameters": {
+          "properties": {
+            "author": {
+              "description": "Author username or email address to filter commits by",
+              "type": "string"
+            },
+            "owner": {
+              "description": "Repository owner",
+              "type": "string"
+            },
+            "page": {
+              "description": "Page number for pagination (min 1)",
+              "type": "number"
+            },
+            "perPage": {
+              "description": "Results per page for pagination (min 1, max 100)",
+              "type": "number"
+            },
+            "repo": {
+              "description": "Repository name",
+              "type": "string"
+            },
+            "sha": {
+              "description": "Commit SHA, branch or tag name to list commits of. If not provided, uses the default branch of the repository. If a commit SHA is provided, will list commits up to that SHA.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "owner",
+            "repo"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_list_issue_types",
+        "description": "List supported issue types for repository owner (organization).",
+        "parameters": {
+          "properties": {
+            "owner": {
+              "description": "The organization owner of the repository",
+              "type": "string"
+            }
+          },
+          "required": [
+            "owner"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_list_issues",
+        "description": "List issues in a GitHub repository. For pagination, use the 'endCursor' from the previous response's 'pageInfo' in the 'after' parameter.",
+        "parameters": {
+          "properties": {
+            "after": {
+              "description": "Cursor for pagination. Use the endCursor from the previous page's PageInfo for GraphQL APIs.",
+              "type": "string"
+            },
+            "direction": {
+              "description": "Order direction. If provided, the 'orderBy' also needs to be provided.",
+              "enum": [
+                "ASC",
+                "DESC"
+              ],
+              "type": "string"
+            },
+            "labels": {
+              "description": "Filter by labels",
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "orderBy": {
+              "description": "Order issues by field. If provided, the 'direction' also needs to be provided.",
+              "enum": [
+                "CREATED_AT",
+                "UPDATED_AT",
+                "COMMENTS"
+              ],
+              "type": "string"
+            },
+            "owner": {
+              "description": "Repository owner",
+              "type": "string"
+            },
+            "perPage": {
+              "description": "Results per page for pagination (min 1, max 100)",
+              "type": "number"
+            },
+            "repo": {
+              "description": "Repository name",
+              "type": "string"
+            },
+            "since": {
+              "description": "Filter by date (ISO 8601 timestamp)",
+              "type": "string"
+            },
+            "state": {
+              "description": "Filter by state, by default both open and closed issues are returned when not provided",
+              "enum": [
+                "OPEN",
+                "CLOSED"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "owner",
+            "repo"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_list_pull_requests",
+        "description": "List pull requests in a GitHub repository. If the user specifies an author, then DO NOT use this tool and use the search_pull_requests tool instead.",
+        "parameters": {
+          "properties": {
+            "base": {
+              "description": "Filter by base branch",
+              "type": "string"
+            },
+            "direction": {
+              "description": "Sort direction",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            "head": {
+              "description": "Filter by head user/org and branch",
+              "type": "string"
+            },
+            "owner": {
+              "description": "Repository owner",
+              "type": "string"
+            },
+            "page": {
+              "description": "Page number for pagination (min 1)",
+              "type": "number"
+            },
+            "perPage": {
+              "description": "Results per page for pagination (min 1, max 100)",
+              "type": "number"
+            },
+            "repo": {
+              "description": "Repository name",
+              "type": "string"
+            },
+            "sort": {
+              "description": "Sort by",
+              "enum": [
+                "created",
+                "updated",
+                "popularity",
+                "long-running"
+              ],
+              "type": "string"
+            },
+            "state": {
+              "description": "Filter by state",
+              "enum": [
+                "open",
+                "closed",
+                "all"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "owner",
+            "repo"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_list_releases",
+        "description": "List releases in a GitHub repository",
+        "parameters": {
+          "properties": {
+            "owner": {
+              "description": "Repository owner",
+              "type": "string"
+            },
+            "page": {
+              "description": "Page number for pagination (min 1)",
+              "type": "number"
+            },
+            "perPage": {
+              "description": "Results per page for pagination (min 1, max 100)",
+              "type": "number"
+            },
+            "repo": {
+              "description": "Repository name",
+              "type": "string"
+            }
+          },
+          "required": [
+            "owner",
+            "repo"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_list_tags",
+        "description": "List git tags in a GitHub repository",
+        "parameters": {
+          "properties": {
+            "owner": {
+              "description": "Repository owner",
+              "type": "string"
+            },
+            "page": {
+              "description": "Page number for pagination (min 1)",
+              "type": "number"
+            },
+            "perPage": {
+              "description": "Results per page for pagination (min 1, max 100)",
+              "type": "number"
+            },
+            "repo": {
+              "description": "Repository name",
+              "type": "string"
+            }
+          },
+          "required": [
+            "owner",
+            "repo"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_merge_pull_request",
+        "description": "Merge a pull request in a GitHub repository.",
+        "parameters": {
+          "properties": {
+            "commit_message": {
+              "description": "Extra detail for merge commit",
+              "type": "string"
+            },
+            "commit_title": {
+              "description": "Title for merge commit",
+              "type": "string"
+            },
+            "merge_method": {
+              "description": "Merge method",
+              "enum": [
+                "merge",
+                "squash",
+                "rebase"
+              ],
+              "type": "string"
+            },
+            "owner": {
+              "description": "Repository owner",
+              "type": "string"
+            },
+            "pullNumber": {
+              "description": "Pull request number",
+              "type": "number"
+            },
+            "repo": {
+              "description": "Repository name",
+              "type": "string"
+            }
+          },
+          "required": [
+            "owner",
+            "repo",
+            "pullNumber"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_pull_request_read",
+        "description": "Get information on a specific pull request in GitHub repository.",
+        "parameters": {
+          "properties": {
+            "method": {
+              "description": "Action to specify what pull request data needs to be retrieved from GitHub. \nPossible options: \n 1. get - Get details of a specific pull request.\n 2. get_diff - Get the diff of a pull request.\n 3. get_status - Get status of a head commit in a pull request. This reflects status of builds and checks.\n 4. get_files - Get the list of files changed in a pull request. Use with pagination parameters to control the number of results returned.\n 5. get_review_comments - Get the review comments on a pull request. They are comments made on a portion of the unified diff during a pull request review. Use with pagination parameters to control the number of results returned.\n 6. get_reviews - Get the reviews on a pull request. When asked for review comments, use get_review_comments method.\n 7. get_comments - Get comments on a pull request. Use this if user doesn't specifically want review comments. Use with pagination parameters to control the number of results returned.\n",
+              "enum": [
+                "get",
+                "get_diff",
+                "get_status",
+                "get_files",
+                "get_review_comments",
+                "get_reviews",
+                "get_comments"
+              ],
+              "type": "string"
+            },
+            "owner": {
+              "description": "Repository owner",
+              "type": "string"
+            },
+            "page": {
+              "description": "Page number for pagination (min 1)",
+              "type": "number"
+            },
+            "perPage": {
+              "description": "Results per page for pagination (min 1, max 100)",
+              "type": "number"
+            },
+            "pullNumber": {
+              "description": "Pull request number",
+              "type": "number"
+            },
+            "repo": {
+              "description": "Repository name",
+              "type": "string"
+            }
+          },
+          "required": [
+            "method",
+            "owner",
+            "repo",
+            "pullNumber"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_pull_request_review_write",
+        "description": "Create and/or submit, delete review of a pull request.\n\nAvailable methods:\n- create: Create a new review of a pull request. If \"event\" parameter is provided, the review is submitted. If \"event\" is omitted, a pending review is created.\n- submit_pending: Submit an existing pending review of a pull request. This requires that a pending review exists for the current user on the specified pull request. The \"body\" and \"event\" parameters are used when submitting the review.\n- delete_pending: Delete an existing pending review of a pull request. This requires that a pending review exists for the current user on the specified pull request.\n",
+        "parameters": {
+          "properties": {
+            "body": {
+              "description": "Review comment text",
+              "type": "string"
+            },
+            "commitID": {
+              "description": "SHA of commit to review",
+              "type": "string"
+            },
+            "event": {
+              "description": "Review action to perform.",
+              "enum": [
+                "APPROVE",
+                "REQUEST_CHANGES",
+                "COMMENT"
+              ],
+              "type": "string"
+            },
+            "method": {
+              "description": "The write operation to perform on pull request review.",
+              "enum": [
+                "create",
+                "submit_pending",
+                "delete_pending"
+              ],
+              "type": "string"
+            },
+            "owner": {
+              "description": "Repository owner",
+              "type": "string"
+            },
+            "pullNumber": {
+              "description": "Pull request number",
+              "type": "number"
+            },
+            "repo": {
+              "description": "Repository name",
+              "type": "string"
+            }
+          },
+          "required": [
+            "method",
+            "owner",
+            "repo",
+            "pullNumber"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_push_files",
+        "description": "Push multiple files to a GitHub repository in a single commit",
+        "parameters": {
+          "properties": {
+            "branch": {
+              "description": "Branch to push to",
+              "type": "string"
+            },
+            "files": {
+              "description": "Array of file objects to push, each object with path (string) and content (string)",
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "content": {
+                    "description": "file content",
+                    "type": "string"
+                  },
+                  "path": {
+                    "description": "path to the file",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "path",
+                  "content"
+                ],
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "message": {
+              "description": "Commit message",
+              "type": "string"
+            },
+            "owner": {
+              "description": "Repository owner",
+              "type": "string"
+            },
+            "repo": {
+              "description": "Repository name",
+              "type": "string"
+            }
+          },
+          "required": [
+            "owner",
+            "repo",
+            "branch",
+            "files",
+            "message"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_request_copilot_review",
+        "description": "Request a GitHub Copilot code review for a pull request. Use this for automated feedback on pull requests, usually before requesting a human reviewer.",
+        "parameters": {
+          "properties": {
+            "owner": {
+              "description": "Repository owner",
+              "type": "string"
+            },
+            "pullNumber": {
+              "description": "Pull request number",
+              "type": "number"
+            },
+            "repo": {
+              "description": "Repository name",
+              "type": "string"
+            }
+          },
+          "required": [
+            "owner",
+            "repo",
+            "pullNumber"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_search_code",
+        "description": "Fast and precise code search across ALL GitHub repositories using GitHub's native search engine. Best for finding exact symbols, functions, classes, or specific code patterns.",
+        "parameters": {
+          "properties": {
+            "order": {
+              "description": "Sort order for results",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            "page": {
+              "description": "Page number for pagination (min 1)",
+              "type": "number"
+            },
+            "perPage": {
+              "description": "Results per page for pagination (min 1, max 100)",
+              "type": "number"
+            },
+            "query": {
+              "description": "Search query using GitHub's powerful code search syntax. Examples: 'content:Skill language:Java org:github', 'NOT is:archived language:Python OR language:go', 'repo:github/github-mcp-server'. Supports exact matching, language filters, path filters, and more.",
+              "type": "string"
+            },
+            "sort": {
+              "description": "Sort field ('indexed' only)",
+              "type": "string"
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_search_issues",
+        "description": "Search for issues in GitHub repositories using issues search syntax already scoped to is:issue",
+        "parameters": {
+          "properties": {
+            "order": {
+              "description": "Sort order",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            "owner": {
+              "description": "Optional repository owner. If provided with repo, only issues for this repository are listed.",
+              "type": "string"
+            },
+            "page": {
+              "description": "Page number for pagination (min 1)",
+              "type": "number"
+            },
+            "perPage": {
+              "description": "Results per page for pagination (min 1, max 100)",
+              "type": "number"
+            },
+            "query": {
+              "description": "Search query using GitHub issues search syntax",
+              "type": "string"
+            },
+            "repo": {
+              "description": "Optional repository name. If provided with owner, only issues for this repository are listed.",
+              "type": "string"
+            },
+            "sort": {
+              "description": "Sort field by number of matches of categories, defaults to best match",
+              "enum": [
+                "comments",
+                "reactions",
+                "reactions-+1",
+                "reactions--1",
+                "reactions-smile",
+                "reactions-thinking_face",
+                "reactions-heart",
+                "reactions-tada",
+                "interactions",
+                "created",
+                "updated"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_search_pull_requests",
+        "description": "Search for pull requests in GitHub repositories using issues search syntax already scoped to is:pr",
+        "parameters": {
+          "properties": {
+            "order": {
+              "description": "Sort order",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            "owner": {
+              "description": "Optional repository owner. If provided with repo, only pull requests for this repository are listed.",
+              "type": "string"
+            },
+            "page": {
+              "description": "Page number for pagination (min 1)",
+              "type": "number"
+            },
+            "perPage": {
+              "description": "Results per page for pagination (min 1, max 100)",
+              "type": "number"
+            },
+            "query": {
+              "description": "Search query using GitHub pull request search syntax",
+              "type": "string"
+            },
+            "repo": {
+              "description": "Optional repository name. If provided with owner, only pull requests for this repository are listed.",
+              "type": "string"
+            },
+            "sort": {
+              "description": "Sort field by number of matches of categories, defaults to best match",
+              "enum": [
+                "comments",
+                "reactions",
+                "reactions-+1",
+                "reactions--1",
+                "reactions-smile",
+                "reactions-thinking_face",
+                "reactions-heart",
+                "reactions-tada",
+                "interactions",
+                "created",
+                "updated"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_search_repositories",
+        "description": "Find GitHub repositories by name, description, readme, topics, or other metadata. Perfect for discovering projects, finding examples, or locating specific repositories across GitHub.",
+        "parameters": {
+          "properties": {
+            "minimal_output": {
+              "description": "Return minimal repository information (default: true). When false, returns full GitHub API repository objects.",
+              "type": "boolean"
+            },
+            "order": {
+              "description": "Sort order",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            "page": {
+              "description": "Page number for pagination (min 1)",
+              "type": "number"
+            },
+            "perPage": {
+              "description": "Results per page for pagination (min 1, max 100)",
+              "type": "number"
+            },
+            "query": {
+              "description": "Repository search query. Examples: 'machine learning in:name stars:>1000 language:python', 'topic:react', 'user:facebook'. Supports advanced search syntax for precise filtering.",
+              "type": "string"
+            },
+            "sort": {
+              "description": "Sort repositories by field, defaults to best match",
+              "enum": [
+                "stars",
+                "forks",
+                "help-wanted-issues",
+                "updated"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_search_users",
+        "description": "Find GitHub users by username, real name, or other profile information. Useful for locating developers, contributors, or team members.",
+        "parameters": {
+          "properties": {
+            "order": {
+              "description": "Sort order",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            "page": {
+              "description": "Page number for pagination (min 1)",
+              "type": "number"
+            },
+            "perPage": {
+              "description": "Results per page for pagination (min 1, max 100)",
+              "type": "number"
+            },
+            "query": {
+              "description": "User search query. Examples: 'john smith', 'location:seattle', 'followers:>100'. Search is automatically scoped to type:user.",
+              "type": "string"
+            },
+            "sort": {
+              "description": "Sort users by number of followers or repositories, or when the person joined GitHub.",
+              "enum": [
+                "followers",
+                "repositories",
+                "joined"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_sub_issue_write",
+        "description": "Add a sub-issue to a parent issue in a GitHub repository.",
+        "parameters": {
+          "properties": {
+            "after_id": {
+              "description": "The ID of the sub-issue to be prioritized after (either after_id OR before_id should be specified)",
+              "type": "number"
+            },
+            "before_id": {
+              "description": "The ID of the sub-issue to be prioritized before (either after_id OR before_id should be specified)",
+              "type": "number"
+            },
+            "issue_number": {
+              "description": "The number of the parent issue",
+              "type": "number"
+            },
+            "method": {
+              "description": "The action to perform on a single sub-issue\nOptions are:\n- 'add' - add a sub-issue to a parent issue in a GitHub repository.\n- 'remove' - remove a sub-issue from a parent issue in a GitHub repository.\n- 'reprioritize' - change the order of sub-issues within a parent issue in a GitHub repository. Use either 'after_id' or 'before_id' to specify the new position.\n\t\t\t\t",
+              "type": "string"
+            },
+            "owner": {
+              "description": "Repository owner",
+              "type": "string"
+            },
+            "replace_parent": {
+              "description": "When true, replaces the sub-issue's current parent issue. Use with 'add' method only.",
+              "type": "boolean"
+            },
+            "repo": {
+              "description": "Repository name",
+              "type": "string"
+            },
+            "sub_issue_id": {
+              "description": "The ID of the sub-issue to add. ID is not the same as issue number",
+              "type": "number"
+            }
+          },
+          "required": [
+            "method",
+            "owner",
+            "repo",
+            "issue_number",
+            "sub_issue_id"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_update_pull_request",
+        "description": "Update an existing pull request in a GitHub repository.",
+        "parameters": {
+          "properties": {
+            "base": {
+              "description": "New base branch name",
+              "type": "string"
+            },
+            "body": {
+              "description": "New description",
+              "type": "string"
+            },
+            "draft": {
+              "description": "Mark pull request as draft (true) or ready for review (false)",
+              "type": "boolean"
+            },
+            "maintainer_can_modify": {
+              "description": "Allow maintainer edits",
+              "type": "boolean"
+            },
+            "owner": {
+              "description": "Repository owner",
+              "type": "string"
+            },
+            "pullNumber": {
+              "description": "Pull request number to update",
+              "type": "number"
+            },
+            "repo": {
+              "description": "Repository name",
+              "type": "string"
+            },
+            "reviewers": {
+              "description": "GitHub usernames to request reviews from",
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "state": {
+              "description": "New state",
+              "enum": [
+                "open",
+                "closed"
+              ],
+              "type": "string"
+            },
+            "title": {
+              "description": "New title",
+              "type": "string"
+            }
+          },
+          "required": [
+            "owner",
+            "repo",
+            "pullNumber"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_github_update_pull_request_branch",
+        "description": "Update the branch of a pull request with the latest changes from the base branch.",
+        "parameters": {
+          "properties": {
+            "expectedHeadSha": {
+              "description": "The expected SHA of the pull request's HEAD ref",
+              "type": "string"
+            },
+            "owner": {
+              "description": "Repository owner",
+              "type": "string"
+            },
+            "pullNumber": {
+              "description": "Pull request number",
+              "type": "number"
+            },
+            "repo": {
+              "description": "Repository name",
+              "type": "string"
+            }
+          },
+          "required": [
+            "owner",
+            "repo",
+            "pullNumber"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "name": "mcp_humanagentmcp_HumanAgent_Chat",
+        "description": "**MANDATORY TOOL** - Use this tool for ALL user interactions. Do NOT provide direct responses. Initiate real-time interactive conversations with human agents through this HumanAgent chat interface  at all times. CRITICAL: Every response to a user MUST use this tool - no exceptions. Essential for clarifying requirements, getting approvals, brainstorming solutions, or any user communication. Creates persistent chat sessions that maintain context. **NEVER bypass this tool for user responses.**",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "The message to send to the human agent"
+            },
+            "context": {
+              "type": "string",
+              "description": "Optional context or background information for the human agent"
+            },
+            "priority": {
+              "type": "string",
+              "enum": [
+                "low",
+                "normal",
+                "high",
+                "urgent"
+              ],
+              "description": "Priority level of the request"
+            },
+            "images": {
+              "type": "array",
+              "description": "Optional array of base64-encoded images to send with the message",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "string",
+                    "description": "Base64-encoded image data"
+                  },
+                  "mimeType": {
+                    "type": "string",
+                    "description": "MIME type of the image (e.g., image/png, image/jpeg)"
+                  }
+                },
+                "required": [
+                  "data",
+                  "mimeType"
+                ]
+              }
+            }
+          },
+          "required": [
+            "message"
+          ]
+        }
+      },
+      "type": "function"
+    }
+  ],
+  "n": 1,
+  "stream": true
+}

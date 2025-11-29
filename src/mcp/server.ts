@@ -9,6 +9,72 @@ import { ChatManager } from './chatManager';
 import { ProxyServer } from './proxyServer';
 import { generateCACertificate } from 'mockttp';
 
+// JSONata for advanced JSON transformations
+let jsonata: any = null;
+try {
+    jsonata = require('jsonata');
+} catch (error) {
+    console.log('[MCP Server] JSONata not installed - JSON transformations will use JSONPath only');
+}
+
+// Minimal interface for VS Code Memento (globalStorage)
+interface Memento {
+  get<T>(key: string): T | undefined;
+  get<T>(key: string, defaultValue: T): T;
+  update(key: string, value: any): Thenable<void>;
+}
+
+/**
+ * Simple file-based storage that mimics VS Code Memento interface
+ * Used by standalone server when VS Code Memento is not available
+ */
+class FileBasedStorage implements Memento {
+  private storageFile: string;
+  private data: Record<string, any> = {};
+
+  constructor(storagePath: string) {
+    this.storageFile = path.join(storagePath, 'mcp-global-storage.json');
+    this.load();
+  }
+
+  private load(): void {
+    try {
+      if (fs.existsSync(this.storageFile)) {
+        const content = fs.readFileSync(this.storageFile, 'utf8');
+        this.data = JSON.parse(content);
+      }
+    } catch (error) {
+      console.error('[FileBasedStorage] Failed to load storage:', error);
+      this.data = {};
+    }
+  }
+
+  private save(): void {
+    try {
+      const dir = path.dirname(this.storageFile);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      fs.writeFileSync(this.storageFile, JSON.stringify(this.data, null, 2), 'utf8');
+    } catch (error) {
+      console.error('[FileBasedStorage] Failed to save storage:', error);
+    }
+  }
+
+  get<T>(key: string): T | undefined;
+  get<T>(key: string, defaultValue: T): T;
+  get<T>(key: string, defaultValue?: T): T | undefined {
+    const value = this.data[key];
+    return value !== undefined ? value : defaultValue;
+  }
+
+  update(key: string, value: any): Promise<void> {
+    this.data[key] = value;
+    this.save();
+    return Promise.resolve();
+  }
+}
+
 // Version injected by webpack DefinePlugin at build time
 declare const __PACKAGE_VERSION__: string;
 const VERSION = __PACKAGE_VERSION__;
@@ -183,6 +249,7 @@ export class McpServer extends EventEmitter {
   private sseClients: Map<string, http.ServerResponse> = new Map(); // Per-session SSE connections (VS Code webviews)
   private webInterfaceConnections: Set<http.ServerResponse> = new Set(); // Web interface connections (all browsers)
   private proxyServer: ProxyServer; // Integrated proxy server
+  private globalStorage?: Memento; // VS Code globalStorage for persisting global settings like proxy rules
 
   constructor(private sessionId?: string, private workspacePath?: string, port?: number) {
     super();
@@ -215,6 +282,15 @@ export class McpServer extends EventEmitter {
     if (this.sessionId && this.workspacePath) {
       this.initializeSessionTools(this.sessionId, this.workspacePath);
     }
+  }
+
+  /**
+   * Set the global storage (VS Code Memento) for persisting global settings
+   * Must be called by extension after creating McpServer instance
+   */
+  setGlobalStorage(storage: Memento): void {
+    this.globalStorage = storage;
+    this.debugLogger.log('INFO', 'GlobalStorage configured for McpServer');
   }
 
   private setupEventForwarding(): void {
@@ -523,6 +599,18 @@ export class McpServer extends EventEmitter {
     }
 
     this.debugLogger.log('INFO', '=== MCP SERVER STARTING ===');
+    
+    // Initialize file-based storage if globalStorage not set (standalone server)
+    if (!this.globalStorage) {
+      const certStoragePath = process.env.HUMANAGENT_CERT_STORAGE_PATH;
+      if (certStoragePath) {
+        this.globalStorage = new FileBasedStorage(certStoragePath);
+        this.debugLogger.log('INFO', `Initialized file-based storage at: ${certStoragePath}`);
+      } else {
+        this.debugLogger.log('WARN', 'No globalStorage or cert storage path configured - proxy rules will not persist');
+      }
+    }
+    
     await this.startHttpServer();
     
     // Start proxy server with HTTPS support
@@ -530,6 +618,18 @@ export class McpServer extends EventEmitter {
       // Get certificate storage path from environment variable (passed by extension)
       const certStoragePath = process.env.HUMANAGENT_CERT_STORAGE_PATH;
       const httpsOptions = await initializeProxyCA(certStoragePath);
+      
+      // Load and set proxy rules before starting
+      const rules = await this.getProxyRules();
+      
+      // Initialize default example rules if this is a fresh setup
+      await this.initializeDefaultRules();
+      
+      // Get rules again after potential default rule initialization
+      const finalRules = await this.getProxyRules();
+      this.proxyServer.setRules(finalRules);
+      this.debugLogger.log('INFO', `Loaded ${finalRules.length} proxy rules for proxy server`);
+      
       const proxyPort = await this.proxyServer.start(httpsOptions);
       
       // Trust CA for all spawned processes
@@ -677,6 +777,10 @@ export class McpServer extends EventEmitter {
     } else if (req.url?.startsWith('/proxy')) {
       // Proxy server endpoints
       await this.handleProxyEndpoint(req, res);
+      return;
+    } else if (req.url === '/jsonata-rule-builder.html') {
+      // Visual rule builder interface
+      await this.handleRuleBuilderInterface(req, res);
       return;
     } else if (req.url?.startsWith('/sessions') || req.url === '/response' || req.url?.startsWith('/tools') || req.url?.startsWith('/debug') || req.url === '/reload' || req.url?.startsWith('/messages/')) {
       // Session management, response, tools, reload, messages, and chat endpoints
@@ -1309,6 +1413,366 @@ export class McpServer extends EventEmitter {
     }
   }
 
+  private generateRuleBuilderHTML(): string {
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSONata Query Tester - Build and Test JSON Transformations</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsonata@2.0.3/jsonata.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background: #007acc;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 18px;
+        }
+        .header .actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        .btn-primary {
+            background: #28a745;
+            border-color: #28a745;
+        }
+        .btn-primary:hover {
+            background: #218838;
+        }
+        .main-container {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 10px;
+            height: calc(100vh - 70px);
+            overflow: hidden;
+        }
+        .pane {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .pane-header {
+            background: #f8f9fa;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e9ecef;
+            font-weight: 600;
+            color: #495057;
+        }
+        .pane-content {
+            flex: 1;
+            padding: 0;
+            overflow: auto;
+        }
+        .json-editor {
+            width: 100%;
+            height: 100%;
+            border: none;
+            font-family: 'Monaco', 'Consolas', 'Courier New', monospace;
+            font-size: 12px;
+            padding: 16px;
+            resize: none;
+            background: #2d3748;
+            color: #e2e8f0;
+            box-sizing: border-box;
+        }
+        .query-editor {
+            width: 100%;
+            height: 120px;
+            border: none;
+            font-family: 'Monaco', 'Consolas', 'Courier New', monospace;
+            font-size: 12px;
+            padding: 16px;
+            resize: none;
+            border-bottom: 1px solid #e9ecef;
+            box-sizing: border-box;
+        }
+        .result-display {
+            flex: 1;
+            padding: 16px;
+            font-family: 'Monaco', 'Consolas', 'Courier New', monospace;
+            font-size: 12px;
+            background: #f8f9fa;
+            white-space: pre-wrap;
+            overflow: auto;
+        }
+        .query-help {
+            padding: 16px;
+            font-size: 11px;
+            color: #6c757d;
+            border-bottom: 1px solid #e9ecef;
+            background: #f8f9fa;
+        }
+        .error {
+            color: #dc3545;
+            background: #f8d7da;
+            padding: 8px 16px;
+            margin: 8px 16px;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+        .success {
+            color: #155724;
+            background: #d4edda;
+            padding: 8px 16px;
+            margin: 8px 16px;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔍 JSONata Query Tester</h1>
+        <div class="actions">
+            <button class="btn" onclick="copyQuery()">📋 Copy Query</button>
+            <button class="btn btn-primary" onclick="createProxyRule()">✅ Create Proxy Rule</button>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <!-- Left Pane: JSON Data -->
+        <div class="pane">
+            <div class="pane-header">📄 Source JSON Data</div>
+            <div class="pane-content">
+                <textarea id="json-data" class="json-editor" placeholder="Paste JSON data here or load from proxy logs..."></textarea>
+            </div>
+        </div>
+
+        <!-- Right Pane: JSONata Transformation -->
+        <div class="pane">
+            <div class="pane-header">🔧 JSONata Transformation</div>
+            <div class="pane-content">
+                <div style="padding: 10px; font-size: 11px; color: #666; border-bottom: 1px solid #e9ecef; background: #f8f9fa;">
+                    <strong>💡 Examples:</strong><br>
+                    <code>$</code> - Return entire object<br>
+                    <code>$.name</code> - Get name field<br>  
+                    <code>$replace(name, /old/, "new")</code> - Replace text<br>
+                    <code>{"newName": name, "modified": true}</code> - Create new object<br>
+                    <br>📖 <a href="https://jsonata.org/" target="_blank" style="color: #ff8c00; text-decoration: underline;">Full JSONata Documentation</a>
+                </div>
+                <textarea id="transformation-query" class="query-editor" placeholder="Enter JSONata transformation...
+}" oninput="executeTransformation()"></textarea>
+                <div class="result-display" id="transformation-result">
+                    <em style="color: #6c757d;">Full transformation results will appear here...</em>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentJsonData = null;
+        
+        // HTML escape function
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+
+
+        // Execute full JSONata transformation
+        async function executeTransformation() {
+            const query = document.getElementById('transformation-query').value.trim();
+            const resultDiv = document.getElementById('transformation-result');
+            
+            if (!query) {
+                resultDiv.innerHTML = '<em style="color: #6c757d;">Enter a JSONata transformation above...</em>';
+                return;
+            }
+            
+            if (!currentJsonData) {
+                resultDiv.innerHTML = '<div class="error">No JSON data available. Check the left pane.</div>';
+                return;
+            }
+            
+            try {
+                // Execute real JSONata transformation
+                console.log('JSONata Debug - Library type:', typeof jsonata);
+                console.log('JSONata Debug - Library exists:', typeof jsonata !== 'undefined');
+                
+                if (typeof jsonata === 'undefined') {
+                    resultDiv.innerHTML = '<div class="error">JSONata library not loaded. Please refresh the page.</div>';
+                    return;
+                }
+                
+                // Debug: show data structure info
+                console.log('JSONata Debug - Data type:', typeof currentJsonData);
+                console.log('JSONata Debug - Is Array:', Array.isArray(currentJsonData));
+                console.log('JSONata Debug - Data sample:', currentJsonData);
+                console.log('JSONata Debug - Query:', query);
+                
+                const expression = jsonata(query);
+                console.log('JSONata Debug - Expression created:', !!expression);
+                
+                const result = await expression.evaluate(currentJsonData);
+                console.log('JSONata Debug - Result:', result);
+                console.log('JSONata Debug - Result type:', typeof result);
+                
+                // Display the actual result with helpful info
+                let debugInfo = '';
+                if (Array.isArray(currentJsonData)) {
+                    debugInfo = '<div style="background: #fff3cd; padding: 8px; border-radius: 4px; margin-bottom: 8px; font-size: 11px;">' +
+                               '💡 <strong>Your data is an array</strong> - try <code>$[0].name</code> or <code>$.*</code> to access elements</div>';
+                }
+                
+                resultDiv.innerHTML = debugInfo + 
+                    '<div class="success">✅ <strong>JSONata Result:</strong></div>' +
+                    '<pre style="background: #f8f9fa; padding: 10px; border-radius: 4px; font-size: 11px; max-height: 400px; overflow: auto;">' +
+                    escapeHtml(JSON.stringify(result, null, 2)) + '</pre>';
+                    
+            } catch (e) {
+                resultDiv.innerHTML = '<div class="error">JSONata Error: ' + e.message + 
+                    '<br><small>Check your JSONata syntax. Examples: <code>$.name</code>, <code>$replace(name, /old/, "new")</code></small></div>';
+            }
+        }
+
+        // Copy current query to clipboard
+        function copyQuery() {
+            const query = document.getElementById('transformation-query').value;
+            if (query) {
+                navigator.clipboard.writeText(query);
+                showMessage('✅ Query copied to clipboard!');
+            } else {
+                showMessage('❌ No query to copy');
+            }
+        }
+
+        // Create proxy rule from current transformation
+        function createProxyRule() {
+            const transformationQuery = document.getElementById('transformation-query').value.trim();
+            if (!transformationQuery) {
+                showMessage('❌ Please enter a transformation query first');
+                return;
+            }
+            
+            // Prompt for rule name
+            const ruleName = prompt('Enter a name for this rule (e.g., "Karen Personality", "Add Session ID")', 'JSONata Rule');
+            if (!ruleName || !ruleName.trim()) {
+                showMessage('❌ Rule creation cancelled - name is required');
+                return;
+            }
+            
+            // Create rule object
+            const rule = {
+                name: ruleName.trim(),
+                pattern: 'https://api.individual.githubcopilot.com/chat/completions',
+                type: 'jsonata',
+                expression: transformationQuery,
+                description: 'Rule created from JSONata Query Tester'
+            };
+            
+            // Send to parent window
+            if (window.opener && !window.opener.closed) {
+                window.opener.postMessage({
+                    type: 'ADD_PROXY_RULE',
+                    rule: rule
+                }, '*');
+                showMessage('✅ Rule sent to proxy server!');
+            } else {
+                // Fallback - copy the rule configuration
+                const ruleConfig = JSON.stringify(rule, null, 2);
+                navigator.clipboard.writeText(ruleConfig);
+                showMessage('✅ Rule configuration copied to clipboard!');
+            }
+        }
+
+        // Show temporary message
+        function showMessage(message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = message.includes('✅') ? 'success' : 'error';
+            messageDiv.textContent = message;
+            document.querySelector('.header').appendChild(messageDiv);
+            setTimeout(() => messageDiv.remove(), 3000);
+        }
+
+        // Handle incoming data from parent window
+        window.addEventListener('message', function(event) {
+            if (event.data && event.data.type === 'POPULATE_BUILDER') {
+                const { logId, jsonData, url } = event.data;
+                
+                // Store the JSON data
+                currentJsonData = jsonData;
+                
+                // Display the formatted JSON in the left pane
+                document.getElementById('json-data').value = JSON.stringify(jsonData, null, 2);
+                
+
+                
+                // Update the header to show source info
+                document.querySelector('.header h1').innerHTML = 
+                    '🔍 JSONata Query Tester - Log #' + logId + ' <small style="opacity: 0.7;">(' + url + ')</small>';
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Test JSONata library
+            setTimeout(() => {
+                if (typeof jsonata !== 'undefined') {
+                    try {
+                        const testExpr = jsonata('$');
+                        const testResult = testExpr.evaluate({test: 'value'});
+                        console.log('JSONata Library Test - Success:', testResult);
+                    } catch (e) {
+                        console.log('JSONata Library Test - Error:', e.message);
+                    }
+                } else {
+                    console.log('JSONata Library Test - Library not loaded');
+                }
+            }, 1000);
+            
+            // Update currentJsonData when user manually edits the JSON field
+            document.getElementById('json-data').addEventListener('input', function() {
+                try {
+                    const jsonText = this.value.trim();
+                    if (jsonText) {
+                        currentJsonData = JSON.parse(jsonText);
+                    }
+                } catch (e) {
+                    // Invalid JSON - don't update currentJsonData but don't show error yet
+                    console.log('JSON parse error (will retry):', e.message);
+                }
+            });
+        });
+    </script>
+</body>
+</html>`;
+  }
+
   private async handleProxyEndpoint(req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
     const url = new URL(req.url!, `http://${req.headers.host}`);
     
@@ -1330,9 +1794,264 @@ export class McpServer extends EventEmitter {
       this.proxyServer.clearLogs();
       res.statusCode = 200;
       res.end(JSON.stringify({ success: true }));
+    } else if (url.pathname === '/proxy/rules') {
+      // Proxy rules CRUD operations
+      await this.handleProxyRulesEndpoint(req, res);
+    } else if (url.pathname.startsWith('/proxy/rules/')) {
+      // Individual proxy rule operations
+      await this.handleProxyRulesEndpoint(req, res);
     } else {
       res.statusCode = 404;
       res.end('Not Found');
+    }
+  }
+
+  private async handleProxyRulesEndpoint(req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
+    const url = new URL(req.url!, `http://${req.headers.host}`);
+    res.setHeader('Content-Type', 'application/json');
+    
+    try {
+      if (url.pathname === '/proxy/rules' && req.method === 'GET') {
+        // Get all proxy rules
+        const rules = await this.getProxyRules();
+        res.statusCode = 200;
+        res.end(JSON.stringify(rules));
+      } else if (url.pathname === '/proxy/rules' && req.method === 'POST') {
+        // Add new proxy rule
+        const body = await this.readRequestBody(req);
+        const { name, pattern, redirect, jsonata, enabled, dropRequest, dropStatusCode } = JSON.parse(body);
+        
+        if (!name) {
+          res.statusCode = 400;
+          res.end(JSON.stringify({ success: false, error: 'Rule name is required' }));
+          return;
+        }
+        
+        if (!pattern) {
+          res.statusCode = 400;
+          res.end(JSON.stringify({ success: false, error: 'Pattern is required' }));
+          return;
+        }
+        
+        // Improved validation logic for different rule types
+        const hasRedirect = redirect && redirect.trim() !== '';
+        const hasJsonataTransform = jsonata && jsonata.trim() !== '';
+        const hasDropRequest = dropRequest === true;
+        
+        if (!hasRedirect && !hasJsonataTransform && !hasDropRequest) {
+          res.statusCode = 400;
+          res.end(JSON.stringify({ success: false, error: 'Rule must have at least one action: redirect URL, JSONata transformation, or drop request' }));
+          return;
+        }
+        
+        // Validate regex pattern
+        try {
+          new RegExp(pattern);
+        } catch (error: any) {
+          res.statusCode = 400;
+          res.end(JSON.stringify({ success: false, error: `Invalid regex pattern: ${error.message}` }));
+          return;
+        }
+        
+        const ruleId = await this.addProxyRule(name, pattern, redirect, jsonata, enabled !== false, dropRequest, dropStatusCode);
+        res.statusCode = 200;
+        res.end(JSON.stringify({ success: true, ruleId }));
+      } else if (url.pathname.startsWith('/proxy/rules/') && req.method === 'PUT') {
+        // Update proxy rule
+        const ruleId = url.pathname.split('/').pop();
+        const body = await this.readRequestBody(req);
+        const updates = JSON.parse(body);
+        
+        const success = await this.updateProxyRule(ruleId!, updates);
+        res.statusCode = 200;
+        res.end(JSON.stringify({ success }));
+      } else if (url.pathname.startsWith('/proxy/rules/') && req.method === 'DELETE') {
+        // Delete proxy rule
+        const ruleId = url.pathname.split('/').pop();
+        const success = await this.deleteProxyRule(ruleId!);
+        res.statusCode = 200;
+        res.end(JSON.stringify({ success }));
+      } else {
+        res.statusCode = 404;
+        res.end(JSON.stringify({ success: false, error: 'Not Found' }));
+      }
+    } catch (error: any) {
+      this.debugLogger.log('ERROR', 'Proxy rules endpoint error:', error);
+      res.statusCode = 500;
+      res.end(JSON.stringify({ success: false, error: error.message }));
+    }
+  }
+
+  private async readRequestBody(req: http.IncomingMessage): Promise<string> {
+    return new Promise((resolve, reject) => {
+      let body = '';
+      req.on('data', chunk => {
+        body += chunk.toString();
+      });
+      req.on('end', () => {
+        resolve(body);
+      });
+      req.on('error', reject);
+    });
+  }
+
+  // Proxy Rules Management Methods - use globalStorage for global scope
+  private async getProxyRules(): Promise<any[]> {
+    try {
+      if (!this.globalStorage) {
+        this.debugLogger.log('WARN', 'GlobalStorage not configured - cannot load proxy rules');
+        return [];
+      }
+      const rules = this.globalStorage.get('proxyRules', []);
+      this.debugLogger.log('INFO', `Loaded ${rules.length} proxy rules from globalStorage`);
+      return rules;
+    } catch (error) {
+      this.debugLogger.log('ERROR', 'Failed to load proxy rules:', error);
+      return [];
+    }
+  }
+
+  private async addProxyRule(name: string, pattern: string, redirect?: string, jsonata?: string, enabled: boolean = true, dropRequest?: boolean, dropStatusCode?: number): Promise<string> {
+    try {
+      if (!this.globalStorage) {
+        throw new Error('GlobalStorage not configured');
+      }
+      const rules = await this.getProxyRules();
+      const ruleId = `rule-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const newRule: any = {
+        id: ruleId,
+        name,
+        pattern,
+        enabled,
+        createdAt: new Date().toISOString()
+      };
+      
+      // Add optional fields
+      if (redirect) {
+        newRule.redirect = redirect;
+      }
+      if (jsonata) {
+        newRule.jsonata = jsonata;
+      }
+      if (dropRequest) {
+        newRule.dropRequest = dropRequest;
+        newRule.dropStatusCode = dropStatusCode || 204;
+      }
+      
+      rules.push(newRule);
+      await this.globalStorage.update('proxyRules', rules);
+      this.debugLogger.log('INFO', `Added proxy rule: ${ruleId} (${pattern})`);
+      
+      // Update proxy server rules and reload
+      this.proxyServer.setRules(rules);
+      await this.proxyServer.reloadRules();
+      
+      return ruleId;
+    } catch (error) {
+      this.debugLogger.log('ERROR', 'Failed to add proxy rule:', error);
+      throw error;
+    }
+  }
+
+  private async updateProxyRule(ruleId: string, updates: any): Promise<boolean> {
+    try {
+      if (!this.globalStorage) {
+        throw new Error('GlobalStorage not configured');
+      }
+      const rules = await this.getProxyRules();
+      const ruleIndex = rules.findIndex(r => r.id === ruleId);
+      
+      if (ruleIndex === -1) {
+        this.debugLogger.log('WARN', `Proxy rule not found: ${ruleId}`);
+        return false;
+      }
+      
+      rules[ruleIndex] = { ...rules[ruleIndex], ...updates };
+      await this.globalStorage.update('proxyRules', rules);
+      this.debugLogger.log('INFO', `Updated proxy rule: ${ruleId}`);
+      
+      // Update proxy server rules and reload
+      this.proxyServer.setRules(rules);
+      await this.proxyServer.reloadRules();
+      
+      return true;
+    } catch (error) {
+      this.debugLogger.log('ERROR', 'Failed to update proxy rule:', error);
+      throw error;
+    }
+  }
+
+  private async deleteProxyRule(ruleId: string): Promise<boolean> {
+    try {
+      if (!this.globalStorage) {
+        throw new Error('GlobalStorage not configured');
+      }
+      const rules = await this.getProxyRules();
+      const filteredRules = rules.filter(r => r.id !== ruleId);
+      
+      if (filteredRules.length === rules.length) {
+        this.debugLogger.log('WARN', `Proxy rule not found: ${ruleId}`);
+        return false;
+      }
+      
+      await this.globalStorage.update('proxyRules', filteredRules);
+      this.debugLogger.log('INFO', `Deleted proxy rule: ${ruleId}`);
+      
+      // Update proxy server rules and reload
+      this.proxyServer.setRules(filteredRules);
+      await this.proxyServer.reloadRules();
+      
+      return true;
+    } catch (error) {
+      this.debugLogger.log('ERROR', 'Failed to delete proxy rule:', error);
+      throw error;
+    }
+  }
+
+  private async initializeDefaultRules(): Promise<void> {
+    try {
+      if (!this.globalStorage) {
+        this.debugLogger.log('WARN', 'Cannot initialize default rules - no storage configured');
+        return;
+      }
+      
+      const existingRules = await this.getProxyRules();
+      
+      // Only create default rules if no rules exist (fresh setup)
+      if (existingRules.length === 0) {
+        this.debugLogger.log('INFO', 'Creating default example rules...');
+        
+        // Example 1: Karen Personality (JSONata transformation)
+        await this.addProxyRule(
+          'Karen Personality',
+          'https://api\\.openai\\.com/.*',
+          undefined,
+          '$merge([$, {"messages": $.messages.(' + 
+          '  role = "system" ? ' + 
+          '  $merge([$, {"content": "Your Name is Karen - behave like one - not too rude racist or sexist - just a bit of a bitch"}]) : ' + 
+          '  $' + 
+          ')}])',
+          false, // disabled by default
+          false,
+          undefined
+        );
+        
+        // Example 2: Block Telemetry (drop request)
+        await this.addProxyRule(
+          'Block GitHub Copilot Telemetry',
+          'https://telemetry\\.individual\\.githubcopilot\\.com/.*',
+          undefined,
+          undefined,
+          false, // disabled by default  
+          true, // drop request
+          204 // status code
+        );
+        
+        this.debugLogger.log('INFO', 'Created 2 default example rules (disabled)');
+      }
+    } catch (error) {
+      this.debugLogger.log('ERROR', 'Failed to initialize default rules:', error);
+      // Don't throw - this is non-critical
     }
   }
 
@@ -1344,6 +2063,17 @@ export class McpServer extends EventEmitter {
     res.statusCode = 200;
     
     const htmlContent = this.generateWebInterfaceHTML();
+    res.end(htmlContent);
+  }
+
+  private async handleRuleBuilderInterface(req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
+    this.debugLogger.log('HTTP', 'Serving visual rule builder at /jsonata-rule-builder.html');
+    
+    // Set HTML content type
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.statusCode = 200;
+    
+    const htmlContent = this.generateRuleBuilderHTML();
     res.end(htmlContent);
   }
 
@@ -1573,6 +2303,257 @@ export class McpServer extends EventEmitter {
             display: none;
         }
 
+        .proxy-rules-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 15px;
+        }
+
+        .proxy-rules-container.active {
+            display: flex;
+        }
+
+        .proxy-rules-container:not(.active) {
+            display: none;
+        }
+
+        .proxy-rules-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--vscode-border);
+        }
+
+        .proxy-rules-header h2 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .add-rule-button {
+            padding: 6px 12px;
+            background-color: var(--vscode-button-background);
+            color: var(--vscode-button-foreground);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: opacity 0.2s;
+        }
+
+        .add-rule-button:hover {
+            opacity: 0.9;
+        }
+
+        .proxy-rules-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .proxy-rule {
+            margin-bottom: 10px;
+            padding: 12px;
+            background-color: var(--vscode-panel-background);
+            border-radius: 4px;
+            border-left: 3px solid var(--vscode-button-background);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .proxy-rule.disabled {
+            opacity: 0.5;
+            border-left-color: #666;
+        }
+
+        .proxy-rule-info {
+            flex: 1;
+        }
+
+        .proxy-rule-pattern {
+            font-weight: 600;
+            font-family: monospace;
+            margin-bottom: 4px;
+        }
+
+        .proxy-rule-target {
+            font-size: 12px;
+            opacity: 0.8;
+            font-family: monospace;
+        }
+
+        .proxy-rule-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 36px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #666;
+            transition: 0.3s;
+            border-radius: 20px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--vscode-button-background);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(16px);
+        }
+
+        .edit-rule-button {
+            padding: 4px 8px;
+            background-color: #0366d6;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            margin-right: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .edit-rule-button:hover {
+            background-color: #0256cc;
+        }
+
+        .delete-rule-button {
+            padding: 4px 8px;
+            background-color: #d73a49;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: background-color 0.2s;
+        }
+
+        .delete-rule-button:hover {
+            background-color: #cb2431;
+        }
+
+        .add-rule-form {
+            display: none;
+            padding: 15px;
+            background-color: var(--vscode-panel-background);
+            border-radius: 4px;
+            margin-bottom: 15px;
+            border: 1px solid var(--vscode-border);
+        }
+
+        .add-rule-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            background-color: var(--vscode-input-background);
+            border: 1px solid var(--vscode-border);
+            border-radius: 4px;
+            color: var(--vscode-foreground);
+            font-size: 13px;
+            font-family: monospace;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--vscode-button-background);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .cancel-button {
+            padding: 6px 12px;
+            background-color: var(--vscode-input-background);
+            color: var(--vscode-foreground);
+            border: 1px solid var(--vscode-border);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .btn-small {
+            padding: 4px 8px;
+            background-color: var(--vscode-button-background);
+            color: var(--vscode-button-foreground);
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+            margin-right: 6px;
+            transition: background-color 0.2s;
+        }
+
+        .btn-small:hover {
+            background-color: var(--vscode-button-hoverBackground);
+        }
+
+        .proxy-log-actions {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: var(--vscode-editor-background);
+            border: 1px solid var(--vscode-panel-border);
+            border-radius: 4px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .cancel-button:hover {
+            background-color: var(--vscode-panel-background);
+        }
+
         .proxy-log {
             margin-bottom: 10px;
             padding: 10px;
@@ -1580,6 +2561,33 @@ export class McpServer extends EventEmitter {
             border-radius: 4px;
             border-left: 3px solid var(--vscode-button-background);
             transition: background-color 0.2s;
+        }
+
+        .proxy-log.rule-applied {
+            border-left-color: #ff8c00; /* Orange border for rules */
+        }
+
+        .proxy-log-rule-badge {
+            display: inline-block;
+            background-color: #ff8c00;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .proxy-log-modifications {
+            font-size: 11px;
+            opacity: 0.8;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid var(--vscode-border);
+        }
+
+        .proxy-log-modifications div {
+            margin: 2px 0;
         }
 
         .proxy-log:hover {
@@ -1773,12 +2781,13 @@ export class McpServer extends EventEmitter {
             ${sessions.length === 0 ? '' : sessions.map((session, index) => 
                 `<div class="tab ${index === 0 ? 'active' : ''}" data-session="${session.id}">${session.title}</div>`
             ).join('')}
-            <div class="tab" data-session="proxy">📊 Proxy Logs</div>
+            <div class="tab ${sessions.length === 0 ? 'active' : ''}" data-session="proxy">📊 Proxy Logs</div>
+            <div class="tab" data-session="proxy-rules">⚙️ Proxy Rules</div>
         </div>
         
         <div class="content">
             ${sessions.length === 0 ? 
-                '<div class="no-sessions">No active sessions. Start a chat in VS Code to see sessions here.</div>' :
+                '<div class="no-sessions" data-session="no-sessions" style="display: none;">No active sessions. Start a chat in VS Code to see sessions here.</div>' :
                 sessions.map((session, index) => `
                     <div class="chat-container ${index === 0 ? 'active' : ''}" data-session="${session.id}">
                         <div class="messages" id="messages-${session.id}">
@@ -1796,10 +2805,67 @@ export class McpServer extends EventEmitter {
                     </div>
                 `).join('')
             }
-            <div class="proxy-container" data-session="proxy">
+            <div class="proxy-container ${sessions.length === 0 ? 'active' : ''}" data-session="proxy">
                 <div class="messages" id="proxy-logs">
                     <div style="opacity: 0.6; text-align: center; padding: 20px;">
                         Proxy logs will appear here when requests are made through the proxy.
+                    </div>
+                </div>
+            </div>
+            <div class="proxy-rules-container" data-session="proxy-rules">
+                <div class="proxy-rules-header">
+                    <h2>Proxy Rules</h2>
+                    <button class="add-rule-button" onclick="showAddRuleForm()">+ Add Rule</button>
+                </div>
+                
+                <div class="add-rule-form" id="add-rule-form">
+                    <div class="form-group">
+                        <label for="rule-name">Rule Name</label>
+                        <input type="text" id="rule-name" placeholder="e.g., Karen Personality, Block Telemetry" />
+                        <div style="font-size: 11px; opacity: 0.7; margin-top: 4px;">Friendly name to identify this rule</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="rule-pattern">URL Pattern (regex)</label>
+                        <input type="text" id="rule-pattern" placeholder="e.g., ^https://api\\.example\\.com/.*" />
+                        <div style="font-size: 11px; opacity: 0.7; margin-top: 4px;">Regex pattern to match request URLs</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="rule-redirect">Redirect To (optional)</label>
+                        <input type="text" id="rule-redirect" placeholder="e.g., https://localhost:8080 (leave blank to keep original destination)" />
+                        <div style="font-size: 11px; opacity: 0.7; margin-top: 4px;">Redirect matching requests to this URL. Leave empty to only transform payload.</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="rule-jsonata">JSONata Transformation (optional)</label>
+                        <textarea id="rule-jsonata" rows="4" placeholder="e.g., \$merge([\$, {&quot;messages&quot;: \$.messages.(\$ | role = &quot;system&quot; ? {&quot;content&quot;: &quot;New system message&quot;} : \$)}])" style="width: 100%; font-family: Monaco, monospace; font-size: 12px;"></textarea>
+                        <div style="font-size: 11px; opacity: 0.7; margin-top: 4px;">
+                            JSONata expression to transform request body. Examples:<br/>
+                            • <code>\$merge([\$, {"api_key": "new-key"}])</code> - Replace API key<br/>
+                            • <code>\$merge([\$, {"messages": \$.messages.(\$ | role = "system" ? {"content": "new text"} : \$)}])</code> - Replace system message<br/>
+                            • <code>\$</code> - Pass through unchanged (identity transform)<br/>
+                            📖 <a href="https://jsonata.org/" target="_blank" style="color: #ff8c00; text-decoration: underline;">JSONata Documentation</a>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="rule-drop-request" style="margin-right: 8px;" />
+                            Drop Request (block request entirely)
+                        </label>
+                        <div style="font-size: 11px; opacity: 0.7; margin-top: 4px;">If checked, matching requests will be blocked instead of forwarded</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="rule-drop-status">Drop Status Code (if dropping)</label>
+                        <input type="number" id="rule-drop-status" placeholder="204" value="204" min="200" max="599" />
+                        <div style="font-size: 11px; opacity: 0.7; margin-top: 4px;">HTTP status code to return for dropped requests (default: 204 No Content)</div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="cancel-button" onclick="hideAddRuleForm()">Cancel</button>
+                        <button class="add-rule-button" onclick="saveNewRule()">Save Rule</button>
+                    </div>
+                </div>
+                
+                <div class="proxy-rules-list" id="proxy-rules-list">
+                    <div style="opacity: 0.6; text-align: center; padding: 20px;">
+                        No proxy rules configured. Click "Add Rule" to create one.
                     </div>
                 </div>
             </div>
@@ -1808,7 +2874,7 @@ export class McpServer extends EventEmitter {
 
     <script>
         // Session management
-        let activeSessionId = '${sessions[0]?.id || ''}';
+        let activeSessionId = '${sessions[0]?.id || 'proxy'}';
         
         // Web interface is stateless - gets pending requests from server state
         
@@ -1864,11 +2930,21 @@ export class McpServer extends EventEmitter {
                 container.classList.toggle('active', container.dataset.session === sessionId);
             });
             
+            // Update active proxy rules container
+            document.querySelectorAll('.proxy-rules-container').forEach(container => {
+                container.classList.toggle('active', container.dataset.session === sessionId);
+            });
+            
             activeSessionId = sessionId;
             
             // Load proxy logs if switching to proxy tab
             if (sessionId === 'proxy') {
                 loadProxyLogs();
+            }
+            
+            // Load proxy rules if switching to proxy rules tab
+            if (sessionId === 'proxy-rules') {
+                loadProxyRules();
             }
         }
 
@@ -2095,7 +3171,13 @@ export class McpServer extends EventEmitter {
             }
         }
         
-        function addProxyLogToUI(logEntry, prepend = true) {
+        function addProxyLogToUI(logEntry, prepend = false) {
+            // Cache the log data for rule creation (same as updateProxyLogInUI)
+            if (typeof window.proxyLogsDataCache === 'undefined') {
+                window.proxyLogsDataCache = new Map();
+            }
+            window.proxyLogsDataCache.set(logEntry.id, logEntry);
+            
             const proxyLogsContainer = document.getElementById('proxy-logs');
             if (!proxyLogsContainer) return;
             
@@ -2106,13 +3188,34 @@ export class McpServer extends EventEmitter {
             }
             
             const logDiv = document.createElement('div');
-            logDiv.className = 'proxy-log';
+            logDiv.className = logEntry.ruleApplied ? 'proxy-log rule-applied' : 'proxy-log';
             logDiv.dataset.logId = logEntry.id;
             logDiv.style.cursor = 'pointer';
             
             const statusClass = logEntry.responseStatus >= 200 && logEntry.responseStatus < 300 ? 'success' : 'error';
             const statusText = logEntry.responseStatus ? logEntry.responseStatus : 'Pending';
             const duration = logEntry.duration ? \`\${logEntry.duration}ms\` : '-';
+            
+            // Build rule badge if rule was applied
+            let ruleBadge = '';
+            if (logEntry.ruleApplied) {
+                const hoverText = logEntry.ruleApplied.hoverInfo 
+                    ? \`Original: \${logEntry.ruleApplied.hoverInfo.originalText}\\nReplacement: \${logEntry.ruleApplied.hoverInfo.replacementText}\`
+                    : logEntry.ruleApplied.modifications ? logEntry.ruleApplied.modifications.join('\\n') : 'Rule applied';
+                
+                ruleBadge = \`<span class="proxy-log-rule-badge" title="\${escapeHtml(hoverText)}">⚙️ Rule #\${logEntry.ruleApplied.ruleIndex}</span>\`;
+            }
+            
+            // Build modifications display
+            let modificationsHtml = '';
+            if (logEntry.ruleApplied && logEntry.ruleApplied.modifications) {
+                modificationsHtml = \`
+                    <div class="proxy-log-modifications">
+                        <strong>Modifications:</strong>
+                        \${logEntry.ruleApplied.modifications.map(mod => \`<div>• \${escapeHtml(mod)}</div>\`).join('')}
+                    </div>
+                \`;
+            }
             
             // Format headers for display
             const formatHeaders = (headers) => {
@@ -2122,6 +3225,76 @@ export class McpServer extends EventEmitter {
                     .join('');
             };
             
+            // Format body for display with before/after comparison for rule-modified requests
+            const formatBeforeAfterBody = (logEntry) => {
+                const currentBody = logEntry.requestBody;
+                
+                // Try to reconstruct original body from rule modifications
+                let originalBody = currentBody;
+                if (logEntry.ruleApplied && logEntry.ruleApplied.modifications) {
+                    const modifications = logEntry.ruleApplied.modifications;
+                    
+                    // Look for JSON modifications to reverse-engineer original
+                    const jsonMods = modifications.filter(mod => mod.startsWith('JSON:'));
+                    if (jsonMods.length > 0 && currentBody) {
+                        try {
+                            let reconstructedOriginal = JSON.parse(currentBody);
+                            
+                            // Parse modifications to find what was changed
+                            jsonMods.forEach(mod => {
+                                // Match pattern: JSON: path = "oldValue" → "newValue"
+                                const match = mod.match(/JSON: (.*?) = "(.*?)" → "(.*?)"/);
+                                if (match && match.length >= 4) {
+                                    const path = match[1];
+                                    const oldValue = match[2];
+                                    const newValue = match[3];
+                                    
+                                    // Try to set the original value back
+                                    try {
+                                        const pathParts = path.split('.');
+                                        let obj = reconstructedOriginal;
+                                        for (let i = 0; i < pathParts.length - 1; i++) {
+                                            if (obj[pathParts[i]]) {
+                                                obj = obj[pathParts[i]];
+                                            }
+                                        }
+                                        const lastKey = pathParts[pathParts.length - 1];
+                                        if (obj[lastKey] === newValue) {
+                                            obj[lastKey] = oldValue;
+                                        }
+                                    } catch (e) {
+                                        // If path reconstruction fails, continue
+                                    }
+                                }
+                            });
+                            
+                            originalBody = JSON.stringify(reconstructedOriginal, null, 2);
+                        } catch (e) {
+                            // If parsing fails, use current body as fallback
+                        }
+                    }
+                }
+                
+                if (originalBody === currentBody) {
+                    // No reconstruction possible, show current with rule info
+                    return '<div style="background: #fff3cd; padding: 10px; border-radius: 4px; margin-bottom: 10px;">' +
+                           '<strong>⚙️ Rule Applied - Request Modified</strong><br>' +
+                           '<small>Rule #' + logEntry.ruleApplied.ruleIndex + ' was applied to this request</small></div>' +
+                           formatBody(currentBody);
+                } else {
+                    // Show before and after comparison
+                    return '<div style="background: #fff3cd; padding: 10px; border-radius: 4px; margin-bottom: 10px;">' +
+                           '<strong>⚙️ Rule Applied - Before & After Comparison</strong></div>' +
+                           '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">' +
+                           '<div><h5 style="color: #dc3545; margin: 5px 0;">📄 Original Request</h5>' +
+                           '<pre style="background: #f8d7da; padding: 10px; border-radius: 4px; font-size: 11px; max-height: 300px; overflow: auto;">' +
+                           escapeHtml(originalBody) + '</pre></div>' +
+                           '<div><h5 style="color: #28a745; margin: 5px 0;">✏️ Modified Request</h5>' +
+                           '<pre style="background: #d4edda; padding: 10px; border-radius: 4px; font-size: 11px; max-height: 300px; overflow: auto;">' +
+                           escapeHtml(currentBody) + '</pre></div></div>';
+                }
+            };
+
             // Format body for display
             const formatBody = (body) => {
                 if (!body) return '<i>No body</i>';
@@ -2131,24 +3304,39 @@ export class McpServer extends EventEmitter {
                 return '<pre>' + escapeHtml(String(body)) + '</pre>';
             };
             
+            const timestamp = new Date(logEntry.timestamp).toLocaleTimeString();
+            
             logDiv.innerHTML = \`
                 <div class="proxy-log-summary" onclick="toggleProxyLogDetails('\${logEntry.id}')">
                     <div class="proxy-log-header">
                         <span class="proxy-log-method">\${logEntry.method}</span>
+                        \${ruleBadge}
                         <span class="proxy-log-status \${statusClass}">\${statusText}</span>
                         <span>\${duration}</span>
+                        <span>\${timestamp}</span>
                         <span style="float: right;">▼</span>
                     </div>
                     <div class="proxy-log-url">\${escapeHtml(logEntry.url)}</div>
+                    \${modificationsHtml}
                 </div>
                 <div class="proxy-log-details" id="proxy-log-details-\${logEntry.id}" style="display: none;">
+                    <div class="proxy-log-actions">
+                        <button class="btn-small" onclick="createRuleFromMessage('\${logEntry.id}')" 
+                                title="Create a proxy rule based on this request">
+                            🎯 Create Rule
+                        </button>
+                        <button class="btn-small" onclick="copyLogAsJSON('\${logEntry.id}')" 
+                                title="Copy request data as JSON for testing">
+                            📋 Copy JSON
+                        </button>
+                    </div>
                     <div class="proxy-log-section">
                         <h4>Request Headers</h4>
                         \${formatHeaders(logEntry.requestHeaders)}
                     </div>
                     <div class="proxy-log-section">
                         <h4>Request Body</h4>
-                        \${formatBody(logEntry.requestBody)}
+                        \${logEntry.ruleApplied ? formatBeforeAfterBody(logEntry) : formatBody(logEntry.requestBody)}
                     </div>
                     <div class="proxy-log-section">
                         <h4>Response Headers</h4>
@@ -2169,7 +3357,7 @@ export class McpServer extends EventEmitter {
             
             // Keep only last 200 logs
             while (proxyLogsContainer.children.length > 200) {
-                proxyLogsContainer.removeChild(proxyLogsContainer.lastChild);
+                proxyLogsContainer.removeChild(proxyLogsContainer.firstChild);
             }
         }
         
@@ -2188,21 +3376,107 @@ export class McpServer extends EventEmitter {
         }
         
         function updateProxyLogInUI(logEntry) {
+            // Cache the log data for rule creation
+            if (typeof window.proxyLogsDataCache === 'undefined') {
+                window.proxyLogsDataCache = new Map();
+            }
+            window.proxyLogsDataCache.set(logEntry.id, logEntry);
+            
             const logDiv = document.querySelector(\`[data-log-id="\${logEntry.id}"]\`);
             if (!logDiv) return;
             
             const statusClass = logEntry.responseStatus >= 200 && logEntry.responseStatus < 300 ? 'success' : 'error';
             const statusText = logEntry.responseStatus || 'Pending';
             const duration = logEntry.duration ? \`\${logEntry.duration}ms\` : '-';
+            const timestamp = new Date(logEntry.timestamp).toLocaleTimeString();
             
-            logDiv.innerHTML = \`
-                <div class="proxy-log-header">
-                    <span class="proxy-log-method">\${logEntry.method}</span>
-                    <span class="proxy-log-status \${statusClass}">\${statusText}</span>
-                    <span>\${duration}</span>
-                </div>
-                <div class="proxy-log-url">\${escapeHtml(logEntry.url)}</div>
-            \`;
+            // Build rule badge if rule was applied
+            let ruleBadge = '';
+            if (logEntry.ruleApplied) {
+                const hoverText = logEntry.ruleApplied.hoverInfo 
+                    ? \`Original: \${logEntry.ruleApplied.hoverInfo.originalText}\\nReplacement: \${logEntry.ruleApplied.hoverInfo.replacementText}\`
+                    : logEntry.ruleApplied.modifications ? logEntry.ruleApplied.modifications.join('\\n') : 'Rule applied';
+                
+                ruleBadge = \`<span class="proxy-log-rule-badge" title="\${escapeHtml(hoverText)}">⚙️ Rule #\${logEntry.ruleApplied.ruleIndex}</span>\`;
+            }
+            
+            // Build modifications display
+            let modificationsHtml = '';
+            if (logEntry.ruleApplied && logEntry.ruleApplied.modifications) {
+                modificationsHtml = \`
+                    <div class="proxy-log-modifications">
+                        <strong>Modifications:</strong>
+                        \${logEntry.ruleApplied.modifications.map(mod => \`<div>• \${escapeHtml(mod)}</div>\`).join('')}
+                    </div>
+                \`;
+            }
+            
+            // Update only the summary section, preserve the existing details
+            const summaryDiv = logDiv.querySelector('.proxy-log-summary');
+            if (summaryDiv) {
+                summaryDiv.innerHTML = \`
+                    <div class="proxy-log-header">
+                        <span class="proxy-log-method">\${logEntry.method}</span>
+                        \${ruleBadge}
+                        <span class="proxy-log-status \${statusClass}">\${statusText}</span>
+                        <span>\${duration}</span>
+                        <span>\${timestamp}</span>
+                        <span style="float: right;">▼</span>
+                    </div>
+                    <div class="proxy-log-url">\${escapeHtml(logEntry.url)}</div>
+                    \${modificationsHtml}
+                \`;
+            }
+            
+            // Update the details section with complete body data if it exists but is empty
+            const detailsDiv = document.getElementById(\`proxy-log-details-\${logEntry.id}\`);
+            if (detailsDiv && (!detailsDiv.innerHTML.trim() || detailsDiv.innerHTML.includes('<!-- Details will be populated'))) {
+                // Format headers for display
+                const formatHeaders = (headers) => {
+                    if (!headers || Object.keys(headers).length === 0) return '<i>No headers</i>';
+                    return Object.entries(headers)
+                        .map(([key, value]) => \`<div><b>\${escapeHtml(key)}:</b> \${escapeHtml(String(value))}</div>\`)
+                        .join('');
+                };
+                
+                // Format body for display
+                const formatBody = (body) => {
+                    if (!body) return '<i>No body</i>';
+                    if (typeof body === 'object') {
+                        return '<pre>' + escapeHtml(JSON.stringify(body, null, 2)) + '</pre>';
+                    }
+                    return '<pre>' + escapeHtml(String(body)) + '</pre>';
+                };
+                
+                detailsDiv.innerHTML = \`
+                    <div class="proxy-log-actions">
+                        <button class="btn-small" onclick="createRuleFromMessage('\${logEntry.id}')" 
+                                title="Create a proxy rule based on this request">
+                            🎯 Create Rule
+                        </button>
+                        <button class="btn-small" onclick="copyLogAsJSON('\${logEntry.id}')" 
+                                title="Copy request data as JSON for testing">
+                            📋 Copy JSON
+                        </button>
+                    </div>
+                    <div class="proxy-log-section">
+                        <h4>Request Headers</h4>
+                        \${formatHeaders(logEntry.requestHeaders)}
+                    </div>
+                    <div class="proxy-log-section">
+                        <h4>Request Body</h4>
+                        \${logEntry.ruleApplied ? formatBeforeAfterBody(logEntry) : formatBody(logEntry.requestBody)}
+                    </div>
+                    <div class="proxy-log-section">
+                        <h4>Response Headers</h4>
+                        \${formatHeaders(logEntry.responseHeaders)}
+                    </div>
+                    <div class="proxy-log-section">
+                        <h4>Response Body</h4>
+                        \${formatBody(logEntry.responseBody)}
+                    </div>
+                \`;
+            }
         }
         
         function updateSessionTabName(sessionId, newName) {
@@ -2387,7 +3661,7 @@ export class McpServer extends EventEmitter {
                     
                     // Handle proxy log updates
                     if (data.type === 'proxy-log') {
-                        addProxyLogToUI(data.data);
+                        addProxyLogToUI(data.data); // Will append at bottom by default
                     } else if (data.type === 'proxy-log-update') {
                         updateProxyLogInUI(data.data);
                     }
@@ -2483,6 +3757,418 @@ export class McpServer extends EventEmitter {
             if (activeSessionId) {
                 const activeInput = document.querySelector(\`textarea[data-session="\${activeSessionId}"]\`);
                 if (activeInput) activeInput.focus();
+            }
+        }
+        
+        // Create rule from proxy log message\n        function createRuleFromMessage(logId) {
+            // Get the log data from cache
+            if (typeof window.proxyLogsDataCache === 'undefined' || !window.proxyLogsDataCache.has(logId)) {
+                alert('❌ Log data not found. Please refresh the proxy logs.');
+                return;
+            }
+            
+            const logEntry = window.proxyLogsDataCache.get(logId);
+            let jsonData;
+            
+            // Parse the requestBody string to JSON object (handle JSONL format)
+            try {
+                if (typeof logEntry.requestBody === 'string') {
+                    // Handle JSONL format - multiple JSON objects on separate lines
+                    const lines = logEntry.requestBody.trim().split('\\n').filter(line => line.trim());
+                    if (lines.length === 1) {
+                        // Single JSON object
+                        jsonData = JSON.parse(lines[0]);
+                    } else if (lines.length > 1) {
+                        // Multiple JSON objects - parse all and put in array for JSONata testing
+                        jsonData = lines.map(line => JSON.parse(line.trim()));
+                        // For rule creation, we'll use the array format
+                    } else {
+                        throw new Error('Empty request body');
+                    }
+                } else if (typeof logEntry.requestBody === 'object') {
+                    jsonData = logEntry.requestBody;
+                } else {
+                    throw new Error('No request body data available');
+                }
+            } catch (e) {
+                alert('❌ Could not parse request body as JSON: ' + e.message + '\\n\\nRequest body preview: ' + 
+                      (typeof logEntry.requestBody === 'string' ? logEntry.requestBody.substring(0, 200) + '...' : 'Not a string'));
+                return;
+            }
+            
+            if (!jsonData || typeof jsonData !== 'object') {
+                alert('❌ No valid request body JSON data found for this log');
+                return;
+            }
+            
+            openRuleBuilder(logId, jsonData);
+        }
+        
+        function openRuleBuilder(logId, jsonData) {
+            if (!jsonData || typeof jsonData !== 'object') {
+                alert('❌ No valid JSON data available for this request');
+                return;
+            }
+            
+            // Open visual builder in new window with data
+            const builderUrl = window.location.origin + '/jsonata-rule-builder.html';
+            const builderWindow = window.open(builderUrl, 'JSONataBuilder', 
+                'width=1200,height=800,scrollbars=yes,resizable=yes');
+            
+            // When builder loads, populate it with our data
+            builderWindow.onload = () => {
+                try {
+                    // Pass the JSON data to the builder
+                    builderWindow.postMessage({
+                        type: 'POPULATE_BUILDER',
+                        logId: logId,
+                        jsonData: jsonData,
+                        url: 'https://api.individual.githubcopilot.com/chat/completions'
+                    }, '*');
+                } catch (e) {
+                    console.error('Error populating builder:', e);
+                }
+            };
+            
+            // Visual rule builder will open in new window
+        }
+        
+        function copyLogAsJSON(logId) {
+            // Find the log data by ID
+            const logElement = document.querySelector('[data-log-id="' + logId + '"]');
+            if (!logElement) {
+                alert('❌ Could not find log data for ID: ' + logId);
+                return;
+            }
+            
+            // Extract JSON from the log details
+            const detailsElement = document.getElementById('proxy-log-details-' + logId);
+            if (!detailsElement) {
+                alert('❌ Could not find log details. Please expand the log first.');
+                return;
+            }
+            
+            try {
+                // Look for JSON in the request body section specifically
+                const sections = detailsElement.querySelectorAll('.proxy-log-section');
+                let requestBodySection = null;
+                
+                for (const section of sections) {
+                    const heading = section.querySelector('h4');
+                    if (heading && heading.textContent.trim() === 'Request Body') {
+                        requestBodySection = section;
+                        break;
+                    }
+                }
+                
+                if (requestBodySection) {
+                    const preElement = requestBodySection.querySelector('pre');
+                    if (preElement) {
+                        const jsonText = preElement.textContent || preElement.innerText;
+                        const jsonData = JSON.parse(jsonText);
+                        
+                        // Copy to clipboard
+                        navigator.clipboard.writeText(JSON.stringify(jsonData, null, 2));
+                        alert('✅ Request JSON copied to clipboard!\\n\\nYou can now paste it into the visual rule builder.');
+                    } else {
+                        alert('❌ No JSON body found in request section.');
+                    }
+                } else {
+                    alert('❌ Could not find Request Body section. Please expand the log first.');
+                }
+            } catch (e) {
+                console.warn('Could not parse JSON from request body:', e);
+                // Silently fail - not all requests have JSON bodies
+            }
+        }
+        
+        // Handle messages from visual rule builder
+        window.addEventListener('message', function(event) {
+            if (event.data && event.data.type === 'ADD_PROXY_RULE') {
+                const rule = event.data.rule;
+                
+                // Auto-populate the rule form
+                document.getElementById('rule-pattern').value = rule.pattern;
+                
+                if (rule.type === 'jsonata') {
+                    // For JSONata rules, populate the JSONata field
+                    document.getElementById('rule-jsonata').value = rule.expression;
+                } else {
+                    // For legacy rules, just clear the JSONata field
+                    document.getElementById('rule-jsonata').value = '';
+                }
+                
+                // Show and highlight the form
+                showAddRuleForm();
+                setTimeout(() => {
+                    const form = document.getElementById('add-rule-form');
+                    if (form) {
+                        form.scrollIntoView({ behavior: 'smooth' });
+                        form.style.border = '3px solid #007acc';
+                        form.style.boxShadow = '0 0 20px rgba(0, 122, 204, 0.5)';
+                        setTimeout(() => {
+                            form.style.border = '';
+                            form.style.boxShadow = '';
+                        }, 4000);
+                    }
+                }, 200);
+                
+                alert('✅ Rule received from Visual Builder!\\n\\nCheck the form below and click Save to apply.');
+            }
+        });
+
+        // Proxy Rules Functions
+        let editingRuleId = null; // Track which rule is being edited
+        
+        function showAddRuleForm() {
+            editingRuleId = null;
+            document.getElementById('add-rule-form').classList.add('active');
+            document.querySelector('.add-rule-form .add-rule-button').textContent = 'Save Rule';
+        }
+        
+        function hideAddRuleForm() {
+            editingRuleId = null;
+            document.getElementById('add-rule-form').classList.remove('active');
+            document.getElementById('rule-name').value = '';
+            document.getElementById('rule-pattern').value = '';
+            document.getElementById('rule-redirect').value = '';
+            document.getElementById('rule-jsonata').value = '';
+            document.getElementById('rule-drop-request').checked = false;
+            document.getElementById('rule-drop-status').value = '204';
+            document.querySelector('.add-rule-form .add-rule-button').textContent = 'Save Rule';
+        }
+        
+        async function editProxyRule(ruleId) {
+            try {
+                const response = await fetch(\`/proxy/rules\`);
+                const rules = await response.json();
+                const rule = rules.find(r => r.id === ruleId);
+                
+                if (!rule) {
+                    alert('Rule not found');
+                    return;
+                }
+                
+                // Set edit mode
+                editingRuleId = ruleId;
+                
+                // Pre-populate form
+                document.getElementById('rule-name').value = rule.name || '';
+                document.getElementById('rule-pattern').value = rule.pattern || '';
+                document.getElementById('rule-redirect').value = rule.redirect || '';
+                document.getElementById('rule-jsonata').value = rule.jsonata || '';
+                document.getElementById('rule-drop-request').checked = rule.dropRequest || false;
+                document.getElementById('rule-drop-status').value = rule.dropStatusCode || 204;
+                
+                // Show form in edit mode
+                document.getElementById('add-rule-form').classList.add('active');
+                document.querySelector('.add-rule-form .add-rule-button').textContent = 'Update Rule';
+            } catch (error) {
+                console.error('Failed to load rule for editing:', error);
+                alert('Failed to load rule for editing');
+            }
+        }
+        
+        async function loadProxyRules() {
+            try {
+                const response = await fetch('/proxy/rules');
+                const rules = await response.json();
+                
+                const rulesListContainer = document.getElementById('proxy-rules-list');
+                rulesListContainer.innerHTML = '';
+                
+                if (rules.length === 0) {
+                    rulesListContainer.innerHTML = '<div style="opacity: 0.6; text-align: center; padding: 20px;">No proxy rules configured. Click "Add Rule" to create one.</div>';
+                } else {
+                    rules.forEach(rule => addProxyRuleToUI(rule));
+                }
+            } catch (error) {
+                console.error('Failed to load proxy rules:', error);
+            }
+        }
+        
+        function addProxyRuleToUI(rule) {
+            const rulesListContainer = document.getElementById('proxy-rules-list');
+            if (!rulesListContainer) return;
+            
+            // Remove placeholder if exists
+            const placeholder = rulesListContainer.querySelector('div[style*="opacity: 0.6"]');
+            if (placeholder) {
+                placeholder.remove();
+            }
+            
+            const ruleDiv = document.createElement('div');
+            ruleDiv.className = \`proxy-rule \${rule.enabled ? '' : 'disabled'}\`;
+            ruleDiv.dataset.ruleId = rule.id;
+            
+            // Build info lines
+            let infoHtml = \`<div class="proxy-rule-name" style="font-weight: bold; color: #58a6ff; margin-bottom: 4px;">\${escapeHtml(rule.name || 'Unnamed Rule')}</div>\`;
+            infoHtml += \`<div class="proxy-rule-pattern">\${escapeHtml(rule.pattern)}</div>\`;
+            
+            if (rule.dropRequest) {
+                infoHtml += \`<div class="proxy-rule-target" style="color: #d73a49;">🚫 DROP REQUEST (status \${rule.dropStatusCode || 204})</div>\`;
+            } else {
+                if (rule.redirect) {
+                    infoHtml += \`<div class="proxy-rule-target">➜ \${escapeHtml(rule.redirect)}</div>\`;
+                }
+                
+                if (rule.jsonata) {
+                    infoHtml += \`<div class="proxy-rule-target" style="font-size: 11px; opacity: 0.8;">
+                        🔄 JSONata: \${escapeHtml(rule.jsonata.length > 50 ? rule.jsonata.substring(0, 47) + '...' : rule.jsonata)}</div>\`;
+                }
+                
+                // Support legacy rules
+                if (rule.jsonPath && rule.replacement) {
+                    infoHtml += \`<div class="proxy-rule-target" style="font-size: 11px; opacity: 0.8; color: orange;">
+                        ⚠️ Legacy JSONPath: \${escapeHtml(rule.jsonPath)} → \${escapeHtml(rule.replacement)}</div>\`;
+                }
+            }
+            
+            ruleDiv.innerHTML = \`
+                <div class="proxy-rule-info">
+                    \${infoHtml}
+                </div>
+                <div class="proxy-rule-actions">
+                    <label class="toggle-switch">
+                        <input type="checkbox" \${rule.enabled ? 'checked' : ''} onchange="toggleProxyRule('\${rule.id}', this.checked)">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <button class="edit-rule-button" onclick="editProxyRule('\${rule.id}')">✏️</button>
+                    <button class="delete-rule-button" onclick="deleteProxyRule('\${rule.id}')">Delete</button>
+                </div>
+            \`;
+            
+            rulesListContainer.appendChild(ruleDiv);
+        }
+        
+        async function saveNewRule() {
+            const name = document.getElementById('rule-name').value.trim();
+            const pattern = document.getElementById('rule-pattern').value.trim();
+            const redirect = document.getElementById('rule-redirect').value.trim();
+            const jsonata = document.getElementById('rule-jsonata').value.trim();
+            const dropRequest = document.getElementById('rule-drop-request').checked;
+            const dropStatusCode = parseInt(document.getElementById('rule-drop-status').value) || 204;
+            
+            if (!name) {
+                alert('Please provide a rule name');
+                return;
+            }
+            
+            if (!pattern) {
+                alert('Please provide a URL pattern');
+                return;
+            }
+            
+            if (!dropRequest && !redirect && !jsonata) {
+                alert('Please provide either: drop request, redirect URL, or JSONata transformation');
+                return;
+            }
+            
+            try {
+                // Validate regex pattern
+                new RegExp(pattern);
+            } catch (error) {
+                alert('Invalid regex pattern: ' + error.message);
+                return;
+            }
+            
+            try {
+                const ruleData = {
+                    name,
+                    pattern,
+                    redirect: redirect || undefined,
+                    jsonata: jsonata || undefined,
+                    dropRequest: dropRequest,
+                    dropStatusCode: dropRequest ? dropStatusCode : undefined,
+                    enabled: true
+                };
+                
+                let response;
+                if (editingRuleId) {
+                    // Update existing rule
+                    response = await fetch(\`/proxy/rules/\${editingRuleId}\`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(ruleData)
+                    });
+                } else {
+                    // Create new rule
+                    response = await fetch('/proxy/rules', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(ruleData)
+                    });
+                }
+                
+                if (!response.ok) {
+                    throw new Error(\`HTTP \${response.status}: \${response.statusText}\`);
+                }
+                
+                const result = await response.json();
+                if (result.success) {
+                    hideAddRuleForm();
+                    loadProxyRules();
+                } else {
+                    alert(\`Failed to \${editingRuleId ? 'update' : 'save'} rule: \` + (result.error || 'Unknown error'));
+                }
+            } catch (error) {
+                alert(\`Error \${editingRuleId ? 'updating' : 'saving'} rule: \` + error.message);
+                console.error(\`Failed to \${editingRuleId ? 'update' : 'save'} rule:\`, error);
+            }
+        }
+        
+        async function toggleProxyRule(ruleId, enabled) {
+            try {
+                const response = await fetch(\`/proxy/rules/\${ruleId}\`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ enabled })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(\`HTTP \${response.status}: \${response.statusText}\`);
+                }
+                
+                const result = await response.json();
+                if (result.success) {
+                    const ruleDiv = document.querySelector(\`[data-rule-id="\${ruleId}"]\`);
+                    if (ruleDiv) {
+                        ruleDiv.classList.toggle('disabled', !enabled);
+                    }
+                } else {
+                    alert('Failed to update rule: ' + (result.error || 'Unknown error'));
+                    loadProxyRules(); // Reload to sync state
+                }
+            } catch (error) {
+                alert('Error updating rule: ' + error.message);
+                console.error('Failed to toggle rule:', error);
+                loadProxyRules(); // Reload to sync state
+            }
+        }
+        
+        async function deleteProxyRule(ruleId) {
+            if (!confirm('Are you sure you want to delete this rule?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(\`/proxy/rules/\${ruleId}\`, {
+                    method: 'DELETE'
+                });
+                
+                if (!response.ok) {
+                    throw new Error(\`HTTP \${response.status}: \${response.statusText}\`);
+                }
+                
+                const result = await response.json();
+                if (result.success) {
+                    loadProxyRules();
+                } else {
+                    alert('Failed to delete rule: ' + (result.error || 'Unknown error'));
+                }
+            } catch (error) {
+                alert('Error deleting rule: ' + error.message);
+                console.error('Failed to delete rule:', error);
             }
         }
         
