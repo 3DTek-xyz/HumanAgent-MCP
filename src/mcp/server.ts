@@ -1004,10 +1004,6 @@ export class McpServer extends EventEmitter {
         try {
           const { requestId, response, source } = JSON.parse(body);
           
-          // Simple file write to test if endpoint is called
-          require('fs').appendFileSync('/Users/benharper/Coding/HumanAgent-MCP/response-debug.txt', 
-            `${new Date().toISOString()} - RESPONSE ENDPOINT CALLED - RequestID: ${requestId}\n`);
-          
           this.debugLogger.log('HTTP', '=== RESPONSE ENDPOINT CALLED ===');
           this.debugLogger.log('HTTP', `Request ID: ${requestId}, Response: ${response}`);
           
