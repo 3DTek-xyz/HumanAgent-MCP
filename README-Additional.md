@@ -6,7 +6,7 @@ VS Code extension that creates an MCP server for AI assistants to chat with huma
 
 ![HumanAgent MCP Extension Demo](high-res-demo.gif)
 
-*Complete demonstration of the HumanAgent MCP extension in action - showing real-time human-AI collaboration*
+_Complete demonstration of the HumanAgent MCP extension in action - showing real-time human-AI collaboration_
 
 ## What it does
 
@@ -14,7 +14,7 @@ This extension provides a `HumanAgent_Chat` MCP tool that forces AI assistants t
 
 ## Why
 
-The AI Agent is encouraged to discuss with you before running off to do its own thing - if its part way through iterating through on a problem it can stop and ask you a question - it reduces requests considerably, helps avoid runaway agent, allows you to manage multiple VSCode agents working in multiple workspaces from one web page. Allows you to append useful reminders to each response.   
+The AI Agent is encouraged to discuss with you before running off to do its own thing - if its part way through iterating through on a problem it can stop and ask you a question - it reduces requests considerably, helps avoid runaway agent, allows you to manage multiple VSCode agents working in multiple workspaces from one web page. Allows you to append useful reminders to each response.
 
 ## How it works
 
@@ -23,6 +23,12 @@ The AI Agent is encouraged to discuss with you before running off to do its own 
 - AI assistants must use this tool for all interactions
 - Creates persistent chat sessions with message history
 - Provides VS Code webview and browser interfaces for human responses
+
+### Server Lifecycle
+
+- The server stops automatically when VS Code closes (so the port doesn’t remain occupied).
+- Reloading the VS Code window restarts the server automatically.
+- The standalone server is launched from VS Code `globalStorage` to avoid extension-update file locks.
 
 ## Installation and Setup
 

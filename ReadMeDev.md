@@ -5,32 +5,43 @@
 VS Code extension that runs an HTTP MCP server on port 3737. The server handles three distinct endpoints to avoid connection conflicts:
 
 - `/mcp` - Server-Sent Events for VS Code webview
-- `/mcp-tools` - MCP protocol for VS Code extension registration  
+- `/mcp-tools` - MCP protocol for VS Code extension registration
 - `/HumanAgent` - Web interface for browser access
+
+Server lifecycle:
+
+- On VS Code close / window reload, the extension shuts down the standalone server.
+- On activation, the extension starts the server again.
+- The standalone server is copied into VS Code `globalStorage` and launched from there to avoid file locks during extension updates.
 
 ## Core Components
 
 **Extension Entry Point** (`src/extension.ts`)
+
 - Implements `McpServerDefinitionProvider` for VS Code integration
 - Manages workspace-specific session IDs using MD5 hash
 - Handles version-based cache invalidation for tool updates
 
-**MCP Server** (`src/mcp/server.ts`)  
+**MCP Server** (`src/mcp/server.ts`)
+
 - HTTP server handling MCP protocol and chat interfaces
 - Session-based tool override system
 - Real-time message broadcasting via SSE
 
 **Chat Management** (`src/mcp/chatManager.ts`)
+
 - Centralized message storage and session handling
 - Pending request tracking for AI-human interactions
 
 **Webview Provider** (`src/webview/chatWebviewProvider.ts`)
+
 - VS Code panel integration with SSE connection
 - Cog menu for session management and configuration
 
 ## Session System
 
 Sessions are tied to VS Code workspaces:
+
 - Session ID: `session-{uuid}` stored in VS Code global state
 - Workspace mapping: MD5 hash of workspace path
 - Tool overrides: Per-session tool configurations from `.vscode/HumanAgentOverride.json`
@@ -43,6 +54,7 @@ Sessions are tied to VS Code workspaces:
 4. Version changes in `McpHttpServerDefinition` force VS Code cache refresh
 
 Override file supports:
+
 - Tool description and schema customization
 - Message auto-appending (global and tool-specific)
 - Session-specific configurations
@@ -51,7 +63,7 @@ Override file supports:
 
 ```
 GET  /sessions                    - List active sessions
-POST /sessions/register           - Register session with overrides  
+POST /sessions/register           - Register session with overrides
 GET  /tools?sessionId=<id>        - Get tools for specific session
 GET  /debug/tools?sessionId=<id>  - Debug tool inspection
 POST /response                    - Submit human responses

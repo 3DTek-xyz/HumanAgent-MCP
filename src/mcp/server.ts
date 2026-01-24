@@ -119,6 +119,8 @@ export class McpServer extends EventEmitter {
   private httpServer?: http.Server;
   private port: number = 3737;
   private debugLogger: DebugLogger;
+  private idleShutdownTimer: NodeJS.Timeout | undefined;
+  private readonly idleShutdownDelayMs: number;
   // Simple Map for resolve/reject functions only - data stored in ChatManager
   private requestResolvers: Map<string, { resolve: (response: string) => void; reject: (error: Error) => void }> = new Map();
   private activeSessions: Set<string> = new Set();
@@ -132,6 +134,12 @@ export class McpServer extends EventEmitter {
     if (port) {
       this.port = port;
     }
+    // Auto-shutdown when no VS Code sessions remain.
+    // This prevents the detached standalone process from keeping port 3737/3738 occupied forever
+    // after all VS Code windows using it are closed.
+    this.idleShutdownDelayMs = process.env.HUMANAGENT_IDLE_SHUTDOWN_MS
+      ? Math.max(0, parseInt(process.env.HUMANAGENT_IDLE_SHUTDOWN_MS, 10) || 0)
+      : 30000;
     this.debugLogger = new DebugLogger(this.workspacePath);
     this.chatManager = new ChatManager(this.debugLogger); // Initialize centralized chat management with logging
     
@@ -157,6 +165,51 @@ export class McpServer extends EventEmitter {
     if (this.sessionId && this.workspacePath) {
       this.initializeSessionTools(this.sessionId, this.workspacePath);
     }
+  }
+
+  private cancelIdleShutdown(): void {
+    if (this.idleShutdownTimer) {
+      clearTimeout(this.idleShutdownTimer);
+      this.idleShutdownTimer = undefined;
+      this.debugLogger.log('INFO', 'Cancelled idle shutdown timer');
+    }
+  }
+
+  private scheduleIdleShutdownIfNoSessions(): void {
+    if (this.activeSessions.size > 0) {
+      return;
+    }
+
+    if (this.idleShutdownDelayMs <= 0) {
+      this.debugLogger.log('INFO', 'Idle shutdown disabled (HUMANAGENT_IDLE_SHUTDOWN_MS <= 0)');
+      return;
+    }
+
+    if (this.idleShutdownTimer) {
+      return;
+    }
+
+    this.debugLogger.log(
+      'INFO',
+      `No active sessions remaining; scheduling server shutdown in ${Math.round(this.idleShutdownDelayMs / 1000)}s`
+    );
+
+    this.idleShutdownTimer = setTimeout(async () => {
+      try {
+        // Re-check just before shutting down.
+        if (this.activeSessions.size > 0) {
+          this.debugLogger.log('INFO', 'Idle shutdown aborted: session registered during delay');
+          return;
+        }
+
+        this.debugLogger.log('INFO', 'Idle shutdown triggered; stopping server process');
+        await this.stop();
+        process.exit(0);
+      } catch (error) {
+        this.debugLogger.log('ERROR', 'Idle shutdown failed:', error);
+        process.exit(1);
+      }
+    }, this.idleShutdownDelayMs);
   }
 
   private setupEventForwarding(): void {
@@ -1001,49 +1054,61 @@ export class McpServer extends EventEmitter {
       let body = '';
       req.on('data', (chunk) => { body += chunk.toString(); });
       req.on('end', () => {
+        let parsed: any;
         try {
-          const { requestId, response, source } = JSON.parse(body);
-          
-          // Simple file write to test if endpoint is called
-          require('fs').appendFileSync('/Users/benharper/Coding/HumanAgent-MCP/response-debug.txt', 
-            `${new Date().toISOString()} - RESPONSE ENDPOINT CALLED - RequestID: ${requestId}\n`);
-          
+          parsed = JSON.parse(body);
+        } catch (error) {
+          res.statusCode = 400;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({ success: false, error: 'Invalid JSON body' }));
+          return;
+        }
+
+        const { requestId, response, source } = parsed || {};
+        if (!requestId || typeof requestId !== 'string' || typeof response !== 'string') {
+          res.statusCode = 400;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({ success: false, error: 'requestId (string) and response (string) are required' }));
+          return;
+        }
+
+        try {
           this.debugLogger.log('HTTP', '=== RESPONSE ENDPOINT CALLED ===');
-          this.debugLogger.log('HTTP', `Request ID: ${requestId}, Response: ${response}`);
-          
+          this.debugLogger.log('HTTP', `Request ID: ${requestId}, Response length: ${response.length}`);
+
           // Get the pending request to extract session info - using ChatManager
           const pendingRequestInfo = this.chatManager.findPendingRequest(requestId);
           this.debugLogger.log('HTTP', `Found pending request: ${!!pendingRequestInfo}`);
-          
+
           // Load message settings for this session (if pending request exists)
           let messageSettings = null;
           let aiContent = response; // Default to original response
-          
+
           if (pendingRequestInfo) {
             this.debugLogger.log('HTTP', `Processing response for session: ${pendingRequestInfo.sessionId}`);
-            
+
             // Extract tool name from pending request data
             const toolName = pendingRequestInfo.data.toolName;
             this.debugLogger.log('HTTP', `Request originated from tool: ${toolName}`);
-            
+
             messageSettings = this.loadMessageSettings(pendingRequestInfo.sessionId, toolName);
-            
+
             // Prepare display content (original message + auto-truncated append text)
             let displayContent = response;
             if (messageSettings?.autoAppendEnabled && messageSettings?.autoAppendText) {
               // Auto-truncate to first 20 characters + "..."
-              const truncatedAppend = messageSettings.autoAppendText.length > 20 
-                ? messageSettings.autoAppendText.substring(0, 20) + '...' 
+              const truncatedAppend = messageSettings.autoAppendText.length > 20
+                ? messageSettings.autoAppendText.substring(0, 20) + '...'
                 : messageSettings.autoAppendText;
               displayContent = response + '. Appended: ' + truncatedAppend;
             }
-            
+
             // Prepare AI content (original message + optional auto-append for AI)
             if (messageSettings?.autoAppendEnabled && messageSettings?.autoAppendText) {
               aiContent = response + '. ' + messageSettings.autoAppendText;
-              this.debugLogger.log('HTTP', `Auto-appended text for AI: "${messageSettings.autoAppendText}"`);
+              this.debugLogger.log('HTTP', `Auto-appended text for AI (len=${messageSettings.autoAppendText.length})`);
             }
-            
+
             // Store the user message on server for synchronization (using display content)
             const userMessage: ChatMessage = {
               id: Date.now().toString(),
@@ -1053,27 +1118,29 @@ export class McpServer extends EventEmitter {
               type: 'text',
               source: source || 'web' // Use provided source or default to 'web'
             };
-            
+
             this.debugLogger.log('HTTP', `Storing and broadcasting user message to ${this.sseConnections.size} SSE connections`);
             this.chatManager.addMessage(pendingRequestInfo.sessionId, userMessage);
             this.debugLogger.log('CHAT', `Stored user message in ChatManager for session ${pendingRequestInfo.sessionId}: ${userMessage.content.substring(0, 50)}...`);
             this.broadcastMessageToClients(pendingRequestInfo.sessionId, userMessage);
-            
+
             // Remove from ChatManager as well
             this.chatManager.removePendingRequest(pendingRequestInfo.sessionId, requestId);
             this.debugLogger.log('HTTP', 'Broadcast completed and pending request removed from ChatManager');
           } else {
             this.debugLogger.log('ERROR', `No pending request found for requestId: ${requestId}`);
           }
-          
+
           // Use aiContent (with auto-append) for the actual AI response
           const success = this.respondToHumanRequest(requestId, aiContent);
           res.statusCode = 200;
           res.setHeader('Content-Type', 'application/json');
           res.end(JSON.stringify({ success, requestId }));
         } catch (error) {
-          res.statusCode = 400;
-          res.end(JSON.stringify({ success: false, error: 'Invalid request body' }));
+          this.debugLogger.log('ERROR', 'Unhandled error processing /response:', error);
+          res.statusCode = 500;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({ success: false, error: 'Internal error handling response' }));
         }
       });
     } else if (req.method === 'GET' && url.pathname === '/tools') {
@@ -2395,6 +2462,7 @@ export class McpServer extends EventEmitter {
   }
 
   registerSession(sessionId: string, workspacePath?: string, overrideData?: any): void {
+    this.cancelIdleShutdown();
     this.activeSessions.add(sessionId);
     
     // Initialize session-specific tools from override data or workspace path
@@ -2428,6 +2496,9 @@ export class McpServer extends EventEmitter {
     
     // Send session unregistration to web interface only (for web UI tab removal)
     this.sendToWebInterface('session-unregistered', { sessionId, totalSessions: this.activeSessions.size });
+
+    // If no sessions remain, shutdown after a short idle delay.
+    this.scheduleIdleShutdownIfNoSessions();
   }
 
   getActiveSessions(): string[] {

@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as net from 'net';
+import * as fs from 'fs';
 import * as crypto from 'crypto';
 import { spawn } from 'child_process';
 import { ChatTreeProvider } from './providers/chatTreeProvider';
@@ -139,14 +140,40 @@ export async function activate(context: vscode.ExtensionContext) {
 	// Fire startup event if override file exists to refresh VS Code tools
 	if (workspaceRoot) {
 		const overrideFilePath = path.join(workspaceRoot, '.vscode', 'HumanAgentOverride.json');
-		if (require('fs').existsSync(overrideFilePath)) {
+		if (fs.existsSync(overrideFilePath)) {
 			console.log('HumanAgent MCP: Override file detected on startup, firing onDidChangeMcpServerDefinitions');
 			mcpProvider.notifyServerDefinitionsChanged();
 		}
 	}
 
 	// Initialize Server Manager
-	const serverPath = path.join(context.extensionPath, 'dist', 'mcpStandalone.js');
+	// IMPORTANT: run the standalone server from globalStorage, not from the extension install folder.
+	// This prevents VS Code extension updates from failing due to locked files under
+	// %USERPROFILE%\.vscode\extensions\...\dist when the detached node process is running.
+	const bundledServerPath = path.join(context.extensionPath, 'dist', 'mcpStandalone.js');
+	const storageDir = context.globalStorageUri.fsPath;
+	fs.mkdirSync(storageDir, { recursive: true });
+	const extensionVersion = String((context.extension as any)?.packageJSON?.version || 'unknown');
+	const serverPath = path.join(storageDir, `mcpStandalone-${extensionVersion}.js`);
+	try {
+		if (!fs.existsSync(serverPath)) {
+			fs.copyFileSync(bundledServerPath, serverPath);
+			console.log(`HumanAgent MCP: Copied standalone server to globalStorage: ${serverPath}`);
+		}
+		// Best-effort cleanup of older server copies (ignore errors if in-use)
+		for (const entry of fs.readdirSync(storageDir)) {
+			if (entry.startsWith('mcpStandalone-') && entry.endsWith('.js') && entry !== path.basename(serverPath)) {
+				try {
+					fs.unlinkSync(path.join(storageDir, entry));
+				} catch {
+					// ignore
+				}
+			}
+		}
+	} catch (copyError) {
+		// Fallback: if copy fails for any reason, use the bundled path.
+		console.log('HumanAgent MCP: Failed to stage standalone server in globalStorage; using bundled server path:', copyError);
+	}
 	
 	// Check if logging is enabled via user settings
 	const config = vscode.workspace.getConfiguration('humanagent-mcp');
@@ -705,13 +732,59 @@ export async function deactivate() {
 		// Unregister from standalone server
 		await unregisterSessionWithStandaloneServer(workspaceSessionId);
 	}
+
+	// Stop the standalone server when VS Code closes / window reloads.
+	// This prevents orphaned detached node processes from keeping the port occupied
+	// and ensures a fresh restart on next activation.
+	try {
+		if (SERVER_PORT) {
+			const http = require('http');
+			await new Promise<void>((resolve, reject) => {
+				const req = http.request(
+					{
+						hostname: '127.0.0.1',
+						port: SERVER_PORT,
+						path: '/shutdown',
+						method: 'POST',
+						timeout: 3000
+					},
+					(res: any) => {
+						res.on('data', () => undefined);
+						res.on('end', () => {
+							if (res.statusCode === 200) {
+								resolve();
+							} else {
+								reject(new Error(`HTTP ${res.statusCode}`));
+							}
+						});
+					}
+				);
+				req.on('error', reject);
+				req.on('timeout', () => {
+					req.destroy();
+					reject(new Error('Request timeout'));
+				});
+				req.end();
+			});
+			// Give the server a moment to release the port.
+			await new Promise(resolve => setTimeout(resolve, 500));
+		}
+	} catch (shutdownError) {
+		// Fallback to PID kill if HTTP shutdown fails
+		try {
+			if (serverManager) {
+				await serverManager.stopServer();
+			}
+		} catch (killError) {
+			console.log('HumanAgent MCP: Failed to stop server on deactivate:', killError);
+		}
+	}
 	
 	// Dispose the server manager (this won't stop the server, just cleanup resources)
 	if (serverManager) {
 		serverManager.dispose();
 	}
 	
-	// Note: We don't kill the standalone server as it's running independently
-	// Other extensions may still be using it, and it should persist across workspace changes
+	// Note: Server is intentionally stopped on deactivation to avoid orphaned processes.
 	console.log(`HumanAgent MCP: Extension deactivated for session ${workspaceSessionId}`);
 }
