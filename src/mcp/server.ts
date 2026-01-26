@@ -470,6 +470,13 @@ export class McpServer extends EventEmitter {
     // Store workspace path for this session
     this.sessionWorkspacePaths.set(sessionId, workspacePath);
     
+    // Update proxy server context for rule filtering
+    // Note: We're using the FIRST registered session as the "active" one for proxy rules
+    // This means workspace/session-scoped rules will apply to the first workspace that registered
+    this.proxyServer.setSessionContext(sessionId);
+    this.proxyServer.setWorkspaceContext(workspacePath);
+    this.debugLogger.log('INFO', `Set proxy context - Session: ${sessionId}, Workspace: ${workspacePath}`);
+    
     // Start with default tools
     const sessionToolMap = new Map<string, McpTool>();
     
@@ -2100,7 +2107,20 @@ export class McpServer extends EventEmitter {
     }
   }
 
-  private async addProxyRule(name: string, pattern: string, redirect?: string, jsonata?: string, enabled: boolean = true, dropRequest?: boolean, dropStatusCode?: number): Promise<string> {
+  private async addProxyRule(
+    name: string, 
+    pattern: string, 
+    redirect?: string, 
+    jsonata?: string, 
+    enabled: boolean = true, 
+    dropRequest?: boolean, 
+    dropStatusCode?: number,
+    scope?: 'global' | 'session' | 'workspace',
+    sessionId?: string,
+    sessionName?: string,
+    workspaceFolder?: string,
+    debug?: boolean
+  ): Promise<string> {
     try {
       if (!this.globalStorage) {
         throw new Error('GlobalStorage not configured');
@@ -2112,7 +2132,9 @@ export class McpServer extends EventEmitter {
         name,
         pattern,
         enabled,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        scope: scope || 'global', // Default to global scope
+        debug: debug || false // Default to false
       };
       
       // Add optional fields
@@ -2127,9 +2149,20 @@ export class McpServer extends EventEmitter {
         newRule.dropStatusCode = dropStatusCode || 204;
       }
       
+      // Add scope-specific fields
+      if (scope === 'session' && sessionId) {
+        newRule.sessionId = sessionId;
+        if (sessionName) {
+          newRule.sessionName = sessionName;
+        }
+      }
+      if (scope === 'workspace' && workspaceFolder) {
+        newRule.workspaceFolder = workspaceFolder;
+      }
+      
       rules.push(newRule);
       await this.globalStorage.update('proxyRules', rules);
-      this.debugLogger.log('INFO', `Added proxy rule: ${ruleId} (${pattern})`);
+      this.debugLogger.log('INFO', `Added proxy rule: ${ruleId} (${pattern}) with scope: ${scope || 'global'}${debug ? ' [DEBUG ENABLED]' : ''}`);
       
       // Update proxy server rules and reload
       this.proxyServer.setRules(rules);

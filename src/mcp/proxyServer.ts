@@ -5,6 +5,31 @@ import * as path from 'path';
 // JSONata will be imported dynamically when needed
 
 /**
+ * ProxyRule scope type
+ */
+export type ProxyRuleScope = 'global' | 'session' | 'workspace';
+
+/**
+ * ProxyRule represents a proxy rule configuration
+ */
+export interface ProxyRule {
+    id: string;
+    name: string;
+    pattern: string;
+    enabled: boolean;
+    createdAt: string;
+    redirect?: string;
+    jsonata?: string;
+    dropRequest?: boolean;
+    dropStatusCode?: number;
+    scope?: ProxyRuleScope;
+    sessionId?: string;
+    sessionName?: string;
+    workspaceFolder?: string;
+    debug?: boolean; // Enable enhanced debug logging for this rule
+}
+
+/**
  * ProxyLogEntry represents a single HTTP request/response captured by the proxy
  */
 export interface ProxyLogEntry {
@@ -44,7 +69,9 @@ export class ProxyServer extends EventEmitter {
     private maxDebugLogs: number = 500; // Debug logs buffer
     private isRunning: boolean = false;
     private httpsOptions?: { keyPath: string; certPath: string };
-    private rules: any[] = []; // Proxy rules loaded from storage
+    private rules: ProxyRule[] = []; // Proxy rules loaded from storage
+    private currentSessionId?: string; // Current session ID for filtering rules
+    private currentWorkspaceFolder?: string; // Current workspace folder for filtering rules
 
     constructor() {
         super();
@@ -259,6 +286,50 @@ export class ProxyServer extends EventEmitter {
     }
 
     /**
+     * Set current session context for rule filtering
+     */
+    setSessionContext(sessionId?: string): void {
+        this.currentSessionId = sessionId;
+        this.addDebugLog(`Session context updated: ${sessionId || 'none'}`);
+    }
+
+    /**
+     * Set current workspace context for rule filtering
+     */
+    setWorkspaceContext(workspaceFolder?: string): void {
+        this.currentWorkspaceFolder = workspaceFolder;
+        this.addDebugLog(`Workspace context updated: ${workspaceFolder || 'none'}`);
+    }
+
+    /**
+     * Filter rules based on current scope context
+     * Returns only rules that should apply in the current context
+     */
+    private getApplicableRules(): ProxyRule[] {
+        return this.rules.filter(rule => {
+            // If no scope specified, treat as global (backward compatibility)
+            const scope = rule.scope || 'global';
+            
+            // Global rules always apply
+            if (scope === 'global') {
+                return true;
+            }
+            
+            // Session rules only apply if sessionId matches
+            if (scope === 'session') {
+                return rule.sessionId === this.currentSessionId;
+            }
+            
+            // Workspace rules only apply if workspaceFolder matches
+            if (scope === 'workspace') {
+                return rule.workspaceFolder === this.currentWorkspaceFolder;
+            }
+            
+            return false;
+        });
+    }
+
+    /**
      * Get current proxy rules
      */
     getRules(): any[] {
@@ -278,9 +349,10 @@ export class ProxyServer extends EventEmitter {
             return;
         }
         
-        const enabledRules = this.rules.filter(r => r.enabled);
-        this.addDebugLog(`DEBUG: Found ${enabledRules.length} enabled rules out of ${this.rules.length} total`);
-        this.addDebugLog(`Setting up UNIFIED HANDLER for ${enabledRules.length} enabled proxy rules`);
+        // Get applicable rules based on scope filtering
+        const applicableRules = this.getApplicableRules().filter(r => r.enabled);
+        this.addDebugLog(`DEBUG: Found ${applicableRules.length} applicable enabled rules out of ${this.rules.length} total`);
+        this.addDebugLog(`Setting up UNIFIED HANDLER for ${applicableRules.length} applicable enabled proxy rules`);
 
         // Single unified handler that processes rules and logs ALL requests
         await this.mockttpServer.forAnyRequest()
@@ -288,14 +360,24 @@ export class ProxyServer extends EventEmitter {
                 beforeRequest: async (req) => {
                     this.addDebugLog(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
                     this.addDebugLog(`📥 INCOMING REQUEST: ${req.method} ${req.url}`);
+                    this.addDebugLog(`   Headers: ${JSON.stringify(req.headers, null, 2)}`);
                     
-                    if (enabledRules.length > 0) {
-                        this.addDebugLog(`   Evaluating ${enabledRules.length} enabled rules...`);
+                    // Extract session context from request
+                    const sessionId = req.headers['x-session-id'] || 
+                                     req.headers['x-vscode-session-id'] || 
+                                     req.headers['session-id'];
+                    if (sessionId) {
+                        this.addDebugLog(`   Session ID detected: ${sessionId}`);
+                        this.setSessionContext(sessionId as string);
                     }
                     
-                    // Process each enabled rule in order until we find a match
-                    for (let i = 0; i < enabledRules.length; i++) {
-                        const rule = enabledRules[i];
+                    if (applicableRules.length > 0) {
+                        this.addDebugLog(`   Evaluating ${applicableRules.length} applicable rules...`);
+                    }
+                    
+                    // Process each applicable rule in order until we find a match
+                    for (let i = 0; i < applicableRules.length; i++) {
+                        const rule = applicableRules[i];
                         const ruleIndex = this.rules.findIndex(r => r.id === rule.id) + 1;
                         
                         try {
@@ -317,9 +399,9 @@ export class ProxyServer extends EventEmitter {
                                          req.url.includes(rule.pattern);
                             }
                             
-                            // Enhanced debug logging for Karen rule
-                            if (rule.name && rule.name.toLowerCase().includes('karen')) {
-                                this.addDebugLog(`🎯 KAREN RULE DEBUG:`);
+                            // Enhanced debug logging for rules with debug flag enabled
+                            if (rule.debug) {
+                                this.addDebugLog(`🔍 DEBUG MODE ENABLED FOR RULE: "${rule.name || rule.id}"`);
                                 this.addDebugLog(`   Pattern: "${rule.pattern}"`);
                                 this.addDebugLog(`   Request URL: "${req.url}"`);
                                 this.addDebugLog(`   URL Match Result: ${isMatch}`);
@@ -327,9 +409,16 @@ export class ProxyServer extends EventEmitter {
                                 this.addDebugLog(`   Pattern Length: ${rule.pattern.length}`);
                                 this.addDebugLog(`   Request URL Length: ${req.url.length}`);
                                 this.addDebugLog(`   Strict Equality: ${rule.pattern === req.url}`);
+                                this.addDebugLog(`   Scope: ${rule.scope || 'global'}`);
+                                if (rule.sessionId) {
+                                    this.addDebugLog(`   Session ID: ${rule.sessionId}`);
+                                }
+                                if (rule.workspaceFolder) {
+                                    this.addDebugLog(`   Workspace: ${rule.workspaceFolder}`);
+                                }
                             }
                             
-                            const ruleLabel = `[${i + 1}/${enabledRules.length}] "${rule.name || rule.id}"`;
+                            const ruleLabel = `[${i + 1}/${applicableRules.length}] "${rule.name || rule.id}"`;
                             this.addDebugLog(`   ${isMatch ? '✅' : '❌'} ${ruleLabel} - Pattern: "${rule.pattern}" - Match: ${isMatch}`);
                             
                             if (isMatch) {
