@@ -1338,6 +1338,56 @@ export class McpServer extends EventEmitter {
           sessionToolsRegistered: this.sessionTools.has(sessionId)
         }
       }));
+    } else if (req.method === 'GET' && url.pathname === '/debug/proxy-logs') {
+      // Serve standalone proxy logs page with debug logs
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      
+      const htmlContent = this.generateProxyLogsOnlyHTML();
+      res.end(htmlContent);
+    } else if (req.method === 'GET' && url.pathname.startsWith('/debug/proxy')) {
+      // Debug endpoint to inspect proxy server state and logs
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      
+      try {
+        if (!this.proxyServer) {
+          res.end(JSON.stringify({ 
+            error: 'Proxy server not initialized',
+            available: false
+          }));
+          return;
+        }
+        
+        const proxyStatus = this.proxyServer.getStatus();
+        const proxyRules = this.proxyServer.getRules();
+        
+        // Try to capture recent console logs from proxy server
+        // Note: This is a simplified version - real console capturing would need more setup
+        const debugInfo = {
+          timestamp: new Date().toISOString(),
+          proxyStatus: proxyStatus,
+          rulesCount: proxyRules.length,
+          enabledRules: proxyRules.filter(r => r.enabled).length,
+          rules: proxyRules.map(r => ({
+            id: r.id,
+            name: r.name,
+            pattern: r.pattern,
+            enabled: r.enabled,
+            hasJsonata: !!r.jsonata,
+            dropRequest: !!r.dropRequest
+          })),
+          karenRule: proxyRules.find(r => r.name && r.name.toLowerCase().includes('karen')),
+          message: 'Proxy debug info captured - check VS Code Output panel or system console for detailed [ProxyServer] logs'
+        };
+        
+        res.end(JSON.stringify(debugInfo, null, 2));
+      } catch (error) {
+        res.end(JSON.stringify({ 
+          error: 'Failed to get proxy debug info',
+          details: error instanceof Error ? error.message : 'Unknown error'
+        }));
+      }
     } else if (req.method === 'POST' && url.pathname === '/reload') {
       // Reload workspace overrides
       let body = '';
@@ -1411,6 +1461,138 @@ export class McpServer extends EventEmitter {
         }
       };
     }
+  }
+
+  private generateProxyLogsOnlyHTML(): string {
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proxy Debug Logs</title>
+    <style>
+        body { 
+            font-family: Monaco, "Courier New", monospace; 
+            background: #000; 
+            color: #00ff00; 
+            margin: 0; 
+            padding: 10px; 
+            font-size: 12px;
+            line-height: 1.2;
+        }
+        .header {
+            color: #ffffff;
+            padding: 10px 0;
+            border-bottom: 1px solid #333;
+            margin-bottom: 10px;
+        }
+        .log-entry {
+            margin-bottom: 2px;
+            padding: 2px 0;
+            word-wrap: break-word;
+        }
+        .timestamp { color: #888; }
+        .karen { color: #ff69b4; font-weight: bold; }
+        .master { color: #ffff00; }
+        .error { color: #ff4444; }
+        .success { color: #44ff44; }
+        .clear-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        PROXY DEBUG LOG - REAL TIME
+        <button class="clear-btn" onclick="clearAll()">CLEAR ALL</button>
+    </div>
+    
+    <div id="logs"></div>
+
+    <script>
+        const logsContainer = document.getElementById('logs');
+        let lastTimestamp = null; // Track last log timestamp instead of count
+
+        function addLogEntry(timestamp, message) {
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.dataset.timestamp = timestamp; // Store timestamp for tracking
+            
+            let className = '';
+            if (message.includes('KAREN')) className = 'karen';
+            else if (message.includes('MASTER HANDLER')) className = 'master';
+            else if (message.includes('ERROR')) className = 'error';
+            else if (message.includes('SUCCESS')) className = 'success';
+            
+            entry.innerHTML = \`<span class="timestamp">\${timestamp}</span> <span class="\${className}">\${message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</span>\`;
+            logsContainer.appendChild(entry);
+            
+            // Keep only last 500 entries in DOM
+            while (logsContainer.children.length > 500) {
+                logsContainer.removeChild(logsContainer.firstChild);
+            }
+            
+            // Auto-scroll to bottom
+            window.scrollTo(0, document.body.scrollHeight);
+        }
+
+        async function fetchNewLogs() {
+            try {
+                const response = await fetch('/proxy/logs');
+                const data = await response.json();
+                const debugLogs = data.debugLogs || [];
+                
+                if (debugLogs.length === 0) {
+                    return; // No logs yet
+                }
+                
+                // On first load or after clear, add all logs
+                if (lastTimestamp === null) {
+                    debugLogs.forEach(log => {
+                        addLogEntry(log.timestamp, log.message);
+                    });
+                    if (debugLogs.length > 0) {
+                        lastTimestamp = debugLogs[debugLogs.length - 1].timestamp;
+                    }
+                } else {
+                    // Only add logs newer than our last timestamp
+                    const newLogs = debugLogs.filter(log => log.timestamp > lastTimestamp);
+                    newLogs.forEach(log => {
+                        addLogEntry(log.timestamp, log.message);
+                    });
+                    if (newLogs.length > 0) {
+                        lastTimestamp = newLogs[newLogs.length - 1].timestamp;
+                    }
+                }
+            } catch (error) {
+                addLogEntry(new Date().toISOString(), 'ERROR: Failed to fetch logs - ' + error.message);
+            }
+        }
+
+        async function clearAll() {
+            try {
+                await fetch('/proxy/clear-logs', { method: 'POST' });
+                logsContainer.innerHTML = '';
+                lastTimestamp = null;
+                addLogEntry(new Date().toISOString(), 'LOGS CLEARED');
+            } catch (error) {
+                addLogEntry(new Date().toISOString(), 'ERROR: Failed to clear logs - ' + error.message);
+            }
+        }
+
+        // Fetch new logs every 200ms for more real-time feel
+        setInterval(fetchNewLogs, 200);
+        
+        // Initial load
+        fetchNewLogs();
+    </script>
+</body>
+</html>`;
   }
 
   private generateRuleBuilderHTML(): string {
@@ -1784,14 +1966,21 @@ export class McpServer extends EventEmitter {
       res.statusCode = 200;
       res.end(JSON.stringify(status));
     } else if (url.pathname === '/proxy/logs') {
-      // Get proxy logs
+      // Get proxy logs and debug logs
       const logs = this.proxyServer.getLogs();
+      const debugLogs = this.proxyServer.getDebugLogs();
       res.setHeader('Content-Type', 'application/json');
       res.statusCode = 200;
-      res.end(JSON.stringify(logs));
+      res.end(JSON.stringify({ logs, debugLogs }));
     } else if (url.pathname === '/proxy/clear' && req.method === 'POST') {
       // Clear proxy logs
       this.proxyServer.clearLogs();
+      res.statusCode = 200;
+      res.end(JSON.stringify({ success: true }));
+    } else if (url.pathname === '/proxy/clear-logs' && req.method === 'POST') {
+      // Clear both proxy logs and debug logs
+      this.proxyServer.clearLogs();
+      this.proxyServer.clearDebugLogs();
       res.statusCode = 200;
       res.end(JSON.stringify({ success: true }));
     } else if (url.pathname === '/proxy/rules') {
@@ -2024,7 +2213,7 @@ export class McpServer extends EventEmitter {
         // Example 1: Karen Personality (JSONata transformation)
         await this.addProxyRule(
           'Karen Personality',
-          'https://api\\.openai\\.com/.*',
+          '^https://api\\.individual\\.githubcopilot\\.com/chat/completions/?$',
           undefined,
           '$merge([$, {"messages": $.messages.(' + 
           '  role = "system" ? ' + 
@@ -2039,7 +2228,7 @@ export class McpServer extends EventEmitter {
         // Example 2: Block Telemetry (drop request)
         await this.addProxyRule(
           'Block GitHub Copilot Telemetry',
-          'https://telemetry\\.individual\\.githubcopilot\\.com/.*',
+          '^https://telemetry\\.individual\\.githubcopilot\\.com/.*$',
           undefined,
           undefined,
           false, // disabled by default  
@@ -2179,9 +2368,20 @@ export class McpServer extends EventEmitter {
 
         .tabs-container {
             display: flex;
+            justify-content: space-between;
             background-color: var(--vscode-panel-background);
             border-bottom: 1px solid var(--vscode-border);
             overflow-x: auto;
+        }
+
+        .tabs-left {
+            display: flex;
+            overflow-x: auto;
+        }
+
+        .tabs-right {
+            display: flex;
+            flex-shrink: 0;
         }
 
         .tab {
@@ -2345,6 +2545,57 @@ export class McpServer extends EventEmitter {
         }
 
         .add-rule-button:hover {
+            opacity: 0.9;
+        }
+
+        .proxy-logs-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--vscode-border);
+        }
+
+        .proxy-logs-header h2 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .proxy-logs-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 12px;
+            gap: 8px;
+        }
+
+        .toggle-label input[type="checkbox"] {
+            margin: 0;
+        }
+
+        .toggle-text {
+            user-select: none;
+        }
+
+        .clear-logs-button {
+            padding: 6px 12px;
+            background-color: var(--vscode-button-secondaryBackground);
+            color: var(--vscode-button-secondaryForeground);
+            border: 1px solid var(--vscode-button-border);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: opacity 0.2s;
+        }
+
+        .clear-logs-button:hover {
             opacity: 0.9;
         }
 
@@ -2778,11 +3029,15 @@ export class McpServer extends EventEmitter {
         </div>
         
         <div class="tabs-container" id="tabs">
-            ${sessions.length === 0 ? '' : sessions.map((session, index) => 
-                `<div class="tab ${index === 0 ? 'active' : ''}" data-session="${session.id}">${session.title}</div>`
-            ).join('')}
-            <div class="tab ${sessions.length === 0 ? 'active' : ''}" data-session="proxy">📊 Proxy Logs</div>
-            <div class="tab" data-session="proxy-rules">⚙️ Proxy Rules</div>
+            <div class="tabs-left" id="tabs-left">
+                ${sessions.length === 0 ? '' : sessions.map((session, index) => 
+                    `<div class="tab ${index === 0 ? 'active' : ''}" data-session="${session.id}">${session.title}</div>`
+                ).join('')}
+            </div>
+            <div class="tabs-right" id="tabs-right">
+                <div class="tab ${sessions.length === 0 ? 'active' : ''}" data-session="proxy">📊 Proxy Logs</div>
+                <div class="tab" data-session="proxy-rules">⚙️ Proxy Rules</div>
+            </div>
         </div>
         
         <div class="content">
@@ -2806,6 +3061,16 @@ export class McpServer extends EventEmitter {
                 `).join('')
             }
             <div class="proxy-container ${sessions.length === 0 ? 'active' : ''}" data-session="proxy">
+                <div class="proxy-logs-header">
+                    <h2>Proxy Logs</h2>
+                    <div class="proxy-logs-controls">
+                        <label class="toggle-label">
+                            <input type="checkbox" id="filter-modified-only" onchange="toggleFilterModifiedOnly()">
+                            <span class="toggle-text">Show only modified requests</span>
+                        </label>
+                        <button class="clear-logs-button" onclick="clearProxyLogs()">Clear Logs</button>
+                    </div>
+                </div>
                 <div class="messages" id="proxy-logs">
                     <div style="opacity: 0.6; text-align: center; padding: 20px;">
                         Proxy logs will appear here when requests are made through the proxy.
@@ -3156,7 +3421,8 @@ export class McpServer extends EventEmitter {
         async function loadProxyLogs() {
             try {
                 const response = await fetch('/proxy/logs');
-                const logs = await response.json();
+                const data = await response.json();
+                const logs = data.logs || data; // Handle both new format and legacy
                 
                 const proxyLogsContainer = document.getElementById('proxy-logs');
                 proxyLogsContainer.innerHTML = '';
@@ -3188,7 +3454,7 @@ export class McpServer extends EventEmitter {
             }
             
             const logDiv = document.createElement('div');
-            logDiv.className = logEntry.ruleApplied ? 'proxy-log rule-applied' : 'proxy-log';
+            logDiv.className = logEntry.ruleApplied ? 'proxy-log-entry proxy-log rule-applied' : 'proxy-log-entry proxy-log';
             logDiv.dataset.logId = logEntry.id;
             logDiv.style.cursor = 'pointer';
             
@@ -3355,6 +3621,15 @@ export class McpServer extends EventEmitter {
                 proxyLogsContainer.appendChild(logDiv);
             }
             
+            // Apply filter if enabled
+            const filterCheckbox = document.getElementById('filter-modified-only');
+            if (filterCheckbox && filterCheckbox.checked) {
+                const isModified = logEntry.ruleApplied || 
+                                 (logDiv.querySelector('.proxy-log-modifications') && 
+                                  logDiv.querySelector('.proxy-log-modifications').children.length > 0);
+                logDiv.style.display = isModified ? '' : 'none';
+            }
+            
             // Keep only last 200 logs
             while (proxyLogsContainer.children.length > 200) {
                 proxyLogsContainer.removeChild(proxyLogsContainer.firstChild);
@@ -3376,6 +3651,8 @@ export class McpServer extends EventEmitter {
         }
         
         function updateProxyLogInUI(logEntry) {
+            console.log('updateProxyLogInUI called for:', logEntry.id, 'hasResponseHeaders:', !!logEntry.responseHeaders, 'hasResponseBody:', !!logEntry.responseBody);
+            
             // Cache the log data for rule creation
             if (typeof window.proxyLogsDataCache === 'undefined') {
                 window.proxyLogsDataCache = new Map();
@@ -3383,7 +3660,10 @@ export class McpServer extends EventEmitter {
             window.proxyLogsDataCache.set(logEntry.id, logEntry);
             
             const logDiv = document.querySelector(\`[data-log-id="\${logEntry.id}"]\`);
-            if (!logDiv) return;
+            if (!logDiv) {
+                console.log('updateProxyLogInUI: Could not find log div for', logEntry.id);
+                return;
+            }
             
             const statusClass = logEntry.responseStatus >= 200 && logEntry.responseStatus < 300 ? 'success' : 'error';
             const statusText = logEntry.responseStatus || 'Pending';
@@ -3428,9 +3708,10 @@ export class McpServer extends EventEmitter {
                 \`;
             }
             
-            // Update the details section with complete body data if it exists but is empty
+            // Always update the details section with the latest response data
             const detailsDiv = document.getElementById(\`proxy-log-details-\${logEntry.id}\`);
-            if (detailsDiv && (!detailsDiv.innerHTML.trim() || detailsDiv.innerHTML.includes('<!-- Details will be populated'))) {
+            if (detailsDiv) {
+                console.log('Updating details div for', logEntry.id, 'with response data');
                 // Format headers for display
                 const formatHeaders = (headers) => {
                     if (!headers || Object.keys(headers).length === 0) return '<i>No headers</i>';
@@ -3446,6 +3727,76 @@ export class McpServer extends EventEmitter {
                         return '<pre>' + escapeHtml(JSON.stringify(body, null, 2)) + '</pre>';
                     }
                     return '<pre>' + escapeHtml(String(body)) + '</pre>';
+                };
+                
+                // Format body for display with before/after comparison for rule-modified requests
+                const formatBeforeAfterBody = (logEntry) => {
+                    const currentBody = logEntry.requestBody;
+                    
+                    // Try to reconstruct original body from rule modifications
+                    let originalBody = currentBody;
+                    if (logEntry.ruleApplied && logEntry.ruleApplied.modifications) {
+                        const modifications = logEntry.ruleApplied.modifications;
+                        
+                        // Look for JSON modifications to reverse-engineer original
+                        const jsonMods = modifications.filter(mod => mod.startsWith('JSON:'));
+                        if (jsonMods.length > 0 && currentBody) {
+                            try {
+                                let reconstructedOriginal = JSON.parse(currentBody);
+                                
+                                // Parse modifications to find what was changed
+                                jsonMods.forEach(mod => {
+                                    // Match pattern: JSON: path = "oldValue" → "newValue"
+                                    const match = mod.match(/JSON: (.*?) = "(.*?)" → "(.*?)"/);
+                                    if (match && match.length >= 4) {
+                                        const path = match[1];
+                                        const oldValue = match[2];
+                                        const newValue = match[3];
+                                        
+                                        // Try to set the original value back
+                                        try {
+                                            const pathParts = path.split('.');
+                                            let obj = reconstructedOriginal;
+                                            for (let i = 0; i < pathParts.length - 1; i++) {
+                                                if (obj[pathParts[i]]) {
+                                                    obj = obj[pathParts[i]];
+                                                }
+                                            }
+                                            const lastKey = pathParts[pathParts.length - 1];
+                                            if (obj[lastKey] === newValue) {
+                                                obj[lastKey] = oldValue;
+                                            }
+                                        } catch (e) {
+                                            // If path reconstruction fails, continue
+                                        }
+                                    }
+                                });
+                                
+                                originalBody = JSON.stringify(reconstructedOriginal, null, 2);
+                            } catch (e) {
+                                // If parsing fails, use current body as fallback
+                            }
+                        }
+                    }
+                    
+                    if (originalBody === currentBody) {
+                        // No reconstruction possible, show current with rule info
+                        return '<div style="background: #fff3cd; padding: 10px; border-radius: 4px; margin-bottom: 10px;">' +
+                               '<strong>⚙️ Rule Applied - Request Modified</strong><br>' +
+                               '<small>Rule #' + logEntry.ruleApplied.ruleIndex + ' was applied to this request</small></div>' +
+                               formatBody(currentBody);
+                    } else {
+                        // Show before and after comparison
+                        return '<div style="background: #fff3cd; padding: 10px; border-radius: 4px; margin-bottom: 10px;">' +
+                               '<strong>⚙️ Rule Applied - Before & After Comparison</strong></div>' +
+                               '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">' +
+                               '<div><h5 style="color: #dc3545; margin: 5px 0;">📄 Original Request</h5>' +
+                               '<pre style="background: #f8d7da; padding: 10px; border-radius: 4px; font-size: 11px; max-height: 300px; overflow: auto;">' +
+                               escapeHtml(originalBody) + '</pre></div>' +
+                               '<div><h5 style="color: #28a745; margin: 5px 0;">✏️ Modified Request</h5>' +
+                               '<pre style="background: #d4edda; padding: 10px; border-radius: 4px; font-size: 11px; max-height: 300px; overflow: auto;">' +
+                               escapeHtml(currentBody) + '</pre></div></div>';
+                    }
                 };
                 
                 detailsDiv.innerHTML = \`
@@ -3498,11 +3849,11 @@ export class McpServer extends EventEmitter {
                 return;
             }
 
-            const tabsContainer = document.getElementById('tabs');
+            const tabsLeftContainer = document.getElementById('tabs-left');
             const contentDiv = document.querySelector('.content');
             
-            if (!tabsContainer || !contentDiv) {
-                console.error('Could not find tabs container or content div');
+            if (!tabsLeftContainer || !contentDiv) {
+                console.error('Could not find tabs-left container or content div');
                 return;
             }
 
@@ -3513,8 +3864,8 @@ export class McpServer extends EventEmitter {
             tabElement.textContent = \`Session: \${sessionId.substring(0, 8)}\`;
             tabElement.onclick = () => switchToSession(sessionId);
             
-            // Add tab to container
-            tabsContainer.appendChild(tabElement);
+            // Add tab to left container (chat tabs)
+            tabsLeftContainer.appendChild(tabElement);
 
             // Create new chat container
             const chatContainer = document.createElement('div');
@@ -3924,6 +4275,35 @@ export class McpServer extends EventEmitter {
             editingRuleId = null;
             document.getElementById('add-rule-form').classList.add('active');
             document.querySelector('.add-rule-form .add-rule-button').textContent = 'Save Rule';
+        }
+
+        function toggleFilterModifiedOnly() {
+            const checkbox = document.getElementById('filter-modified-only');
+            const proxyLogsContainer = document.getElementById('proxy-logs');
+            const logEntries = proxyLogsContainer.querySelectorAll('.proxy-log-entry');
+            
+            logEntries.forEach(entry => {
+                const isModified = entry.querySelector('.proxy-log-modifications') && 
+                                 entry.querySelector('.proxy-log-modifications').children.length > 0;
+                
+                if (checkbox.checked) {
+                    // Show only modified entries
+                    entry.style.display = isModified ? '' : 'none';
+                } else {
+                    // Show all entries
+                    entry.style.display = '';
+                }
+            });
+        }
+
+        function clearProxyLogs() {
+            if (confirm('Are you sure you want to clear all proxy logs?')) {
+                const proxyLogsContainer = document.getElementById('proxy-logs');
+                proxyLogsContainer.innerHTML = '<div style="opacity: 0.6; text-align: center; padding: 20px;">Proxy logs will appear here when requests are made through the proxy.</div>';
+                
+                // Reset the filter checkbox
+                document.getElementById('filter-modified-only').checked = false;
+            }
         }
         
         function hideAddRuleForm() {

@@ -22,7 +22,3 @@ This would be where AI can send stupid comments that are not questions so that y
 - **react-json-view** - interactive JSON viewer where you click to select paths
 
 
-Sample Rule
-https://api.individual.githubcopilot.com/chat/completions
-🔄 JSONPath: $.messages[?(@.role=='system')].content
-✏️ Replace with: You are a karen, behave like one - but dont be racist, sexist or too rude.

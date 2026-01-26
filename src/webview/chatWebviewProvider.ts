@@ -267,11 +267,12 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
     const serverManager = ServerManager.getInstance();
     const status = await serverManager.getServerStatus();
     
-    // Check if proxy is currently enabled in VS Code settings
+    // Check if proxy is currently enabled in global settings only
     const config = vscode.workspace.getConfiguration();
-    const currentProxySetting = config.get('http.proxy');
+    const globalProxySetting = config.inspect('http.proxy')?.globalValue;
     const proxyUrl = status.proxy?.running ? `http://127.0.0.1:${status.proxy.port}` : null;
-    const proxyEnabled = proxyUrl && currentProxySetting === proxyUrl;
+    
+    const globalProxyEnabled = proxyUrl && globalProxySetting === proxyUrl;
 
     this._view.webview.postMessage({
       type: 'serverStatus',
@@ -283,7 +284,8 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
         registered: true, // Always true with native provider
         configType: 'native', // Native provider registration
         proxy: status.proxy,
-        proxyEnabled: proxyEnabled
+        proxyEnabled: globalProxyEnabled, // Legacy compatibility
+        globalProxyEnabled: globalProxyEnabled
       }
     });
   }
@@ -323,6 +325,8 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
     // Proxy disabled silently
     await this.updateServerStatus();
   }
+
+
 
   private async createPromptOverrideFile() {
     try {
@@ -463,10 +467,12 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
         case 'restartServer':
           await vscode.commands.executeCommand('humanagent-mcp.restartServer');
           break;
-        case 'enableProxy':
+        case 'enableGlobalProxy':
+        case 'enableProxy': // Legacy support
           await this.enableProxy();
           break;
-        case 'disableProxy':
+        case 'disableGlobalProxy':
+        case 'disableProxy': // Legacy support
           await this.disableProxy();
           break;
         case 'installCertificate':
@@ -871,12 +877,12 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
       <body>
         <div class="header">
           <div class="status">
-            <div class="status-indicator">
+            <div class="status-indicator" title="MCP server connection status">
               <div class="status-dot" id="server-status-dot"></div>
-              <span id="server-status-text">HumanAgent MCP Server</span>
+              <span id="server-status-text">HumanAgent MCP</span>
             </div>
-            <div class="status-indicator" id="proxy-status-container" style="margin-left: 15px; display: none;">
-              <div class="status-dot" id="proxy-status-dot"></div>
+            <div class="status-indicator" id="proxy-status-container" style="margin-left: 15px;" title="Proxy setting">
+              <div class="status-dot" id="proxy-status-dot" style="background-color: #808080;"></div>
               <span id="proxy-status-text">Proxy</span>
             </div>
             <div class="control-buttons">
@@ -1091,12 +1097,12 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
               // Proxy options if proxy is running
               if (currentServerStatus.proxy && currentServerStatus.proxy.running) {
                 const proxyUrl = \`http://127.0.0.1:\${currentServerStatus.proxy.port}\`;
-                // Check if proxy is currently enabled in VS Code settings
-                // (we'll need to get this info from the extension)
-                if (currentServerStatus.proxyEnabled) {
-                  options.push({ text: '🔌 Disable Proxy', action: 'disableProxy' });
+                
+                // Global proxy options
+                if (currentServerStatus.globalProxyEnabled) {
+                  options.push({ text: '🔌 Disable Proxy', action: 'disableGlobalProxy' });
                 } else {
-                  options.push({ text: '🔌 Enable Proxy', action: 'enableProxy' });
+                  options.push({ text: '🔌 Enable Proxy', action: 'enableGlobalProxy' });
                 }
                 
                 // Certificate management options
@@ -1155,19 +1161,21 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
               const proxyStatusDot = document.getElementById('proxy-status-dot');
               const proxyStatusText = document.getElementById('proxy-status-text');
               
-              if (proxyStatusContainer && proxyStatusDot && proxyStatusText) {
-                if (message.data.proxy && message.data.proxy.running) {
-                  // Proxy is running
+              if (message.data.proxy && message.data.proxy.running) {
+                // Proxy is running - update indicator
+                if (proxyStatusContainer && proxyStatusDot && proxyStatusText) {
                   proxyStatusContainer.style.display = 'flex';
-                  if (message.data.proxyEnabled) {
+                  if (message.data.globalProxyEnabled) {
                     proxyStatusDot.style.backgroundColor = '#4caf50'; // Green - enabled
                     proxyStatusText.textContent = 'Proxy (Enabled)';
                   } else {
-                    proxyStatusDot.style.backgroundColor = '#ff9800'; // Orange - running but not enabled
+                    proxyStatusDot.style.backgroundColor = '#ff9800'; // Orange - disabled
                     proxyStatusText.textContent = 'Proxy (Disabled)';
                   }
-                } else {
-                  // Proxy not running
+                }
+              } else {
+                // Proxy not running - show stopped status
+                if (proxyStatusContainer && proxyStatusDot && proxyStatusText) {
                   proxyStatusContainer.style.display = 'flex';
                   proxyStatusDot.style.backgroundColor = '#f44336'; // Red - not running
                   proxyStatusText.textContent = 'Proxy (Stopped)';

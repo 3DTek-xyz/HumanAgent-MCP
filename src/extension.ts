@@ -171,6 +171,8 @@ export async function activate(context: vscode.ExtensionContext) {
 	// Initialize telemetry service
 	telemetryService = new TelemetryService(context);
 	await telemetryService.trackExtensionActivated();
+	await telemetryService.trackFirstTimeUser(); // Track new installs
+	await telemetryService.trackWeeklyActive(); // Track weekly retention
 
 	// Determine port based on extension mode (dev vs production)
 	SERVER_PORT = context.extensionMode === vscode.ExtensionMode.Development ? 3738 : 3737;

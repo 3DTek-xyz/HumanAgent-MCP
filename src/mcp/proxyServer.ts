@@ -39,7 +39,9 @@ export class ProxyServer extends EventEmitter {
     private mockttpServer: Mockttp.Mockttp | null = null;
     private port: number = 0;
     private logs: ProxyLogEntry[] = [];
+    private debugLogs: Array<{timestamp: string, message: string}> = [];
     private maxLogs: number = 200; // FIFO buffer size
+    private maxDebugLogs: number = 500; // Debug logs buffer
     private isRunning: boolean = false;
     private httpsOptions?: { keyPath: string; certPath: string };
     private rules: any[] = []; // Proxy rules loaded from storage
@@ -49,12 +51,39 @@ export class ProxyServer extends EventEmitter {
     }
 
     /**
+     * Add debug log entry that can be retrieved via web interface
+     */
+    private addDebugLog(message: string) {
+        const entry = {
+            timestamp: new Date().toISOString(),
+            message: `[ProxyServer] ${message}`
+        };
+        
+        this.debugLogs.push(entry);
+        
+        // Keep buffer size limited
+        if (this.debugLogs.length > this.maxDebugLogs) {
+            this.debugLogs.shift();
+        }
+        
+        // Also log to console for development
+        console.log(entry.message);
+    }
+
+    /**
+     * Get debug logs for web interface
+     */
+    getDebugLogs(): Array<{timestamp: string, message: string}> {
+        return [...this.debugLogs];
+    }
+
+    /**
      * Start the proxy server on a dynamic port with optional HTTPS support
      * @param httpsOptions Optional HTTPS configuration with keyPath and certPath
      */
     async start(httpsOptions?: { keyPath: string; certPath: string }): Promise<number> {
         if (this.isRunning) {
-            console.log('[ProxyServer] Already running');
+            this.addDebugLog('Already running');
             return this.port;
         }
 
@@ -77,54 +106,23 @@ export class ProxyServer extends EventEmitter {
                     cert: certContent,
                     key: keyContent
                 };
-                console.log(`[ProxyServer] HTTPS enabled with CA cert from: ${httpsOptions.certPath}`);
+                this.addDebugLog(`HTTPS enabled with CA cert from: ${httpsOptions.certPath}`);
             }
 
             // Create Mockttp instance
             this.mockttpServer = Mockttp.getLocal(config);
 
-            // Set up rule-based handlers
-            await this.setupRuleHandlers();
-            
-            // Catch-all handler for requests not matching any rules
-            await this.mockttpServer.forAnyRequest().thenPassThrough({
-                beforeRequest: async (req) => {
-                    // Log request (no rule applied)
-                    const protocol = req.url.startsWith('https://') ? 'https' : 'http';
-                    
-                    const logEntry: ProxyLogEntry = {
-                        id: this.generateLogId(),
-                        timestamp: Date.now(),
-                        method: req.method,
-                        url: req.url,
-                        requestHeaders: { ...req.headers } as Record<string, string | string[]>,
-                        requestBody: req.body?.buffer ? req.body.buffer.toString('utf8') : undefined,
-                        protocol: protocol
-                    };
-
-                    this.addLogEntry(logEntry);
-                    this.emit('request', logEntry);
-                },
-                beforeResponse: async (res) => {
-                    const logEntry = this.logs[this.logs.length - 1];
-                    if (logEntry) {
-                        logEntry.responseStatus = res.statusCode;
-                        logEntry.responseHeaders = { ...res.headers } as Record<string, string | string[]>;
-                        logEntry.responseBody = res.body?.buffer ? res.body.buffer.toString('utf8') : undefined;
-                        logEntry.duration = Date.now() - logEntry.timestamp;
-
-                        this.emit('response', logEntry);
-                        this.emit('log-updated', logEntry);
-                    }
-                }
-            });
+            // Set up unified handler that processes rules and logs all requests
+            this.addDebugLog('DEBUG: About to call setupUnifiedHandler...');
+            await this.setupUnifiedHandler();
+            this.addDebugLog('DEBUG: setupUnifiedHandler completed');
 
             // Start server on dynamic port
             await this.mockttpServer.start();
             this.port = this.mockttpServer.port;
             this.isRunning = true;
 
-            console.log(`[ProxyServer] Started on port ${this.port}`);
+            this.addDebugLog(`Started on port ${this.port}`);
             this.emit('started', this.port);
 
             return this.port;
@@ -147,7 +145,7 @@ export class ProxyServer extends EventEmitter {
             await this.mockttpServer.stop();
             this.isRunning = false;
             this.port = 0;
-            console.log('[ProxyServer] Stopped');
+            this.addDebugLog('Stopped');
             this.emit('stopped');
         } catch (error) {
             console.error('[ProxyServer] Failed to stop:', error);
@@ -189,6 +187,14 @@ export class ProxyServer extends EventEmitter {
     }
 
     /**
+     * Clear all debug logs
+     */
+    clearDebugLogs(): void {
+        this.debugLogs = [];
+        this.addDebugLog('Debug logs cleared');
+    }
+
+    /**
      * Add a log entry to the FIFO buffer
      */
     private addLogEntry(entry: ProxyLogEntry): void {
@@ -224,10 +230,12 @@ export class ProxyServer extends EventEmitter {
      * Requires restarting the proxy to apply new handlers
      */
     async reloadRules(): Promise<void> {
-        console.log('[ProxyServer] Reloading proxy rules...');
+        this.addDebugLog('DEBUG: ========= RELOAD RULES CALLED =========');
+        this.addDebugLog(`DEBUG: isRunning: ${this.isRunning}`);
+        this.addDebugLog(`DEBUG: current rules count: ${this.rules?.length || 0}`);
         
         if (!this.isRunning) {
-            console.log('[ProxyServer] Proxy not running, skipping rule reload');
+            this.addDebugLog('Proxy not running, skipping rule reload');
             return;
         }
         
@@ -238,7 +246,7 @@ export class ProxyServer extends EventEmitter {
         await this.stop();
         await this.start(httpsOpts);
         
-        console.log(`[ProxyServer] Proxy restarted with updated rules on port ${port}`);
+        this.addDebugLog(`Proxy restarted with updated rules on port ${port}`);
     }
 
     /**
@@ -247,7 +255,7 @@ export class ProxyServer extends EventEmitter {
      */
     setRules(rules: any[]): void {
         this.rules = rules;
-        console.log(`[ProxyServer] Set ${rules.length} proxy rules`);
+        this.addDebugLog(`Set ${rules.length} proxy rules`);
     }
 
     /**
@@ -258,245 +266,279 @@ export class ProxyServer extends EventEmitter {
     }
 
     /**
-     * Set up Mockttp handlers for each enabled rule
+     * Set up unified handler that processes all requests - with rules and logging
      */
-    private async setupRuleHandlers(): Promise<void> {
-        if (!this.mockttpServer) return;
+    private async setupUnifiedHandler(): Promise<void> {
+        this.addDebugLog('DEBUG: ========= SETUP UNIFIED HANDLER CALLED =========');
+        this.addDebugLog(`DEBUG: mockttpServer exists: ${!!this.mockttpServer}`);
+        this.addDebugLog(`DEBUG: rules array length: ${this.rules?.length || 0}`);
+        
+        if (!this.mockttpServer) {
+            this.addDebugLog('DEBUG: No mockttpServer - returning early');
+            return;
+        }
         
         const enabledRules = this.rules.filter(r => r.enabled);
-        console.log(`[ProxyServer] Setting up ${enabledRules.length} enabled proxy rules`);
-        
-        for (let i = 0; i < enabledRules.length; i++) {
-            const rule = enabledRules[i];
-            // Find the actual index in the full rules list (1-based for display)
-            const ruleIndex = this.rules.findIndex(r => r.id === rule.id) + 1;
-            
-            try {
-                const urlPattern = new RegExp(rule.pattern);
-                
-                // Match requests by URL pattern - check if we should drop the request
-                if (rule.dropRequest) {
-                    // Drop the request with configurable status code
-                    const dropStatusCode = rule.dropStatusCode || 204; // Default to 204 No Content
-                    await this.mockttpServer.forAnyRequest()
-                        .matching((req) => urlPattern.test(req.url))
-                        .thenCallback(async (req) => {
-                            // Log the dropped request
-                            const protocol = req.url.startsWith('https://') ? 'https' : 'http';
-                            const logEntry: ProxyLogEntry = {
-                                id: this.generateLogId(),
-                                timestamp: Date.now(),
-                                method: req.method,
-                                url: req.url,
-                                requestHeaders: { ...req.headers } as Record<string, string | string[]>,
-                                requestBody: req.body?.buffer ? req.body.buffer.toString('utf8') : undefined,
-                                responseStatus: dropStatusCode,
-                                responseHeaders: {},
-                                responseBody: `Request dropped by proxy rule (status ${dropStatusCode})`,
-                                duration: 0,
-                                protocol: protocol,
-                                ruleApplied: {
-                                    ruleId: rule.id,
-                                    ruleIndex: ruleIndex,
-                                    modifications: [`Request dropped with status ${dropStatusCode}`],
-                                    hoverInfo: {
-                                        originalText: 'Request sent to server',
-                                        replacementText: `Dropped with ${dropStatusCode} status`
-                                    }
-                                }
-                            };
-                            
-                            this.addLogEntry(logEntry);
-                            this.emit('request', logEntry);
-                            this.emit('log-updated', logEntry);
-                            
-                            // Return the drop response
-                            return {
-                                statusCode: dropStatusCode,
-                                statusMessage: dropStatusCode === 204 ? 'No Content' : 'Not Found',
-                                headers: {},
-                                body: ''
-                            };
-                        });
-                } else {
-                    // Normal request processing with potential modifications
-                    await this.mockttpServer.forAnyRequest()
-                        .matching((req) => urlPattern.test(req.url))
-                        .thenPassThrough({
-                            beforeRequest: async (req) => {
-                            const originalUrl = req.url;
-                            const modifications: string[] = [];
-                            let modifiedUrl = req.url;
-                            let modifiedBody: any = undefined;
-                            
-                            // Apply URL redirect if specified
-                            if (rule.redirect) {
-                                // Simple replacement for now - could be enhanced with capture groups
-                                modifiedUrl = req.url.replace(urlPattern, rule.redirect);
-                                modifications.push(`URL: ${originalUrl} → ${modifiedUrl} (Rule: ${rule.name || 'Unnamed'})`);
+        this.addDebugLog(`DEBUG: Found ${enabledRules.length} enabled rules out of ${this.rules.length} total`);
+        this.addDebugLog(`Setting up UNIFIED HANDLER for ${enabledRules.length} enabled proxy rules`);
+
+        // Single unified handler that processes rules and logs ALL requests
+        await this.mockttpServer.forAnyRequest()
+            .thenPassThrough({
+                beforeRequest: async (req) => {
+                    this.addDebugLog(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+                    this.addDebugLog(`📥 INCOMING REQUEST: ${req.method} ${req.url}`);
+                    
+                    if (enabledRules.length > 0) {
+                        this.addDebugLog(`   Evaluating ${enabledRules.length} enabled rules...`);
+                    }
+                    
+                    // Process each enabled rule in order until we find a match
+                    for (let i = 0; i < enabledRules.length; i++) {
+                        const rule = enabledRules[i];
+                        const ruleIndex = this.rules.findIndex(r => r.id === rule.id) + 1;
+                        
+                        try {
+                            // Handle both regex patterns and literal URLs
+                            let isMatch: boolean;
+                            if (rule.pattern.startsWith('^') || rule.pattern.includes('.*') || rule.pattern.includes('\\')) {
+                                // Treat as regex pattern
+                                const urlPattern = new RegExp(rule.pattern);
+                                isMatch = urlPattern.test(req.url);
+                            } else {
+                                // Treat as literal URL - use robust normalization and matching
+                                const normalizedPattern = rule.pattern.trim().toLowerCase();
+                                const normalizedUrl = req.url.trim().toLowerCase();
+                                
+                                // Try exact match first, then contains match
+                                isMatch = normalizedUrl === normalizedPattern || 
+                                         normalizedUrl.includes(normalizedPattern) ||
+                                         req.url === rule.pattern ||
+                                         req.url.includes(rule.pattern);
                             }
                             
-                            // Apply JSONata transformation if specified
-                            if (rule.jsonata && req.body?.buffer) {
-                                try {
-                                    const bodyText = req.body.buffer.toString('utf8');
-                                    let bodyJson: any;
-                                    
-                                    // Try parsing as JSON, if it fails try JSONL
-                                    try {
-                                        bodyJson = JSON.parse(bodyText);
-                                    } catch {
-                                        // Try JSONL format (multiple JSON objects)
-                                        const lines = bodyText.trim().split('\n');
-                                        if (lines.length > 1) {
-                                            bodyJson = lines.map(line => JSON.parse(line.trim()));
-                                        } else {
-                                            throw new Error('Invalid JSON format');
-                                        }
-                                    }
-                                    
-                                    // Apply JSONata transformation using dynamic import
-                                    const JSONata = (await import('jsonata')).default;
-                                    const expression = JSONata(rule.jsonata);
-                                    const transformedData = await expression.evaluate(bodyJson);
-                                    
-                                    if (transformedData !== undefined) {
-                                        modifiedBody = transformedData;
-                                        modifications.push(`JSONata: Applied transformation "${rule.jsonata.length > 30 ? rule.jsonata.substring(0, 30) + '...' : rule.jsonata}" (Rule: ${rule.name || 'Unnamed'})`);
-                                    }
-                                } catch (error) {
-                                    console.error(`[ProxyServer] Failed to apply JSONata transformation for rule ${ruleIndex}:`, error);
-                                    // Continue without transformation on error - send original request
-                                }
+                            // Enhanced debug logging for Karen rule
+                            if (rule.name && rule.name.toLowerCase().includes('karen')) {
+                                this.addDebugLog(`🎯 KAREN RULE DEBUG:`);
+                                this.addDebugLog(`   Pattern: "${rule.pattern}"`);
+                                this.addDebugLog(`   Request URL: "${req.url}"`);
+                                this.addDebugLog(`   URL Match Result: ${isMatch}`);
+                                this.addDebugLog(`   Match Type: ${rule.pattern.startsWith('^') || rule.pattern.includes('.*') || rule.pattern.includes('\\') ? 'REGEX' : 'LITERAL'}`);
+                                this.addDebugLog(`   Pattern Length: ${rule.pattern.length}`);
+                                this.addDebugLog(`   Request URL Length: ${req.url.length}`);
+                                this.addDebugLog(`   Strict Equality: ${rule.pattern === req.url}`);
                             }
                             
-                            // Support legacy JSONPath rules for backward compatibility
-                            if (rule.jsonPath && rule.replacement && req.body?.buffer && !rule.jsonata) {
-                                try {
-                                    console.warn(`[ProxyServer] Using legacy JSONPath rule - consider upgrading to JSONata`);
-                                    const bodyText = req.body.buffer.toString('utf8');
-                                    const bodyJson = JSON.parse(bodyText);
-                                    
-                                    // Simple nested property replacement (basic legacy support)
-                                    const path = rule.jsonPath.replace(/^\$\./, '').split('.');
-                                    let obj = bodyJson;
-                                    for (let i = 0; i < path.length - 1; i++) {
-                                        if (obj && typeof obj === 'object') {
-                                            obj = obj[path[i]];
-                                        }
-                                    }
-                                    if (obj && typeof obj === 'object' && path.length > 0) {
-                                        const oldValue = obj[path[path.length - 1]];
-                                        obj[path[path.length - 1]] = rule.replacement;
-                                        modifiedBody = bodyJson;
-                                        modifications.push(`Legacy JSON: ${rule.jsonPath} = "${oldValue}" → "${rule.replacement}" (Rule: ${rule.name || 'Unnamed'})`);
-                                    }
-                                } catch (error) {
-                                    console.error(`[ProxyServer] Failed to apply legacy JSONPath for rule ${ruleIndex}:`, error);
-                                }
-                            }
+                            const ruleLabel = `[${i + 1}/${enabledRules.length}] "${rule.name || rule.id}"`;
+                            this.addDebugLog(`   ${isMatch ? '✅' : '❌'} ${ruleLabel} - Pattern: "${rule.pattern}" - Match: ${isMatch}`);
                             
-                            // Prepare hover info for tooltip
-                            let hoverInfo: { originalText: string; replacementText: string } | undefined;
-                            if (modifications.length > 0) {
-                                // Check for URL modification first (redirect)
-                                const urlMod = modifications.find(mod => mod.startsWith('URL:'));
-                                if (urlMod) {
-                                    // Extract from: URL: originalUrl → modifiedUrl
-                                    const match = urlMod.match(/URL: (.*?) → (.*?)$/);
-                                    if (match && match.length >= 3) {
-                                        hoverInfo = {
-                                            originalText: this.truncateToWords(match[1], 10),
-                                            replacementText: this.truncateToWords(match[2], 10)
-                                        };
-                                        console.log(`[ProxyServer] Debug - URL hover info created:`, hoverInfo);
-                                    }
-                                } else {
-                                    // Check for JSONata transformation
-                                    const jsonataMod = modifications.find(mod => mod.startsWith('JSONata:'));
-                                    if (jsonataMod) {
-                                        // For JSONata transformations, show before/after JSON snippets
-                                        try {
-                                            const originalJson = req.body?.buffer ? JSON.parse(req.body.buffer.toString('utf8')) : {};
-                                            const modifiedJson = modifiedBody;
-                                            hoverInfo = {
-                                                originalText: this.truncateToWords(JSON.stringify(originalJson), 15),
-                                                replacementText: this.truncateToWords(JSON.stringify(modifiedJson), 15)
-                                            };
-                                        } catch (error) {
-                                            // Fallback to transformation description
-                                            hoverInfo = {
-                                                originalText: 'Original data',
-                                                replacementText: 'JSONata transformed'
-                                            };
-                                        }
-                                    } else {
-                                        // Extract original and replacement text from legacy JSON modification
-                                        const jsonMod = modifications.find(mod => mod.startsWith('Legacy JSON:'));
-                                        console.log(`[ProxyServer] Debug - Legacy JSON modification found:`, jsonMod);
-                                        if (jsonMod) {
-                                            // Match: Legacy JSON: path = "oldValue" → "newValue"
-                                            const match = jsonMod.match(/Legacy JSON: .* = "(.*?)" → "(.*?)"/);
-                                            console.log(`[ProxyServer] Debug - Legacy JSON match result:`, match);
-                                            if (match && match.length >= 3) {
-                                                hoverInfo = {
-                                                    originalText: this.truncateToWords(match[1], 10),
-                                                    replacementText: this.truncateToWords(match[2], 10)
-                                                };
-                                                console.log(`[ProxyServer] Debug - Legacy JSON hover info created:`, hoverInfo);
+                            if (isMatch) {
+                                this.addDebugLog(`   🎯 RULE MATCHED! Applying "${rule.name || rule.id}"`);
+                                
+                                // Handle drop requests
+                                if (rule.dropRequest) {
+                                    const dropStatusCode = rule.dropStatusCode || 204;
+                                    this.addDebugLog(`   🛑 DROP REQUEST - Status: ${dropStatusCode}`);
+                                    this.addDebugLog(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+                                    
+                                    // Log the dropped request
+                                    const protocol = req.url.startsWith('https://') ? 'https' : 'http';
+                                    const logEntry: ProxyLogEntry = {
+                                        id: this.generateLogId(),
+                                        timestamp: Date.now(),
+                                        method: req.method,
+                                        url: req.url,
+                                        requestHeaders: { ...req.headers } as Record<string, string | string[]>,
+                                        requestBody: req.body?.buffer ? req.body.buffer.toString('utf8') : undefined,
+                                        responseStatus: dropStatusCode,
+                                        responseHeaders: {},
+                                        responseBody: `Request dropped by proxy rule (status ${dropStatusCode})`,
+                                        duration: 0,
+                                        protocol: protocol,
+                                        ruleApplied: {
+                                            ruleId: rule.id,
+                                            ruleIndex: ruleIndex,
+                                            modifications: [`Request dropped with status ${dropStatusCode}`],
+                                            hoverInfo: {
+                                                originalText: 'Request sent to server',
+                                                replacementText: `Dropped with ${dropStatusCode} status`
                                             }
                                         }
-                                    }
+                                    };
+                                    
+                                    this.addLogEntry(logEntry);
+                                    this.emit('request', logEntry);
+                                    this.emit('log-updated', logEntry);
+                                    
+                                    // Throw to stop further processing - this will be caught by Mockttp
+                                    throw new Error(`DROPPED:${dropStatusCode}`);
                                 }
-                            }
-                            
-                            // Log the request with rule applied
-                            const protocol = originalUrl.startsWith('https://') ? 'https' : 'http';
-                            const logEntry: ProxyLogEntry = {
-                                id: this.generateLogId(),
-                                timestamp: Date.now(),
-                                method: req.method,
-                                url: modifiedUrl, // Use modified URL for display
-                                requestHeaders: { ...req.headers } as Record<string, string | string[]>,
-                                requestBody: modifiedBody ? JSON.stringify(modifiedBody) : (req.body?.buffer ? req.body.buffer.toString('utf8') : undefined),
-                                protocol: protocol,
-                                ruleApplied: {
-                                    ruleId: rule.id,
-                                    ruleIndex: ruleIndex,
-                                    originalUrl: modifiedUrl !== originalUrl ? originalUrl : undefined,
-                                    modifications: modifications.length > 0 ? modifications : undefined,
-                                    hoverInfo: hoverInfo
-                                }
-                            };
-                            
-                            this.addLogEntry(logEntry);
-                            this.emit('request', logEntry);
-                            
-                            // Return modified request
-                            return {
-                                url: modifiedUrl,
-                                json: modifiedBody
-                            };
-                        },
-                        beforeResponse: async (res) => {
-                            const logEntry = this.logs[this.logs.length - 1];
-                            if (logEntry) {
-                                logEntry.responseStatus = res.statusCode;
-                                logEntry.responseHeaders = { ...res.headers } as Record<string, string | string[]>;
-                                logEntry.responseBody = res.body?.buffer ? res.body.buffer.toString('utf8') : undefined;
-                                logEntry.duration = Date.now() - logEntry.timestamp;
 
-                                this.emit('response', logEntry);
-                                this.emit('log-updated', logEntry);
+                                // Handle request modifications (URL redirect, JSONata transformation)
+                                return await this.applyRuleModifications(req, rule, ruleIndex);
                             }
+                        } catch (error) {
+                            this.addDebugLog(`ERROR in rule "${rule.name || rule.id}": ${error}`);
                         }
-                    });
+                    }
+                    
+                    // No rules matched - log as passthrough request
+                    this.addDebugLog(`   ⚠️  NO RULES MATCHED - Logging and passing through unchanged`);
+                    
+                    // Log request (no rule applied)
+                    const protocol = req.url.startsWith('https://') ? 'https' : 'http';
+                    const logEntry: ProxyLogEntry = {
+                        id: this.generateLogId(),
+                        timestamp: Date.now(),
+                        method: req.method,
+                        url: req.url,
+                        requestHeaders: { ...req.headers } as Record<string, string | string[]>,
+                        requestBody: req.body?.buffer ? req.body.buffer.toString('utf8') : undefined,
+                        protocol: protocol
+                    };
+
+                    this.addLogEntry(logEntry);
+                    this.emit('request', logEntry);
+                    
+                    this.addDebugLog(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+                    return req;
+                },
+                beforeResponse: async (res) => {
+                    // Find the most recent log entry that doesn't have a response yet
+                    const logEntry = [...this.logs].reverse().find(entry => 
+                        entry.responseStatus === undefined
+                    );
+                    
+                    if (logEntry) {
+                        logEntry.responseStatus = res.statusCode;
+                        logEntry.responseHeaders = { ...res.headers } as Record<string, string | string[]>;
+                        logEntry.responseBody = res.body?.buffer ? res.body.buffer.toString('utf8') : undefined;
+                        logEntry.duration = Date.now() - logEntry.timestamp;
+
+                        this.emit('response', logEntry);
+                        this.emit('log-updated', logEntry);
+                        
+                        // Add debug log for response
+                        this.addDebugLog(`   ✅ Response: ${res.statusCode} (${logEntry.duration}ms)`);
+                    } else {
+                        console.warn('[ProxyServer] Could not find matching log entry for response');
+                    }
+                }
+            });
+    }
+
+    /**
+     * Apply rule modifications to a request
+     */
+    private async applyRuleModifications(req: any, rule: any, ruleIndex: number): Promise<any> {
+        const originalUrl = req.url;
+        const modifications: string[] = [];
+        let modifiedUrl = req.url;
+        let modifiedBody: any = undefined;
+        
+        this.addDebugLog(`   🔧 Applying modifications...`);
+        
+        // Apply URL redirect if specified
+        if (rule.redirect) {
+            const urlPattern = new RegExp(rule.pattern);
+            modifiedUrl = req.url.replace(urlPattern, rule.redirect);
+            modifications.push(`URL: ${originalUrl} → ${modifiedUrl} (Rule: ${rule.name || 'Unnamed'})`);
+            this.addDebugLog(`      🔀 URL Redirect: ${originalUrl} → ${modifiedUrl}`);
+        }
+        
+        // Apply JSONata transformation if specified
+        if (rule.jsonata && req.body?.buffer) {
+            try {
+                this.addDebugLog(`      🔄 JSONata transformation: ${rule.jsonata.substring(0, 50)}...`);
+                const bodyText = req.body.buffer.toString('utf8');
+                let bodyJson: any;
+                
+                // Try parsing as JSON, if it fails try JSONL
+                try {
+                    bodyJson = JSON.parse(bodyText);
+                } catch {
+                    // Try JSONL format (multiple JSON objects)
+                    const lines = bodyText.trim().split('\n');
+                    if (lines.length > 1) {
+                        bodyJson = lines.map((line: string) => JSON.parse(line.trim()));
+                    } else {
+                        throw new Error('Invalid JSON format');
+                    }
                 }
                 
-                console.log(`[ProxyServer] Rule #${ruleIndex} handler set up: ${rule.pattern} ${rule.dropRequest ? '(DROP)' : ''}`);
+                // Apply JSONata transformation using dynamic import
+                const JSONata = (await import('jsonata')).default;
+                const expression = JSONata(rule.jsonata);
+                const transformedData = await expression.evaluate(bodyJson);
+                
+                this.addDebugLog(`JSONata RESULT: ${JSON.stringify(transformedData)}`);
+                
+                // Check if transformation actually produced a valid, different result
+                if (transformedData !== undefined && transformedData !== null) {
+                    // Ensure the transformed data is actually different from original
+                    const transformedString = JSON.stringify(transformedData);
+                    const originalString = JSON.stringify(bodyJson);
+                    
+                    if (transformedString !== originalString) {
+                        modifiedBody = transformedData;
+                        modifications.push(`JSONata: Applied transformation "${rule.jsonata.length > 30 ? rule.jsonata.substring(0, 30) + '...' : rule.jsonata}" (Rule: ${rule.name || 'Unnamed'})`);
+                        this.addDebugLog(`         ✅ SUCCESS - Body transformed (${originalString.length} → ${transformedString.length} bytes)`);
+                    } else {
+                        this.addDebugLog(`         ⚠️  NO CHANGE - Transformation returned same data`);
+                    }
+                } else {
+                    this.addDebugLog(`         ❌ NULL RESULT - Transformation returned undefined/null`);
+                }
             } catch (error) {
-                console.error(`[ProxyServer] Failed to set up rule #${ruleIndex}:`, error);
+                this.addDebugLog(`         ❌ ERROR: ${error}`);
+                // Continue without transformation on error - send original request
             }
         }
+        
+        // Create log entry for the request
+        const protocol = req.url.startsWith('https://') ? 'https' : 'http';
+        const logEntry: ProxyLogEntry = {
+            id: this.generateLogId(),
+            timestamp: Date.now(),
+            method: req.method,
+            url: req.url,
+            requestHeaders: { ...req.headers } as Record<string, string | string[]>,
+            requestBody: req.body?.buffer ? req.body.buffer.toString('utf8') : undefined,
+            protocol: protocol,
+            ruleApplied: modifications.length > 0 ? {
+                ruleId: rule.id,
+                ruleIndex: ruleIndex,
+                originalUrl: originalUrl !== req.url ? originalUrl : undefined,
+                modifications: modifications
+            } : undefined
+        };
+        
+        this.addLogEntry(logEntry);
+        this.emit('request', logEntry);
+        this.emit('log-updated', logEntry);
+        
+        // Return modified request data in correct Mockttp format
+        const result: any = {};
+        
+        if (modifiedUrl !== originalUrl) {
+            result.url = modifiedUrl;
+            this.addDebugLog(`   📤 Returning modified URL`);
+        }
+        
+        if (modifiedBody !== undefined) {
+            result.body = JSON.stringify(modifiedBody);
+            this.addDebugLog(`   📤 Returning modified body (${result.body.length} bytes)`);
+        }
+        
+        // If no modifications, return original request unchanged
+        if (Object.keys(result).length === 0) {
+            this.addDebugLog(`   ⚠️  No modifications applied - returning original`);
+            this.addDebugLog(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+            return req;
+        }
+        
+        this.addDebugLog(`   ✅ Modifications complete: ${Object.keys(result).join(', ')}`);
+        this.addDebugLog(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+        return result;
     }
 }
