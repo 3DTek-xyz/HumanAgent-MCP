@@ -2,7 +2,7 @@
   "name": "humanagent-mcp",
   "displayName": "HumanAgent MCP",
   "description": "MCP server for chatting with a human agent",
-  "version": "0.0.17",
+  "version": "0.0.175",
   "publisher": "3DTek-xyz",
   "icon": "HumanAgent_Icon_Square.png",
   "repository": {
@@ -41,11 +41,6 @@
       {
         "command": "humanagent-mcp.openChat",
         "title": "Open Chat Session"
-      },
-      {
-        "command": "humanagent-mcp.configureMcp",
-        "title": "Configure MCP Server",
-        "icon": "$(settings-gear)"
       },
       {
         "command": "humanagent-mcp.startServer",
@@ -115,11 +110,6 @@
           "group": "navigation"
         },
         {
-          "command": "humanagent-mcp.configureMcp",
-          "when": "view == humanagent-mcp.chatSessions",
-          "group": "navigation"
-        },
-        {
           "command": "humanagent-mcp.reportIssue",
           "when": "view == humanagent-mcp.chatSessions",
           "group": "navigation"
@@ -142,7 +132,12 @@
         },
         "humanagent-mcp.logging.level": {
           "type": "string",
-          "enum": ["ERROR", "WARN", "INFO", "DEBUG"],
+          "enum": [
+            "ERROR",
+            "WARN",
+            "INFO",
+            "DEBUG"
+          ],
           "default": "INFO",
           "description": "Set the logging level for HumanAgent MCP server"
         },
@@ -152,7 +147,7 @@
           "description": "Enable audio notifications when AI agents send messages"
         },
         "humanagent-mcp.notifications.enableFlashing": {
-          "type": "boolean", 
+          "type": "boolean",
           "default": true,
           "description": "Enable visual flashing notifications when AI agents send messages"
         },
@@ -190,6 +185,9 @@
     "webpack-cli": "^6.0.1"
   },
   "dependencies": {
+    "jsonata": "^2.1.0",
+    "jsonpath-plus": "^10.3.0",
+    "mockttp": "^4.2.1",
     "node-wav-player": "^1.0.0"
   }
 }

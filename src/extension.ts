@@ -2,6 +2,8 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as net from 'net';
 import * as crypto from 'crypto';
+import * as fs from 'fs';
+import * as https from 'https';
 import { spawn } from 'child_process';
 import { ChatTreeProvider } from './providers/chatTreeProvider';
 import { ChatWebviewProvider } from './webview/chatWebviewProvider';
@@ -113,12 +115,64 @@ async function restoreSessionName(context: vscode.ExtensionContext, sessionId: s
 	}
 }
 
+/**
+ * Verify that the proxy CA certificate is installed and working
+ * Platform-independent approach: Checks if cert exists in system keychain
+ * @returns Promise<boolean> - true if certificate is installed, false otherwise
+ */
+async function verifyCertificateInstallation(): Promise<boolean> {
+	try {
+		console.log('[CertVerify] Checking certificate installation...');
+		
+		// Platform-specific certificate verification
+		return new Promise<boolean>((resolve) => {
+			let checkCommand: string;
+			
+			if (process.platform === 'darwin') {
+				// macOS: Check if certificate exists in System.keychain
+				checkCommand = 'security find-certificate -c "HumanAgent Proxy CA" /Library/Keychains/System.keychain 2>&1';
+			} else if (process.platform === 'win32') {
+				// Windows: Check if certificate exists in Root store
+				checkCommand = 'certutil -verifystore Root "HumanAgent Proxy CA" 2>&1';
+			} else {
+				// Linux: Check NSS database
+				checkCommand = 'certutil -L -d sql:$HOME/.pki/nssdb 2>&1 | grep "HumanAgent Proxy CA"';
+			}
+			
+			// Execute check command
+			const { exec } = require('child_process');
+			exec(checkCommand, (error: any, stdout: string, stderr: string) => {
+				if (error) {
+					// Certificate not found
+					console.log(`[CertVerify] ❌ Certificate not installed (exit code: ${error.code})`);
+					resolve(false);
+					return;
+				}
+				
+				// Check if certificate name appears in output
+				if (stdout.includes('HumanAgent Proxy CA')) {
+					console.log('[CertVerify] ✅ Certificate is installed in system keychain');
+					resolve(true);
+				} else {
+					console.log('[CertVerify] ❌ Certificate not found in system keychain');
+					resolve(false);
+				}
+			});
+		});
+	} catch (error) {
+		console.log(`[CertVerify] ❌ Verification failed: ${error}`);
+		return false;
+	}
+}
+
 export async function activate(context: vscode.ExtensionContext) {
 	console.log('HumanAgent MCP extension activated!');
 
 	// Initialize telemetry service
 	telemetryService = new TelemetryService(context);
 	await telemetryService.trackExtensionActivated();
+	await telemetryService.trackFirstTimeUser(); // Track new installs
+	await telemetryService.trackWeeklyActive(); // Track weekly retention
 
 	// Determine port based on extension mode (dev vs production)
 	SERVER_PORT = context.extensionMode === vscode.ExtensionMode.Development ? 3738 : 3737;
@@ -153,12 +207,16 @@ export async function activate(context: vscode.ExtensionContext) {
 	const loggingEnabled = config.get<boolean>('logging.enabled', false);
 	const loggingLevel = config.get<string>('logging.level', 'INFO');
 	
+	// Get certificate storage path from VS Code global storage
+	const certStoragePath = context.globalStorageUri.fsPath;
+	
 	const serverOptions: any = {
 		serverPath: serverPath,
 		port: SERVER_PORT,
 		host: '127.0.0.1',
 		loggingEnabled: loggingEnabled,
-		loggingLevel: loggingLevel
+		loggingLevel: loggingLevel,
+		certStoragePath: certStoragePath
 	};
 	
 	// Only add logFile if logging is enabled
@@ -166,6 +224,8 @@ export async function activate(context: vscode.ExtensionContext) {
 		serverOptions.logFile = path.join(vscode.workspace.workspaceFolders[0].uri.fsPath, '.vscode', 'HumanAgent-server.log');
 		console.log('HumanAgent MCP: Logging enabled to .vscode directory');
 	}
+	
+	console.log(`HumanAgent MCP: Certificate storage path: ${certStoragePath}`);
 	
 	serverManager = ServerManager.getInstance(serverOptions);
 
@@ -218,6 +278,23 @@ export async function activate(context: vscode.ExtensionContext) {
 		showCollapseAll: true
 	});
 
+	// Update proxy status in tree view periodically
+	const updateProxyStatus = async () => {
+		try {
+			const serverStatus = await serverManager.getServerStatus();
+			chatTreeProvider.updateProxyStatus(serverStatus.proxy);
+		} catch (error) {
+			console.error('Failed to update proxy status:', error);
+		}
+	};
+	
+	// Initial update
+	updateProxyStatus();
+	
+	// Update every 10 seconds
+	const proxyStatusInterval = setInterval(updateProxyStatus, 10000);
+	context.subscriptions.push({ dispose: () => clearInterval(proxyStatusInterval) });
+
 	// Initialize Chat Webview Provider (no internal server dependency)
 	const chatWebviewProvider = new ChatWebviewProvider(context.extensionUri, null, mcpConfigManager, workspaceSessionId, context, mcpProvider, SERVER_PORT, telemetryService);
 	context.subscriptions.push(
@@ -251,15 +328,22 @@ export async function activate(context: vscode.ExtensionContext) {
 		// Get detailed server status
 		const serverStatus = await serverManager.getServerStatus();
 		
-		vscode.window.showInformationMessage(
+		let statusMessage = 
 			`HumanAgent MCP Server Status:\n` +
 			`- Running: ${serverStatus.isRunning ? '✅' : '❌'}\n` +
 			`- PID: ${serverStatus.pid || 'N/A'}\n` +
 			`- Port: ${serverStatus.port}\n` +
 			`- Host: ${serverStatus.host}\n` +
 			`- Session: ${workspaceSessionId}\n` +
-			`- Registration: Native Provider ✅`
-		);
+			`- Registration: Native Provider ✅`;
+		
+		if (serverStatus.proxy) {
+			statusMessage += `\n\nProxy Server:\n` +
+				`- Running: ${serverStatus.proxy.running ? '✅' : '❌'}\n` +
+				`- Port: ${serverStatus.proxy.port || 'N/A'}`;
+		}
+		
+		vscode.window.showInformationMessage(statusMessage);
 	});
 
 	// Create server management commands
@@ -333,7 +417,7 @@ export async function activate(context: vscode.ExtensionContext) {
 			await new Promise(resolve => setTimeout(resolve, 1000)); // Brief pause
 			const success = await serverManager.ensureServerRunning();
 			if (success) {
-				vscode.window.showInformationMessage('HumanAgent MCP Server restarted successfully!');
+				// MCP server restarted silently
 				// Notify webview to reset reconnection backoff and try immediately
 				chatWebviewProvider.notifyServerStarted();
 			} else {
@@ -344,51 +428,140 @@ export async function activate(context: vscode.ExtensionContext) {
 		}
 	});
 
-	const configureMcpCommand = vscode.commands.registerCommand('humanagent-mcp.configureMcp', async () => {
-		const options = [];
-		
-		// Server management options only (registration handled automatically by native provider)
-		const serverStatus = await serverManager.getServerStatus();
-		if (serverStatus.isRunning) {
-			options.push('🔴 Stop Server');
-			options.push('🔄 Restart Server');
-		} else {
-			options.push('▶️ Start Server');
-		}
-		
-		options.push('📊 Show Status');
-
-		const action = await vscode.window.showQuickPick(options, {
-			placeHolder: 'Choose MCP Server action:'
-		});
-
-		if (!action) {
-			return;
-		}
-
-		try {
-			switch (action) {
-				case '▶️ Start Server':
-					await vscode.commands.executeCommand('humanagent-mcp.startServer');
-					break;
-				case '🔴 Stop Server':
-					await vscode.commands.executeCommand('humanagent-mcp.stopServer');
-					break;
-				case '🔄 Restart Server':
-					await vscode.commands.executeCommand('humanagent-mcp.restartServer');
-					break;
-				case '📊 Show Status':
-					vscode.commands.executeCommand('humanagent-mcp.showStatus');
-					break;
-			}
-		} catch (error) {
-			vscode.window.showErrorMessage(`Server action failed: ${error instanceof Error ? error.message : String(error)}`);
-		}
-	});
+	// Configure MCP command removed - functionality moved to webview context menu
 
 	// Register report issue command
 	const reportIssueCommand = vscode.commands.registerCommand('humanagent-mcp.reportIssue', () => {
 		vscode.env.openExternal(vscode.Uri.parse('https://github.com/benharper/HumanAgent-MCP/issues'));
+	});
+
+	// Register install proxy certificate command
+	const installProxyCertificateCommand = vscode.commands.registerCommand('humanagent-mcp.installProxyCertificate', async () => {
+		try {
+			// Get certificate path from globalStorage
+			const certStoragePath = context.globalStorageUri.fsPath;
+			const certPath = path.join(certStoragePath, 'proxy-ca', 'ca.pem');
+			
+			// Check if certificate exists
+			if (!fs.existsSync(certPath)) {
+				vscode.window.showErrorMessage('Proxy certificate not found. Please start the proxy server first.');
+				return;
+			}
+			
+			// Show information message explaining what will happen
+			const proceed = await vscode.window.showInformationMessage(
+				'This will install the HumanAgent Proxy CA certificate to your system keychain. This requires administrator privileges (sudo password).',
+				{ modal: true },
+				'Install'
+			);
+			
+			if (proceed !== 'Install') {
+				return;
+			}
+			
+			// Determine platform-specific command
+			let installCommand: string;
+			if (process.platform === 'darwin') {
+				// macOS
+				installCommand = `sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain "${certPath}"`;
+			} else if (process.platform === 'win32') {
+				// Windows
+				installCommand = `certutil -addstore Root "${certPath}"`;
+			} else {
+				// Linux
+				vscode.window.showWarningMessage(
+					'Certificate installation on Linux varies by distribution. Please install manually:\n' +
+					`sudo cp "${certPath}" /usr/local/share/ca-certificates/humanagent-proxy-ca.crt && sudo update-ca-certificates`
+				);
+				return;
+			}
+			
+			// Execute installation command
+			const terminal = vscode.window.createTerminal('HumanAgent: Install Certificate');
+			terminal.sendText(installCommand);
+			terminal.show();
+			
+			// Wait a moment, then verify installation
+			setTimeout(async () => {
+				const verified = await verifyCertificateInstallation();
+				if (verified) {
+					vscode.window.showInformationMessage('✅ Proxy certificate installed successfully! You can now enable the proxy.');
+				} else {
+					vscode.window.showWarningMessage('Certificate installation may have failed. Please check the terminal output.');
+				}
+			}, 3000);
+			
+		} catch (error) {
+			vscode.window.showErrorMessage(`Failed to install certificate: ${error}`);
+		}
+	});
+
+	// Register uninstall proxy certificate command
+	const uninstallProxyCertificateCommand = vscode.commands.registerCommand('humanagent-mcp.uninstallProxyCertificate', async () => {
+		try {
+			// Check if proxy is currently enabled
+			const proxyConfig = vscode.workspace.getConfiguration().get('http.proxy');
+			if (proxyConfig) {
+				// Disable proxy first
+				const disableFirst = await vscode.window.showWarningMessage(
+					'Proxy is currently enabled. It will be disabled before uninstalling the certificate.',
+					{ modal: true },
+					'Continue'
+				);
+				
+				if (disableFirst !== 'Continue') {
+					return;
+				}
+				
+				await vscode.workspace.getConfiguration().update('http.proxy', undefined, vscode.ConfigurationTarget.Global);
+				// Proxy disabled silently
+			}
+			
+			// Show confirmation message
+			const proceed = await vscode.window.showWarningMessage(
+				'This will remove the HumanAgent Proxy CA certificate from your system keychain. This requires administrator privileges (sudo password).',
+				{ modal: true },
+				'Uninstall'
+			);
+			
+			if (proceed !== 'Uninstall') {
+				return;
+			}
+			
+			// Determine platform-specific command
+			let uninstallCommand: string;
+			if (process.platform === 'darwin') {
+				// macOS
+				uninstallCommand = 'sudo security delete-certificate -c "HumanAgent Proxy CA" /Library/Keychains/System.keychain';
+			} else if (process.platform === 'win32') {
+				// Windows
+				uninstallCommand = 'certutil -delstore Root "HumanAgent Proxy CA"';
+			} else {
+				// Linux
+				vscode.window.showWarningMessage(
+					'Certificate uninstallation on Linux varies by distribution. Please remove manually:\n' +
+					'sudo rm /usr/local/share/ca-certificates/humanagent-proxy-ca.crt && sudo update-ca-certificates'
+				);
+				return;
+			}
+			
+			// Execute uninstallation command
+			const terminal = vscode.window.createTerminal('HumanAgent: Uninstall Certificate');
+			terminal.sendText(uninstallCommand);
+			terminal.show();
+			
+			setTimeout(() => {
+				vscode.window.showInformationMessage('Certificate uninstalled. You may need to restart VS Code for changes to take effect.');
+			}, 2000);
+			
+		} catch (error) {
+			vscode.window.showErrorMessage(`Failed to uninstall certificate: ${error}`);
+		}
+	});
+
+	// Register verify certificate command (internal use by enableProxy)
+	const verifyCertificateCommand = vscode.commands.registerCommand('humanagent-mcp.verifyCertificate', async () => {
+		return await verifyCertificateInstallation();
 	});
 
 	// Add all disposables to context
@@ -401,8 +574,10 @@ export async function activate(context: vscode.ExtensionContext) {
 		startServerCommand,
 		stopServerCommand,
 		restartServerCommand,
-		configureMcpCommand,
-		reportIssueCommand
+		reportIssueCommand,
+		installProxyCertificateCommand,
+		uninstallProxyCertificateCommand,
+		verifyCertificateCommand
 	);
 
 	// Show welcome message
@@ -562,8 +737,15 @@ async function registerSessionWithStandaloneServer(sessionId: string, forceRereg
 		}
 	}
 	
+	// Get VS Code's session ID for mapping
+	const vscodeSessionId = vscode.env.sessionId;
+	console.log(`HumanAgent MCP: VS Code Session ID: ${vscodeSessionId}`);
+	console.log(`HumanAgent MCP: Workspace Path: ${workspaceRoot || 'none'}`);
+	
 	const requestBody = { 
 		sessionId,
+		vscodeSessionId: vscodeSessionId,
+		workspacePath: workspaceRoot,
 		overrideData: overrideData,
 		forceReregister: forceReregister
 	};

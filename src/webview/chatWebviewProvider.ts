@@ -6,6 +6,7 @@ import { ChatMessage } from '../mcp/types';
 import { McpConfigManager } from '../mcp/mcpConfigManager';
 import { AudioNotification } from '../audio/audioNotification';
 import { TelemetryService } from '../telemetry/telemetryService';
+import { ServerManager } from '../serverManager';
 
 export class ChatWebviewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'humanagent-mcp.chatView';
@@ -165,8 +166,8 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
           await this.handleMcpAction(data.action);
           break;
         case 'requestServerStatus':
-          // Call the dedicated status command from extension.ts
-          vscode.commands.executeCommand('humanagent-mcp.showStatus');
+          // Update the webview with current server status (for menu updates)
+          await this.updateServerStatus();
           break;
         case 'playNotificationSound':
           // Sound removed - only play on AI tool calls
@@ -257,22 +258,75 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
     }
   }
 
-  private updateServerStatus() {
+  private async updateServerStatus() {
     if (!this._view) {
       return;
     }
 
+    // Get full server status including proxy info
+    const serverManager = ServerManager.getInstance();
+    const status = await serverManager.getServerStatus();
+    
+    // Check if proxy is currently enabled in global settings only
+    const config = vscode.workspace.getConfiguration();
+    const globalProxySetting = config.inspect('http.proxy')?.globalValue;
+    const proxyUrl = status.proxy?.running ? `http://127.0.0.1:${status.proxy.port}` : null;
+    
+    const globalProxyEnabled = proxyUrl && globalProxySetting === proxyUrl;
+
     this._view.webview.postMessage({
       type: 'serverStatus',
       data: {
-        running: true, // Assume standalone server is running if configured
+        isRunning: status.isRunning,
+        running: status.isRunning, // Legacy compatibility
         tools: 1, // Default tool count
         pendingRequests: 0, // Can't get from standalone server easily
         registered: true, // Always true with native provider
-        configType: 'native' // Native provider registration
+        configType: 'native', // Native provider registration
+        proxy: status.proxy,
+        proxyEnabled: globalProxyEnabled, // Legacy compatibility
+        globalProxyEnabled: globalProxyEnabled
       }
     });
   }
+
+  private async enableProxy() {
+    const serverManager = ServerManager.getInstance();
+    const status = await serverManager.getServerStatus();
+    if (!status.proxy?.running) {
+      vscode.window.showWarningMessage('Proxy server is not running');
+      return;
+    }
+
+    // Verify certificate is installed and working before enabling proxy
+    const certVerified = await vscode.commands.executeCommand('humanagent-mcp.verifyCertificate') as boolean;
+    
+    if (!certVerified) {
+      const action = await vscode.window.showErrorMessage(
+        '⚠️ Proxy certificate is not installed or not trusted. HTTPS traffic will fail without the certificate.',
+        'Install Certificate',
+        'Cancel'
+      );
+      
+      if (action === 'Install Certificate') {
+        await vscode.commands.executeCommand('humanagent-mcp.installProxyCertificate');
+      }
+      return;
+    }
+
+    const proxyUrl = `http://127.0.0.1:${status.proxy.port}`;
+    await vscode.workspace.getConfiguration().update('http.proxy', proxyUrl, vscode.ConfigurationTarget.Global);
+    // Proxy enabled silently
+    await this.updateServerStatus();
+  }
+
+  private async disableProxy() {
+    await vscode.workspace.getConfiguration().update('http.proxy', undefined, vscode.ConfigurationTarget.Global);
+    // Proxy disabled silently
+    await this.updateServerStatus();
+  }
+
+
 
   private async createPromptOverrideFile() {
     try {
@@ -402,18 +456,35 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
   private async handleMcpAction(action: string) {
     try {
       switch (action) {
-        case 'start':
-        case 'stop':
-        case 'restart':
-          vscode.window.showInformationMessage('MCP Server management not available - using standalone server');
+        case 'startServer':
+          await vscode.commands.executeCommand('humanagent-mcp.startServer');
+          break;
+        case 'stopServer':
+          // Always disable proxy before stopping server
+          await this.disableProxy();
+          await vscode.commands.executeCommand('humanagent-mcp.stopServer');
+          break;
+        case 'restartServer':
+          await vscode.commands.executeCommand('humanagent-mcp.restartServer');
+          break;
+        case 'enableGlobalProxy':
+        case 'enableProxy': // Legacy support
+          await this.enableProxy();
+          break;
+        case 'disableGlobalProxy':
+        case 'disableProxy': // Legacy support
+          await this.disableProxy();
+          break;
+        case 'installCertificate':
+          await vscode.commands.executeCommand('humanagent-mcp.installProxyCertificate');
+          break;
+        case 'uninstallCertificate':
+          await vscode.commands.executeCommand('humanagent-mcp.uninstallProxyCertificate');
           break;
         case 'register':
         case 'unregister':
           // Registration handled automatically by native provider
           vscode.window.showInformationMessage('HumanAgent MCP registration is handled automatically by the native provider.');
-          break;
-        case 'configure':
-          vscode.commands.executeCommand('humanagent-mcp.configureMcp');
           break;
         case 'testSound':
           // Test notification sound by triggering a fake notification
@@ -431,6 +502,9 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
           break;
         case 'openWebView':
           await this.openWebInterface();
+          break;
+        case 'openHelp':
+          vscode.env.openExternal(vscode.Uri.parse('https://github.com/3DTek-xyz/HumanAgent-MCP#readme'));
           break;
         case 'reportIssue':
           vscode.env.openExternal(vscode.Uri.parse('https://github.com/3DTek-xyz/HumanAgent-MCP/issues/new'));
@@ -541,18 +615,43 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
   }
 
   private _getHtmlForWebview(webview: vscode.Webview) {
-    // Check if HumanAgentOverride.json exists in workspace
+    // Check if HumanAgentOverride.json exists in workspace and load quick replies
     let overrideFileExists = false;
+    let quickReplyOptions = [
+      "Yes Please Proceed",
+      "Explain in more detail please"
+    ];
+    let workspacePath = 'none';
+    
     if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
       const workspaceFolder = vscode.workspace.workspaceFolders[0];
-      const overrideFilePath = path.join(workspaceFolder.uri.fsPath, '.vscode', 'HumanAgentOverride.json');
+      workspacePath = workspaceFolder.uri.fsPath;
+      const overrideFilePath = path.join(workspacePath, '.vscode', 'HumanAgentOverride.json');
       overrideFileExists = fs.existsSync(overrideFilePath);
+      
+      // Load quick replies from override file if it exists
+      if (overrideFileExists) {
+        try {
+          const overrideContent = fs.readFileSync(overrideFilePath, 'utf8');
+          const overrideData = JSON.parse(overrideContent);
+          if (overrideData.quickReplies && overrideData.quickReplies.options && Array.isArray(overrideData.quickReplies.options)) {
+            quickReplyOptions = overrideData.quickReplies.options;
+          }
+        } catch (error) {
+          console.error('Failed to load quick replies from override file:', error);
+        }
+      }
     }
 
     // Messages will be loaded dynamically from server via JavaScript
     const messagesHtml = '<div id="messages-loading">Loading conversation history...</div>';
 
     const hasPendingResponse = this.currentRequestId ? 'waiting' : '';
+    
+    // Generate quick reply options HTML
+    const quickReplyOptionsHtml = quickReplyOptions.map(option => 
+      `<option value="${this._escapeHtml(option)}">${this._escapeHtml(option)}</option>`
+    ).join('\\n              ');
 
     return `
       <!DOCTYPE html>
@@ -803,9 +902,13 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
       <body>
         <div class="header">
           <div class="status">
-            <div class="status-indicator">
-              <div class="status-dot"></div>
-              <span id="server-status-text">HumanAgent MCP Server</span>
+            <div class="status-indicator" title="MCP server connection status">
+              <div class="status-dot" id="server-status-dot"></div>
+              <span id="server-status-text">HumanAgent MCP</span>
+            </div>
+            <div class="status-indicator" id="proxy-status-container" style="margin-left: 15px;" title="Proxy setting">
+              <div class="status-dot" id="proxy-status-dot" style="background-color: #808080;"></div>
+              <span id="proxy-status-text">Proxy</span>
             </div>
             <div class="control-buttons">
               <button class="cog-button" onclick="showConfigMenu()" title="Configure MCP">⚙️</button>
@@ -823,8 +926,7 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
             <input type="text" class="message-input" id="messageInput" placeholder="Type your response...">
             <select class="quick-replies" id="quickReplies" onchange="selectQuickReply()" ${hasPendingResponse ? '' : 'disabled'}>
               <option value="">Quick Replies...</option>
-              <option value="Yes Please Proceed">Yes Please Proceed</option>
-              <option value="Explain in more detail please">Explain in more detail please</option>
+              ${quickReplyOptionsHtml}
             </select>
             <button class="send-button" id="sendButton" onclick="sendMessage()" ${hasPendingResponse ? '' : 'disabled'}>Send</button>
           </div>
@@ -857,13 +959,20 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
             }
           });
 
-          function showConfigMenu() {
+          async function showConfigMenu() {
             // Create dropdown menu
             const existingMenu = document.getElementById('configMenu');
             if (existingMenu) {
               existingMenu.remove();
               return;
             }
+            
+            // Request fresh server status before showing menu
+            console.log('Requesting server status before showing menu...');
+            vscode.postMessage({ type: 'requestServerStatus' });
+            
+            // Wait a bit for status to be received
+            await new Promise(resolve => setTimeout(resolve, 100));
             
             const menu = document.createElement('div');
             menu.id = 'configMenu';
@@ -879,6 +988,7 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
             
             // Get dynamic options based on current status
             const options = getDynamicMenuOptions();
+            console.log('Menu options:', options, 'Current status:', currentServerStatus);
             
             options.forEach(option => {
               const item = document.createElement('div');
@@ -995,16 +1105,43 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
           let currentServerStatus = null;
 
           function getDynamicMenuOptions() {
-            // Simplified menu options (no registration needed with native provider)
             const options = [
-              { text: '📊 Show Status', action: 'requestServerStatus' },
-              { text: window.overrideFileExists ? '📁 Recreate Override File' : '📁 Create Override File', action: 'overridePrompt' },
-              { text: '📝 Name This Chat', action: 'nameSession' },
-              { text: '🌐 Open Web View', action: 'openWebView' },
-              { text: '⚙️ Configure MCP', action: 'configure' },
-              { text: '🐛 Report Issue', action: 'reportIssue' },
-              { text: '💡 Request Feature', action: 'requestFeature' }
+              { text: '📊 Show Status', action: 'requestServerStatus' }
             ];
+            
+            // Server management options based on current status
+            if (currentServerStatus) {
+              if (currentServerStatus.isRunning) {
+                options.push({ text: '🔴 Stop Server', action: 'stopServer' });
+                options.push({ text: '🔄 Restart Server', action: 'restartServer' });
+              } else {
+                options.push({ text: '▶️ Start Server', action: 'startServer' });
+              }
+              
+              // Proxy options if proxy is running
+              if (currentServerStatus.proxy && currentServerStatus.proxy.running) {
+                const proxyUrl = \`http://127.0.0.1:\${currentServerStatus.proxy.port}\`;
+                
+                // Global proxy options
+                if (currentServerStatus.globalProxyEnabled) {
+                  options.push({ text: '🔌 Disable Proxy', action: 'disableGlobalProxy' });
+                } else {
+                  options.push({ text: '🔌 Enable Proxy', action: 'enableGlobalProxy' });
+                }
+                
+                // Certificate management options
+                options.push({ text: '🔐 Install Proxy Certificate', action: 'installCertificate' });
+                options.push({ text: '🗑️ Uninstall Proxy Certificate', action: 'uninstallCertificate' });
+              }
+            }
+            
+            // Session-specific options
+            options.push({ text: window.overrideFileExists ? '📁 Recreate Override File' : '📁 Create Override File', action: 'overridePrompt' });
+            options.push({ text: '📝 Name This Chat', action: 'nameSession' });
+            options.push({ text: '🌐 Open Web View', action: 'openWebView' });
+            options.push({ text: '❓ Help & Documentation', action: 'openHelp' });
+            options.push({ text: '🐛 Report Issue', action: 'reportIssue' });
+            options.push({ text: '💡 Request Feature', action: 'requestFeature' });
             
             return options;
           }
@@ -1042,6 +1179,33 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
                   statusElement.textContent = 'HumanAgent MCP Server (Unknown)';
                 }
               }
+              
+              // Update proxy status display
+              const proxyStatusContainer = document.getElementById('proxy-status-container');
+              const proxyStatusDot = document.getElementById('proxy-status-dot');
+              const proxyStatusText = document.getElementById('proxy-status-text');
+              
+              if (message.data.proxy && message.data.proxy.running) {
+                // Proxy is running - update indicator
+                if (proxyStatusContainer && proxyStatusDot && proxyStatusText) {
+                  proxyStatusContainer.style.display = 'flex';
+                  if (message.data.globalProxyEnabled) {
+                    proxyStatusDot.style.backgroundColor = '#4caf50'; // Green - enabled
+                    proxyStatusText.textContent = 'Proxy (Enabled)';
+                  } else {
+                    proxyStatusDot.style.backgroundColor = '#ff9800'; // Orange - disabled
+                    proxyStatusText.textContent = 'Proxy (Disabled)';
+                  }
+                }
+              } else {
+                // Proxy not running - show stopped status
+                if (proxyStatusContainer && proxyStatusDot && proxyStatusText) {
+                  proxyStatusContainer.style.display = 'flex';
+                  proxyStatusDot.style.backgroundColor = '#f44336'; // Red - not running
+                  proxyStatusText.textContent = 'Proxy (Stopped)';
+                }
+              }
+              
               console.log('Server status:', message.data);
             } else if (message.type === 'flashBorder') {
               // Trigger flashing border animation
@@ -1115,7 +1279,7 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
                 currentEventSource.close();
               }
               
-              console.log('Setting up SSE connection to MCP server for session:', sessionId);
+              console.log('Setting up SSE connection to MCP server for session:', sessionId, 'workspace:', '${workspacePath}');
               const eventSource = new EventSource(\`http://localhost:${this.port}/mcp?sessionId=\${sessionId}\`);
               currentEventSource = eventSource;
               

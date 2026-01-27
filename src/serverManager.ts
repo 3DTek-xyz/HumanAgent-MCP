@@ -11,6 +11,7 @@ export interface ServerManagerOptions {
     logFile?: string;
     loggingEnabled?: boolean;
     loggingLevel?: string;
+    certStoragePath?: string;
 }
 
 export class ServerManager {
@@ -186,7 +187,9 @@ export class ServerManager {
                     HUMANAGENT_LOGGING_ENABLED: this.options.loggingEnabled ? 'true' : 'false',
                     HUMANAGENT_LOGGING_LEVEL: this.options.loggingLevel || 'INFO',
                     // Pass port to standalone server
-                    HUMANAGENT_MCP_PORT: this.options.port.toString()
+                    HUMANAGENT_MCP_PORT: this.options.port.toString(),
+                    // Pass certificate storage path to MCP server
+                    HUMANAGENT_CERT_STORAGE_PATH: this.options.certStoragePath || ''
                 }
             });
 
@@ -267,16 +270,37 @@ export class ServerManager {
         port: number;
         host: string;
         serverPath: string;
+        proxy?: {
+            running: boolean;
+            port: number;
+        };
     }> {
         const isRunning = await this.isServerRunning();
         const pid = await this.getStoredPid();
         
+        // Fetch proxy status from server if running
+        let proxyStatus: { running: boolean; port: number } | undefined;
+        if (isRunning) {
+            try {
+                const response = await fetch(`http://${this.options.host}:${this.options.port}/proxy/status`);
+                if (response.ok) {
+                    const json = await response.json() as any;
+                    proxyStatus = json as { running: boolean; port: number };
+                }
+            } catch (error) {
+                this.log(`Failed to fetch proxy status: ${error}`);
+            }
+        }
+        
+        const isProcessAlive = pid ? await this.isProcessRunning(pid) : false;
+        
         return {
             isRunning,
-            pid: pid && await this.isProcessRunning(pid) ? pid : undefined,
+            pid: isProcessAlive ? pid : undefined,
             port: this.options.port,
             host: this.options.host!,
-            serverPath: this.options.serverPath
+            serverPath: this.options.serverPath,
+            proxy: proxyStatus
         };
     }
 

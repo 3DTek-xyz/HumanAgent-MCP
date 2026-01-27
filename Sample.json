@@ -1,0 +1,225 @@
+{
+    "name": "GitHub.copilot-chat/codeMapper.trackEditSurvival",
+    "time": "2025-11-28T20:59:52.940Z",
+    "ver": "4.0",
+    "iKey": "o:0c6ae279ed8443289764825290e4f9e2",
+    "ext": {
+        "sdk": {
+            "ver": "1DS-Web-JS-4.3.6"
+        },
+        "web": {
+            "consentDetails": "{\"GPC_DataSharingOptIn\":false}"
+        },
+        "metadata": {
+            "f": {
+                "baseData": {
+                    "f": {
+                        "measurements": {
+                            "f": {
+                                "survivalRateFourGram": {
+                                    "t": 6
+                                },
+                                "survivalRateNoRevert": {
+                                    "t": 6
+                                },
+                                "timeDelayMs": {
+                                    "t": 6
+                                },
+                                "didBranchChange": {
+                                    "t": 6
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "data": {
+        "baseData": {
+            "name": "GitHub.copilot-chat/codeMapper.trackEditSurvival",
+            "properties": {
+                "requestId": "c48e9a5b-bee4-4bfb-af3a-5a716d5cad97",
+                "requestSource": "agent",
+                "mapper": "stringReplaceTool",
+                "abexp.assignmentcontext": "vsliv368cf:30146710;binariesv615:30325510;ah738568:30811544;nativeloc1:31344060;7d05f481:31400083;cg8ef616:31400082;copilot_t_ci:31333650;pythonrdcb7:31342333;aj953862:31281341;nes-set-on:31351930;6abeh943:31336334;cloudbuttont:31379625;todos-1:31405332;upload-service:31384080;v66_all_req:31402695;control_gpt5applypatchexclusively:31412085;42190218_ostrepl:31403339;trigger-command-fix:31379601;auto_model_enabled:31385282;use-responses-api:31390855;je187915:31401257;ec5jj548:31422691;copilot-nes-oct-t:31418199;cp_cls_c_966_ss:31426491;defaultvisibility:31426295;expandedtokens:31426297;c0683394:31419495;g0h3h215:31426582;nes-undo-2:31426804;b53de340:31426751;fa76a614:31426783;5j92g670_sonnet:31426787;;cmp-ext-treat:31426748",
+                "common.tid": "bd748f0eaa6ddd34ed77b48af2e2f862",
+                "common.sku": "monthly_subscriber_quota",
+                "common.os": "darwin",
+                "common.nodeArch": "arm64",
+                "common.platformversion": "24.5.0",
+                "common.telemetryclientversion": "PACKAGE_JSON_VERSION",
+                "common.extname": "GitHub.copilot-chat",
+                "common.extversion": "0.33.3",
+                "common.vscodemachineid": "bb272dde7b027841491f6e0175284f6bb8556b4161187fdd199fdd50221744f0",
+                "common.vscodesessionid": "7954f340-cec5-4358-97f5-d6f87a4a0fb01764310272552",
+                "common.vscodecommithash": "cb1933bbc38d329b3595673a600fab5c7368f0a7",
+                "common.sqmid": "",
+                "common.devDeviceId": "c49eebf8-d0c1-4946-8116-fe79b6895d58",
+                "common.vscodeversion": "1.106.1",
+                "common.vscodereleasedate": "2025-11-16T10:20:23.745Z",
+                "common.isnewappinstall": false,
+                "common.product": "desktop",
+                "common.uikind": "desktop",
+                "common.remotename": "none",
+                "version": "PostChannel=4.3.6"
+            },
+            "measurements": {
+                "survivalRateFourGram": 1,
+                "survivalRateNoRevert": 1,
+                "timeDelayMs": 300000,
+                "didBranchChange": 0
+            }
+        }
+    }
+}
+{
+    "name": "GitHub.copilot-chat/codeMapper.trackEditSurvival",
+    "time": "2025-11-28T20:59:53.610Z",
+    "ver": "4.0",
+    "iKey": "o:0c6ae279ed8443289764825290e4f9e2",
+    "ext": {
+        "sdk": {
+            "ver": "1DS-Web-JS-4.3.6"
+        },
+        "web": {
+            "consentDetails": "{\"GPC_DataSharingOptIn\":false}"
+        },
+        "metadata": {
+            "f": {
+                "baseData": {
+                    "f": {
+                        "measurements": {
+                            "f": {
+                                "survivalRateFourGram": {
+                                    "t": 6
+                                },
+                                "survivalRateNoRevert": {
+                                    "t": 6
+                                },
+                                "timeDelayMs": {
+                                    "t": 6
+                                },
+                                "didBranchChange": {
+                                    "t": 6
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "data": {
+        "baseData": {
+            "name": "GitHub.copilot-chat/codeMapper.trackEditSurvival",
+            "properties": {
+                "requestId": "c48e9a5b-bee4-4bfb-af3a-5a716d5cad97",
+                "requestSource": "agent",
+                "mapper": "stringReplaceTool",
+                "abexp.assignmentcontext": "vsliv368cf:30146710;binariesv615:30325510;ah738568:30811544;nativeloc1:31344060;7d05f481:31400083;cg8ef616:31400082;copilot_t_ci:31333650;pythonrdcb7:31342333;aj953862:31281341;nes-set-on:31351930;6abeh943:31336334;cloudbuttont:31379625;todos-1:31405332;upload-service:31384080;v66_all_req:31402695;control_gpt5applypatchexclusively:31412085;42190218_ostrepl:31403339;trigger-command-fix:31379601;auto_model_enabled:31385282;use-responses-api:31390855;je187915:31401257;ec5jj548:31422691;copilot-nes-oct-t:31418199;cp_cls_c_966_ss:31426491;defaultvisibility:31426295;expandedtokens:31426297;c0683394:31419495;g0h3h215:31426582;nes-undo-2:31426804;b53de340:31426751;fa76a614:31426783;5j92g670_sonnet:31426787;;cmp-ext-treat:31426748",
+                "common.tid": "bd748f0eaa6ddd34ed77b48af2e2f862",
+                "common.sku": "monthly_subscriber_quota",
+                "common.os": "darwin",
+                "common.nodeArch": "arm64",
+                "common.platformversion": "24.5.0",
+                "common.telemetryclientversion": "PACKAGE_JSON_VERSION",
+                "common.extname": "GitHub.copilot-chat",
+                "common.extversion": "0.33.3",
+                "common.vscodemachineid": "bb272dde7b027841491f6e0175284f6bb8556b4161187fdd199fdd50221744f0",
+                "common.vscodesessionid": "7954f340-cec5-4358-97f5-d6f87a4a0fb01764310272552",
+                "common.vscodecommithash": "cb1933bbc38d329b3595673a600fab5c7368f0a7",
+                "common.sqmid": "",
+                "common.devDeviceId": "c49eebf8-d0c1-4946-8116-fe79b6895d58",
+                "common.vscodeversion": "1.106.1",
+                "common.vscodereleasedate": "2025-11-16T10:20:23.745Z",
+                "common.isnewappinstall": false,
+                "common.product": "desktop",
+                "common.uikind": "desktop",
+                "common.remotename": "none",
+                "version": "PostChannel=4.3.6"
+            },
+            "measurements": {
+                "survivalRateFourGram": 1,
+                "survivalRateNoRevert": 1,
+                "timeDelayMs": 30000,
+                "didBranchChange": 0
+            }
+        }
+    }
+}
+{
+    "name": "GitHub.copilot-chat/codeMapper.trackEditSurvival",
+    "time": "2025-11-28T20:59:53.622Z",
+    "ver": "4.0",
+    "iKey": "o:0c6ae279ed8443289764825290e4f9e2",
+    "ext": {
+        "sdk": {
+            "ver": "1DS-Web-JS-4.3.6"
+        },
+        "web": {
+            "consentDetails": "{\"GPC_DataSharingOptIn\":false}"
+        },
+        "metadata": {
+            "f": {
+                "baseData": {
+                    "f": {
+                        "measurements": {
+                            "f": {
+                                "survivalRateFourGram": {
+                                    "t": 6
+                                },
+                                "survivalRateNoRevert": {
+                                    "t": 6
+                                },
+                                "timeDelayMs": {
+                                    "t": 6
+                                },
+                                "didBranchChange": {
+                                    "t": 6
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "data": {
+        "baseData": {
+            "name": "GitHub.copilot-chat/codeMapper.trackEditSurvival",
+            "properties": {
+                "requestId": "c48e9a5b-bee4-4bfb-af3a-5a716d5cad97",
+                "requestSource": "agent",
+                "mapper": "stringReplaceTool",
+                "abexp.assignmentcontext": "vsliv368cf:30146710;binariesv615:30325510;ah738568:30811544;nativeloc1:31344060;7d05f481:31400083;cg8ef616:31400082;copilot_t_ci:31333650;pythonrdcb7:31342333;aj953862:31281341;nes-set-on:31351930;6abeh943:31336334;cloudbuttont:31379625;todos-1:31405332;upload-service:31384080;v66_all_req:31402695;control_gpt5applypatchexclusively:31412085;42190218_ostrepl:31403339;trigger-command-fix:31379601;auto_model_enabled:31385282;use-responses-api:31390855;je187915:31401257;ec5jj548:31422691;copilot-nes-oct-t:31418199;cp_cls_c_966_ss:31426491;defaultvisibility:31426295;expandedtokens:31426297;c0683394:31419495;g0h3h215:31426582;nes-undo-2:31426804;b53de340:31426751;fa76a614:31426783;5j92g670_sonnet:31426787;;cmp-ext-treat:31426748",
+                "common.tid": "bd748f0eaa6ddd34ed77b48af2e2f862",
+                "common.sku": "monthly_subscriber_quota",
+                "common.os": "darwin",
+                "common.nodeArch": "arm64",
+                "common.platformversion": "24.5.0",
+                "common.telemetryclientversion": "PACKAGE_JSON_VERSION",
+                "common.extname": "GitHub.copilot-chat",
+                "common.extversion": "0.33.3",
+                "common.vscodemachineid": "bb272dde7b027841491f6e0175284f6bb8556b4161187fdd199fdd50221744f0",
+                "common.vscodesessionid": "7954f340-cec5-4358-97f5-d6f87a4a0fb01764310272552",
+                "common.vscodecommithash": "cb1933bbc38d329b3595673a600fab5c7368f0a7",
+                "common.sqmid": "",
+                "common.devDeviceId": "c49eebf8-d0c1-4946-8116-fe79b6895d58",
+                "common.vscodeversion": "1.106.1",
+                "common.vscodereleasedate": "2025-11-16T10:20:23.745Z",
+                "common.isnewappinstall": false,
+                "common.product": "desktop",
+                "common.uikind": "desktop",
+                "common.remotename": "none",
+                "version": "PostChannel=4.3.6"
+            },
+            "measurements": {
+                "survivalRateFourGram": 1,
+                "survivalRateNoRevert": 1,
+                "timeDelayMs": 600000,
+                "didBranchChange": 0
+            }
+        }
+    }
+}
