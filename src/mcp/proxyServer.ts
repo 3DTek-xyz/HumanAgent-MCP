@@ -72,9 +72,11 @@ export class ProxyServer extends EventEmitter {
     private rules: ProxyRule[] = []; // Proxy rules loaded from storage
     private currentSessionId?: string; // Current session ID for filtering rules
     private currentWorkspaceFolder?: string; // Current workspace folder for filtering rules
+    private sessionLookup?: (vscodeSessionId: string) => { sessionId: string, workspacePath?: string } | undefined; // Callback to lookup session context from VS Code session ID
 
-    constructor() {
+    constructor(sessionLookup?: (vscodeSessionId: string) => { sessionId: string, workspacePath?: string } | undefined) {
         super();
+        this.sessionLookup = sessionLookup;
     }
 
     /**
@@ -246,9 +248,13 @@ export class ProxyServer extends EventEmitter {
      * Truncate text to first N words for display
      */
     private truncateToWords(text: string, wordCount: number = 10): string {
-        if (!text) return '';
+        if (!text) {
+            return '';
+        }
         const words = text.toString().trim().split(/\s+/);
-        if (words.length <= wordCount) return text;
+        if (words.length <= wordCount) {
+            return text;
+        }
         return words.slice(0, wordCount).join(' ') + '...';
     }
 
@@ -306,7 +312,7 @@ export class ProxyServer extends EventEmitter {
      * Returns only rules that should apply in the current context
      */
     private getApplicableRules(): ProxyRule[] {
-        return this.rules.filter(rule => {
+        const applicable = this.rules.filter(rule => {
             // If no scope specified, treat as global (backward compatibility)
             const scope = rule.scope || 'global';
             
@@ -317,16 +323,26 @@ export class ProxyServer extends EventEmitter {
             
             // Session rules only apply if sessionId matches
             if (scope === 'session') {
-                return rule.sessionId === this.currentSessionId;
+                const matches = rule.sessionId === this.currentSessionId;
+                if (!matches) {
+                    this.addDebugLog(`   ⏭️  Skipping session rule "${rule.name || rule.id}" - requires session "${rule.sessionName || rule.sessionId}" but current is "${this.currentSessionId || 'none'}"`);
+                }
+                return matches;
             }
             
             // Workspace rules only apply if workspaceFolder matches
             if (scope === 'workspace') {
-                return rule.workspaceFolder === this.currentWorkspaceFolder;
+                const matches = rule.workspaceFolder === this.currentWorkspaceFolder;
+                if (!matches) {
+                    this.addDebugLog(`   ⏭️  Skipping workspace rule "${rule.name || rule.id}" - requires workspace "${rule.workspaceFolder}" but current is "${this.currentWorkspaceFolder || 'none'}"`);
+                }
+                return matches;
             }
             
             return false;
         });
+        
+        return applicable;
     }
 
     /**
@@ -349,10 +365,7 @@ export class ProxyServer extends EventEmitter {
             return;
         }
         
-        // Get applicable rules based on scope filtering
-        const applicableRules = this.getApplicableRules().filter(r => r.enabled);
-        this.addDebugLog(`DEBUG: Found ${applicableRules.length} applicable enabled rules out of ${this.rules.length} total`);
-        this.addDebugLog(`Setting up UNIFIED HANDLER for ${applicableRules.length} applicable enabled proxy rules`);
+        this.addDebugLog(`Setting up UNIFIED HANDLER for proxy rules (will filter per-request based on scope)`);
 
         // Single unified handler that processes rules and logs ALL requests
         await this.mockttpServer.forAnyRequest()
@@ -362,14 +375,36 @@ export class ProxyServer extends EventEmitter {
                     this.addDebugLog(`📥 INCOMING REQUEST: ${req.method} ${req.url}`);
                     this.addDebugLog(`   Headers: ${JSON.stringify(req.headers, null, 2)}`);
                     
-                    // Extract session context from request
-                    const sessionId = req.headers['x-session-id'] || 
-                                     req.headers['x-vscode-session-id'] || 
-                                     req.headers['session-id'];
-                    if (sessionId) {
-                        this.addDebugLog(`   Session ID detected: ${sessionId}`);
-                        this.setSessionContext(sessionId as string);
+                    // Extract session context from request FIRST
+                    // Check for VS Code's native session ID header (no hyphen)
+                    const vscodeSessionId = req.headers['vscode-sessionid'];
+                    if (vscodeSessionId && this.sessionLookup) {
+                        const sessionContext = this.sessionLookup(vscodeSessionId as string);
+                        if (sessionContext) {
+                            this.addDebugLog(`   VS Code Session ID detected: ${vscodeSessionId} → MCP Session: ${sessionContext.sessionId}, Workspace: ${sessionContext.workspacePath || 'none'}`);
+                            this.setSessionContext(sessionContext.sessionId);
+                            if (sessionContext.workspacePath) {
+                                this.setWorkspaceContext(sessionContext.workspacePath);
+                            }
+                        } else {
+                            this.addDebugLog(`   VS Code Session ID detected but not mapped: ${vscodeSessionId}`);
+                        }
+                    } else {
+                        // Fallback to legacy headers
+                        const sessionId = req.headers['x-session-id'] || 
+                                         req.headers['x-vscode-session-id'] || 
+                                         req.headers['session-id'];
+                        if (sessionId) {
+                            this.addDebugLog(`   Session ID detected from legacy headers: ${sessionId}`);
+                            this.setSessionContext(sessionId as string);
+                        } else {
+                            this.addDebugLog(`   No session ID in headers, using current context: ${this.currentSessionId || 'none'}, workspace: ${this.currentWorkspaceFolder || 'none'}`);
+                        }
                     }
+                    
+                    // Get applicable rules based on CURRENT scope context (after session detection)
+                    const applicableRules = this.getApplicableRules().filter(r => r.enabled);
+                    this.addDebugLog(`   Found ${applicableRules.length} applicable enabled rules (out of ${this.rules.length} total)`);
                     
                     if (applicableRules.length > 0) {
                         this.addDebugLog(`   Evaluating ${applicableRules.length} applicable rules...`);
@@ -422,7 +457,15 @@ export class ProxyServer extends EventEmitter {
                             this.addDebugLog(`   ${isMatch ? '✅' : '❌'} ${ruleLabel} - Pattern: "${rule.pattern}" - Match: ${isMatch}`);
                             
                             if (isMatch) {
-                                this.addDebugLog(`   🎯 RULE MATCHED! Applying "${rule.name || rule.id}"`);
+                                // Determine scope type for logging
+                                let scopeType = 'GLOBAL';
+                                if (rule.scope === 'session' && rule.sessionId) {
+                                    scopeType = `SESSION (${rule.sessionName || rule.sessionId})`;
+                                } else if (rule.scope === 'workspace' && rule.workspaceFolder) {
+                                    scopeType = `WORKSPACE (${rule.workspaceFolder})`;
+                                }
+                                
+                                this.addDebugLog(`   🎯 RULE MATCHED! [${scopeType}] Applying "${rule.name || rule.id}"`);
                                 
                                 // Handle drop requests
                                 if (rule.dropRequest) {

@@ -237,6 +237,7 @@ export class McpServer extends EventEmitter {
   private sessionWorkspacePaths: Map<string, string> = new Map(); // Session to workspace path mapping
   private sessionNames: Map<string, string> = new Map(); // Session friendly names
   private sessionMessageSettings: Map<string, any> = new Map(); // Session-specific message settings
+  private vscodeSessionMapping: Map<string, { sessionId: string, workspacePath?: string }> = new Map(); // VS Code session ID → {MCP session ID, workspace path}
   // Removed: sessionMessages - now handled by ChatManager
   private httpServer?: http.Server;
   private port: number = 3737;
@@ -251,6 +252,11 @@ export class McpServer extends EventEmitter {
   private proxyServer: ProxyServer; // Integrated proxy server
   private globalStorage?: Memento; // VS Code globalStorage for persisting global settings like proxy rules
 
+  // Helper method for ProxyServer to lookup MCP session ID and workspace path from VS Code session ID
+  private getSessionContextFromVSCodeSession(vscodeSessionId: string): { sessionId: string, workspacePath?: string } | undefined {
+    return this.vscodeSessionMapping.get(vscodeSessionId);
+  }
+
   constructor(private sessionId?: string, private workspacePath?: string, port?: number) {
     super();
     if (port) {
@@ -258,7 +264,11 @@ export class McpServer extends EventEmitter {
     }
     this.debugLogger = new DebugLogger(this.workspacePath);
     this.chatManager = new ChatManager(this.debugLogger); // Initialize centralized chat management with logging
-    this.proxyServer = new ProxyServer(); // Initialize proxy server
+    
+    // Initialize proxy server with session context lookup callback
+    this.proxyServer = new ProxyServer((vscodeSessionId: string) => {
+      return this.vscodeSessionMapping.get(vscodeSessionId);
+    });
     
     this.config = {
       name: 'HumanAgentMCP',
@@ -638,6 +648,17 @@ export class McpServer extends EventEmitter {
       this.debugLogger.log('INFO', `Loaded ${finalRules.length} proxy rules for proxy server`);
       
       const proxyPort = await this.proxyServer.start(httpsOptions);
+      
+      // Restore session context for active sessions
+      const activeSessions = this.getActiveSessions();
+      if (activeSessions.length > 0) {
+        // Set context to the first active session (primary session)
+        const primarySessionId = activeSessions[0];
+        const primaryWorkspace = this.sessionWorkspacePaths.get(primarySessionId);
+        this.proxyServer.setSessionContext(primarySessionId);
+        this.proxyServer.setWorkspaceContext(primaryWorkspace);
+        this.debugLogger.log('INFO', `Restored proxy context - Session: ${primarySessionId}, Workspace: ${primaryWorkspace || 'none'}`);
+      }
       
       // Trust CA for all spawned processes
       process.env.NODE_EXTRA_CA_CERTS = httpsOptions.certPath;
@@ -1096,7 +1117,21 @@ export class McpServer extends EventEmitter {
       req.on('data', (chunk) => { body += chunk.toString(); });
       req.on('end', () => {
         try {
-          const { sessionId, overrideData, forceReregister } = JSON.parse(body);
+          const { sessionId, vscodeSessionId, workspacePath, overrideData, forceReregister } = JSON.parse(body);
+          
+          this.debugLogger.log('HTTP', `Registering session ${sessionId} with VS Code session ID: ${vscodeSessionId || 'none'}, workspace: ${workspacePath || 'none'}`);
+          
+          // Store VS Code session ID mapping if provided (with workspace path)
+          if (vscodeSessionId) {
+            this.vscodeSessionMapping.set(vscodeSessionId, { sessionId, workspacePath });
+            this.debugLogger.log('INFO', `Stored session mapping: ${vscodeSessionId} → {sessionId: ${sessionId}, workspacePath: ${workspacePath || 'none'}}`);
+          }
+          
+          // Store workspace path for this session (always store it, even with overrideData)
+          if (workspacePath) {
+            this.sessionWorkspacePaths.set(sessionId, workspacePath);
+            this.debugLogger.log('INFO', `Stored workspace path for session ${sessionId}: ${workspacePath}`);
+          }
           
           // If session exists and forceReregister is true, unregister first
           if (forceReregister && this.activeSessions.has(sessionId)) {
@@ -1104,7 +1139,7 @@ export class McpServer extends EventEmitter {
             this.unregisterSession(sessionId);
           }
           
-          this.registerSession(sessionId, undefined, overrideData);
+          this.registerSession(sessionId, workspacePath, overrideData);
           res.statusCode = 200;
           res.setHeader('Content-Type', 'application/json');
           res.end(JSON.stringify({ success: true, sessionId, totalSessions: this.activeSessions.size, reregistered: !!forceReregister }));
@@ -1130,10 +1165,15 @@ export class McpServer extends EventEmitter {
         }
       });
     } else if (req.method === 'GET' && url.pathname === '/sessions') {
-      // List active sessions
+      // List active sessions with their names
+      const sessions = this.getActiveSessions().map(sessionId => ({
+        id: sessionId,
+        name: this.sessionNames.get(sessionId) || 'Unnamed Session',
+        workspacePath: this.sessionWorkspacePaths.get(sessionId)
+      }));
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify({ sessions: this.getActiveSessions(), totalSessions: this.activeSessions.size }));
+      res.end(JSON.stringify({ sessions, totalSessions: this.activeSessions.size }));
     } else if (req.method === 'POST' && url.pathname === '/sessions/name') {
       // Set friendly name for session
       let body = '';
@@ -2015,7 +2055,7 @@ export class McpServer extends EventEmitter {
       } else if (url.pathname === '/proxy/rules' && req.method === 'POST') {
         // Add new proxy rule
         const body = await this.readRequestBody(req);
-        const { name, pattern, redirect, jsonata, enabled, dropRequest, dropStatusCode } = JSON.parse(body);
+        const { name, pattern, redirect, jsonata, enabled, dropRequest, dropStatusCode, scope, sessionId, sessionName, workspaceFolder, debug } = JSON.parse(body);
         
         if (!name) {
           res.statusCode = 400;
@@ -2049,7 +2089,7 @@ export class McpServer extends EventEmitter {
           return;
         }
         
-        const ruleId = await this.addProxyRule(name, pattern, redirect, jsonata, enabled !== false, dropRequest, dropStatusCode);
+        const ruleId = await this.addProxyRule(name, pattern, redirect, jsonata, enabled !== false, dropRequest, dropStatusCode, scope, sessionId, sessionName, workspaceFolder, debug);
         res.statusCode = 200;
         res.end(JSON.stringify({ success: true, ruleId }));
       } else if (url.pathname.startsWith('/proxy/rules/') && req.method === 'PUT') {
@@ -2304,6 +2344,32 @@ export class McpServer extends EventEmitter {
     const sessions = Array.from(this.activeSessions).map((sessionId) => {
       const workspaceRoot = this.sessionWorkspacePaths.get(sessionId);
       const friendlyName = this.sessionNames.get(sessionId);
+      const messageSettings = this.sessionMessageSettings.get(sessionId);
+      
+      // Get quick reply options from message settings or use defaults
+      let quickReplyOptions = [
+        "Yes Please Proceed",
+        "Explain in more detail please"
+      ];
+      
+      // Try to get from message settings first
+      if (messageSettings && messageSettings.quickReplies && messageSettings.quickReplies.options && Array.isArray(messageSettings.quickReplies.options)) {
+        quickReplyOptions = messageSettings.quickReplies.options;
+      } else if (workspaceRoot) {
+        // Fallback: Try to read from workspace override file
+        try {
+          const overrideFilePath = path.join(workspaceRoot, '.vscode', 'HumanAgentOverride.json');
+          if (fs.existsSync(overrideFilePath)) {
+            const overrideContent = fs.readFileSync(overrideFilePath, 'utf8');
+            const overrideData = JSON.parse(overrideContent);
+            if (overrideData.quickReplies && overrideData.quickReplies.options && Array.isArray(overrideData.quickReplies.options)) {
+              quickReplyOptions = overrideData.quickReplies.options;
+            }
+          }
+        } catch (error) {
+          // Ignore errors, use defaults
+        }
+      }
       
       let title: string;
       if (friendlyName) {
@@ -2317,7 +2383,8 @@ export class McpServer extends EventEmitter {
       return {
         id: sessionId,
         title: title,
-        messages: [] // TODO: Add proper message storage
+        messages: [], // TODO: Add proper message storage
+        quickReplyOptions: quickReplyOptions
       };
     });
 
@@ -2551,6 +2618,75 @@ export class McpServer extends EventEmitter {
         .proxy-rules-container:not(.active) {
             display: none;
         }
+        
+        .proxy-debug-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 15px;
+        }
+
+        .proxy-debug-container.active {
+            display: flex;
+        }
+
+        .proxy-debug-container:not(.active) {
+            display: none;
+        }
+        
+        .debug-logs {
+            flex: 1;
+            overflow: auto;
+            font-family: Monaco, "Courier New", monospace;
+            font-size: 12px;
+            line-height: 1.2;
+            background: #000000;
+            color: #00ff00;
+            border: 1px solid var(--vscode-input-border);
+            border-radius: 4px;
+            padding: 10px;
+        }
+        
+        .debug-log-entry {
+            margin-bottom: 2px;
+            padding: 2px 0;
+            display: flex;
+            color: #00ff00;
+        }
+        
+        .debug-log-entry .timestamp {
+            color: #888888;
+            flex-shrink: 0;
+            margin-right: 5px;
+        }
+        
+        .debug-log-entry .message {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            flex: 1;
+        }
+        
+        .debug-log-entry.karen,
+        .debug-log-entry.karen .message {
+            color: #ff69b4;
+            font-weight: bold;
+        }
+        
+        .debug-log-entry.master,
+        .debug-log-entry.master .message {
+            color: #ffff00;
+        }
+        
+        .debug-log-entry.error,
+        .debug-log-entry.error .message {
+            color: #ff4444;
+        }
+        
+        .debug-log-entry.success,
+        .debug-log-entry.success .message {
+            color: #44ff44;
+        }
 
         .proxy-rules-header {
             display: flex;
@@ -2560,7 +2696,6 @@ export class McpServer extends EventEmitter {
             padding-bottom: 10px;
             border-bottom: 1px solid var(--vscode-border);
         }
-
         .proxy-rules-header h2 {
             font-size: 16px;
             font-weight: 600;
@@ -3070,6 +3205,7 @@ export class McpServer extends EventEmitter {
             <div class="tabs-right" id="tabs-right">
                 <div class="tab ${sessions.length === 0 ? 'active' : ''}" data-session="proxy">📊 Proxy Logs</div>
                 <div class="tab" data-session="proxy-rules">⚙️ Proxy Rules</div>
+                <div class="tab" data-session="proxy-debug">🔍 Proxy Debug</div>
             </div>
         </div>
         
@@ -3085,8 +3221,9 @@ export class McpServer extends EventEmitter {
                             <textarea class="input-box" placeholder="Type your message..." data-session="${session.id}"></textarea>
                             <select class="quick-replies" data-session="${session.id}">
                                 <option value="">Quick Replies...</option>
-                                <option value="Yes Please Proceed">Yes Please Proceed</option>
-                                <option value="Explain in more detail please">Explain in more detail please</option>
+                                ${session.quickReplyOptions.map((option: string) => 
+                                  `<option value="${this.escapeHtml(option)}">${this.escapeHtml(option)}</option>`
+                                ).join('\n                                ')}
                             </select>
                             <button class="send-button" data-session="${session.id}">Send</button>
                         </div>
@@ -3138,22 +3275,54 @@ export class McpServer extends EventEmitter {
                         <div style="font-size: 11px; opacity: 0.7; margin-top: 4px;">
                             JSONata expression to transform request body. Examples:<br/>
                             • <code>\$merge([\$, {"api_key": "new-key"}])</code> - Replace API key<br/>
-                            • <code>\$merge([\$, {"messages": \$.messages.(\$ | role = "system" ? {"content": "new text"} : \$)}])</code> - Replace system message<br/>
+                            • <code>\$merge([\$, {"messages": \$.messages.(role = "system" ? \$merge([\$, {"content": "new text"}]) : \$)}])</code> - Replace system message content<br/>
                             • <code>\$</code> - Pass through unchanged (identity transform)<br/>
                             📖 <a href="https://jsonata.org/" target="_blank" style="color: #ff8c00; text-decoration: underline;">JSONata Documentation</a>
                         </div>
                     </div>
                     <div class="form-group">
                         <label>
-                            <input type="checkbox" id="rule-drop-request" style="margin-right: 8px;" />
+                            <input type="checkbox" id="rule-drop-request" onchange="handleDropRequestChange()" style="margin-right: 8px;" />
                             Drop Request (block request entirely)
                         </label>
                         <div style="font-size: 11px; opacity: 0.7; margin-top: 4px;">If checked, matching requests will be blocked instead of forwarded</div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="rule-drop-status-group" style="display: none;">
                         <label for="rule-drop-status">Drop Status Code (if dropping)</label>
                         <input type="number" id="rule-drop-status" placeholder="204" value="204" min="200" max="599" />
                         <div style="font-size: 11px; opacity: 0.7; margin-top: 4px;">HTTP status code to return for dropped requests (default: 204 No Content)</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="rule-scope">Rule Scope</label>
+                        <select id="rule-scope" onchange="handleScopeChange()" style="width: 100%; padding: 8px; background: var(--vscode-input-background); color: var(--vscode-input-foreground); border: 1px solid var(--vscode-input-border); border-radius: 4px;">
+                            <option value="global">Global (applies to all workspaces)</option>
+                            <option value="session">Session (applies to specific session)</option>
+                            <option value="workspace">Workspace (applies to specific workspace folder)</option>
+                        </select>
+                        <div style="font-size: 11px; opacity: 0.7; margin-top: 4px;">Control where this rule applies</div>
+                    </div>
+                    
+                    <div class="form-group" id="rule-session-id-group" style="display: none;">
+                        <label for="rule-session-id">Session</label>
+                        <select id="rule-session-id" style="width: 100%; padding: 8px; background: var(--vscode-input-background); color: var(--vscode-input-foreground); border: 1px solid var(--vscode-input-border); border-radius: 4px;">
+                            <option value="">Select a session...</option>
+                        </select>
+                        <div style="font-size: 11px; opacity: 0.7; margin-top: 4px;">The session this rule applies to</div>
+                    </div>
+                    
+                    <div class="form-group" id="rule-workspace-folder-group" style="display: none;">
+                        <label for="rule-workspace-folder">Workspace Folder Path</label>
+                        <input type="text" id="rule-workspace-folder" placeholder="e.g., /Users/username/projects/myapp" />
+                        <div style="font-size: 11px; opacity: 0.7; margin-top: 4px;">The absolute path to the workspace folder</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="rule-debug" style="margin-right: 8px;" />
+                            Enable Enhanced Debug Logging
+                        </label>
+                        <div style="font-size: 11px; opacity: 0.7; margin-top: 4px;">Show detailed debug information when this rule is evaluated (helps with troubleshooting)</div>
                     </div>
                     <div class="form-actions">
                         <button class="cancel-button" onclick="hideAddRuleForm()">Cancel</button>
@@ -3164,6 +3333,25 @@ export class McpServer extends EventEmitter {
                 <div class="proxy-rules-list" id="proxy-rules-list">
                     <div style="opacity: 0.6; text-align: center; padding: 20px;">
                         No proxy rules configured. Click "Add Rule" to create one.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="proxy-debug-container" data-session="proxy-debug">
+                <div class="proxy-logs-header">
+                    <h2>Proxy Debug</h2>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <select id="debug-log-filter" onchange="filterDebugLogs()" style="padding: 6px 10px; background: var(--vscode-input-background); color: var(--vscode-input-foreground); border: 1px solid var(--vscode-input-border); border-radius: 4px;">
+                            <option value="all">Show All</option>
+                            <option value="chat-completions">Show Only AI Chat Completions</option>
+                            <option value="matched-rules">Show Only Matched Rules</option>
+                        </select>
+                        <button class="clear-logs-button" onclick="clearDebugLogs()">Clear Logs</button>
+                    </div>
+                </div>
+                <div class="debug-logs" id="debug-logs">
+                    <div style="opacity: 0.6; text-align: center; padding: 20px;">
+                        Proxy debug logs will appear here when requests are intercepted and modified.
                     </div>
                 </div>
             </div>
@@ -3233,6 +3421,11 @@ export class McpServer extends EventEmitter {
                 container.classList.toggle('active', container.dataset.session === sessionId);
             });
             
+            // Update active proxy debug container
+            document.querySelectorAll('.proxy-debug-container').forEach(container => {
+                container.classList.toggle('active', container.dataset.session === sessionId);
+            });
+            
             activeSessionId = sessionId;
             
             // Load proxy logs if switching to proxy tab
@@ -3243,6 +3436,15 @@ export class McpServer extends EventEmitter {
             // Load proxy rules if switching to proxy rules tab
             if (sessionId === 'proxy-rules') {
                 loadProxyRules();
+                stopDebugLogsPolling();
+            }
+            
+            // Load proxy debug logs if switching to proxy debug tab
+            if (sessionId === 'proxy-debug') {
+                loadDebugLogs();
+                startDebugLogsPolling();
+            } else {
+                stopDebugLogsPolling();
             }
         }
 
@@ -3874,7 +4076,12 @@ export class McpServer extends EventEmitter {
             }
         }
 
-        function addSessionTab(sessionId) {
+        function addSessionTab(sessionId, quickReplyOptions) {
+            // Use default options if not provided
+            if (!quickReplyOptions || !Array.isArray(quickReplyOptions)) {
+                quickReplyOptions = ["Yes Please Proceed", "Explain in more detail please"];
+            }
+            
             // Check if tab already exists
             const existingTab = document.querySelector(\`[data-session="\${sessionId}"].tab\`);
             if (existingTab) {
@@ -3900,6 +4107,11 @@ export class McpServer extends EventEmitter {
             // Add tab to left container (chat tabs)
             tabsLeftContainer.appendChild(tabElement);
 
+            // Generate quick reply options HTML
+            const quickReplyOptionsHtml = quickReplyOptions.map(option => 
+                \`<option value="\${escapeHtml(option)}">\${escapeHtml(option)}</option>\`
+            ).join('\\n                        ');
+
             // Create new chat container
             const chatContainer = document.createElement('div');
             chatContainer.className = 'chat-container';
@@ -3912,8 +4124,7 @@ export class McpServer extends EventEmitter {
                     <textarea class="input-box" placeholder="Type your message..." data-session="\${sessionId}"></textarea>
                     <select class="quick-replies" data-session="\${sessionId}">
                         <option value="">Quick Replies...</option>
-                        <option value="Yes Please Proceed">Yes Please Proceed</option>
-                        <option value="Explain in more detail please">Explain in more detail please</option>
+                        \${quickReplyOptionsHtml}
                     </select>
                     <button class="send-button" data-session="\${sessionId}">Send</button>
                 </div>
@@ -4110,7 +4321,7 @@ export class McpServer extends EventEmitter {
                     } else if (data.type === 'session-registered' && data.data) {
                         // Add new session tab dynamically
                         console.log('New session registered:', data.data);
-                        addSessionTab(data.data.sessionId);
+                        addSessionTab(data.data.sessionId, data.data.quickReplyOptions);
                     } else if (data.type === 'session-unregistered' && data.data) {
                         // Remove session tab dynamically
                         console.log('Session unregistered:', data.data);
@@ -4301,6 +4512,123 @@ export class McpServer extends EventEmitter {
             }
         });
 
+        // Proxy Debug Logs Functions
+        let lastDebugTimestamp = null;
+        let debugLogsFetchInterval = null;
+        
+        async function loadDebugLogs() {
+            try {
+                const response = await fetch('/proxy/logs');
+                const data = await response.json();
+                const debugLogs = data.debugLogs || [];
+                
+                const debugLogsContainer = document.getElementById('debug-logs');
+                
+                if (debugLogs.length === 0) {
+                    if (!lastDebugTimestamp) {
+                        debugLogsContainer.innerHTML = '<div style="opacity: 0.6; text-align: center; padding: 20px;">No debug logs yet. Enhanced debug output will appear here.</div>';
+                    }
+                    return;
+                }
+                
+                // On first load, add all logs
+                if (lastDebugTimestamp === null) {
+                    debugLogsContainer.innerHTML = '';
+                    debugLogs.forEach(log => {
+                        addDebugLogEntry(log.timestamp, log.message);
+                    });
+                    if (debugLogs.length > 0) {
+                        lastDebugTimestamp = debugLogs[debugLogs.length - 1].timestamp;
+                    }
+                } else {
+                    // Only add logs newer than our last timestamp
+                    const newLogs = debugLogs.filter(log => log.timestamp > lastDebugTimestamp);
+                    newLogs.forEach(log => {
+                        addDebugLogEntry(log.timestamp, log.message);
+                    });
+                    if (newLogs.length > 0) {
+                        lastDebugTimestamp = newLogs[newLogs.length - 1].timestamp;
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to load debug logs:', error);
+            }
+        }
+        
+        function addDebugLogEntry(timestamp, message) {
+            const debugLogsContainer = document.getElementById('debug-logs');
+            if (!debugLogsContainer) return;
+            
+            // Remove placeholder if exists
+            const placeholder = debugLogsContainer.querySelector('div[style*="opacity: 0.6"]');
+            if (placeholder) {
+                placeholder.remove();
+            }
+            
+            const entry = document.createElement('div');
+            entry.className = 'debug-log-entry';
+            entry.dataset.timestamp = timestamp;
+            
+            // Determine styling based on message content - match standalone page exactly
+            let messageClass = '';
+            if (message.includes('KAREN')) {
+                entry.classList.add('karen');
+                messageClass = 'karen';
+            } else if (message.includes('MASTER HANDLER')) {
+                entry.classList.add('master');
+                messageClass = 'master';
+            } else if (message.includes('ERROR')) {
+                entry.classList.add('error');
+                messageClass = 'error';
+            } else if (message.includes('SUCCESS')) {
+                entry.classList.add('success');
+                messageClass = 'success';
+            }
+            
+            // Use the timestamp exactly as provided by the server (ISO format)
+            entry.innerHTML = \`<span class="timestamp">\${escapeHtml(timestamp)}</span> <span class="message \${messageClass}">\${escapeHtml(message)}</span>\`;
+            
+            // Check if user is at bottom BEFORE any DOM manipulation
+            const wasAtBottom = debugLogsContainer.scrollHeight - debugLogsContainer.scrollTop <= debugLogsContainer.clientHeight + 50; // 50px threshold
+            
+            debugLogsContainer.appendChild(entry);
+            
+            // Keep only last 500 entries
+            while (debugLogsContainer.children.length > 500) {
+                debugLogsContainer.removeChild(debugLogsContainer.firstChild);
+            }
+            
+            // Apply current filter to new entry
+            filterDebugLogs();
+            
+            // Only auto-scroll if user was already at the bottom
+            if (wasAtBottom) {
+                debugLogsContainer.scrollTop = debugLogsContainer.scrollHeight;
+            }
+        }
+        
+        // Start auto-refresh when on debug tab
+        function startDebugLogsPolling() {
+            if (debugLogsFetchInterval) return; // Already polling
+            debugLogsFetchInterval = setInterval(() => {
+                if (activeSessionId === 'proxy-debug') {
+                    loadDebugLogs();
+                }
+            }, 1000); // Poll every second
+        }
+        
+        function stopDebugLogsPolling() {
+            if (debugLogsFetchInterval) {
+                clearInterval(debugLogsFetchInterval);
+                debugLogsFetchInterval = null;
+            }
+        }
+        
+        // Start polling when page loads if we're on debug tab
+        if (activeSessionId === 'proxy-debug') {
+            startDebugLogsPolling();
+        }
+
         // Proxy Rules Functions
         let editingRuleId = null; // Track which rule is being edited
         
@@ -4329,13 +4657,163 @@ export class McpServer extends EventEmitter {
             });
         }
 
-        function clearProxyLogs() {
-            if (confirm('Are you sure you want to clear all proxy logs?')) {
+        async function clearProxyLogs() {
+            try {
+                await fetch('/proxy/clear-logs', { method: 'POST' });
                 const proxyLogsContainer = document.getElementById('proxy-logs');
                 proxyLogsContainer.innerHTML = '<div style="opacity: 0.6; text-align: center; padding: 20px;">Proxy logs will appear here when requests are made through the proxy.</div>';
                 
                 // Reset the filter checkbox
                 document.getElementById('filter-modified-only').checked = false;
+            } catch (error) {
+                console.error('Failed to clear proxy logs:', error);
+            }
+        }
+        
+        async function clearDebugLogs() {
+            try {
+                await fetch('/proxy/clear-logs', { method: 'POST' });
+                const debugLogsContainer = document.getElementById('debug-logs');
+                debugLogsContainer.innerHTML = '<div style="opacity: 0.6; text-align: center; padding: 20px;">Proxy debug logs will appear here when requests are intercepted and modified.</div>';
+                lastDebugTimestamp = null; // Reset timestamp tracking
+            } catch (error) {
+                console.error('Failed to clear debug logs:', error);
+            }
+        }
+        
+        function filterDebugLogs() {
+            const filterValue = document.getElementById('debug-log-filter').value;
+            const debugLogsContainer = document.getElementById('debug-logs');
+            const entries = debugLogsContainer.querySelectorAll('.debug-log-entry');
+            
+            if (entries.length === 0) return;
+            
+            // Build request groups by finding request boundaries (━━━━ separators)
+            const requestGroups = [];
+            let currentGroup = { url: '', entries: [] };
+            
+            entries.forEach(entry => {
+                const messageSpan = entry.querySelector('.message');
+                const message = messageSpan ? messageSpan.textContent : '';
+                
+                // Check if this is a request start marker
+                if (message.includes('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')) {
+                    // Save previous group if it has entries
+                    if (currentGroup.entries.length > 0) {
+                        requestGroups.push(currentGroup);
+                    }
+                    // Start new group
+                    currentGroup = { url: '', entries: [entry] };
+                } else if (message.includes('📥 INCOMING REQUEST:')) {
+                    // Extract URL from message like "📥 INCOMING REQUEST: GET https://example.com"
+                    const urlMatch = message.match(/📥 INCOMING REQUEST: \\w+ (.+)/);
+                    if (urlMatch) {
+                        currentGroup.url = urlMatch[1];
+                    }
+                    currentGroup.entries.push(entry);
+                } else {
+                    // Add to current group
+                    currentGroup.entries.push(entry);
+                }
+            });
+            
+            // Don't forget the last group
+            if (currentGroup.entries.length > 0) {
+                requestGroups.push(currentGroup);
+            }
+            
+            // Apply filter based on selection
+            if (filterValue === 'all') {
+                // Show everything
+                entries.forEach(entry => entry.style.display = 'flex');
+            } else if (filterValue === 'chat-completions') {
+                // Show only groups where URL contains "chat/completions"
+                requestGroups.forEach(group => {
+                    const shouldShow = group.url.includes('chat/completions');
+                    group.entries.forEach(entry => {
+                        entry.style.display = shouldShow ? 'flex' : 'none';
+                    });
+                });
+            } else if (filterValue === 'matched-rules') {
+                // Show entire request groups where ANY log indicates a rule matched
+                requestGroups.forEach(group => {
+                    // Check if any entry in this group shows a rule match
+                    const hasMatch = group.entries.some(entry => {
+                        const messageSpan = entry.querySelector('.message');
+                        const message = messageSpan ? messageSpan.textContent : '';
+                        return message.includes('✅ RULE MATCHED') ||
+                               message.includes('SUCCESS') ||
+                               message.includes('Applying rule') ||
+                               (message.includes('Rule #') && !message.includes('not a match')) ||
+                               message.includes('Transforming') ||
+                               message.includes('Modified');
+                    });
+                    
+                    // Show or hide the entire group
+                    group.entries.forEach(entry => {
+                        entry.style.display = hasMatch ? 'flex' : 'none';
+                    });
+                });
+            }
+        }
+        
+        function handleDropRequestChange() {
+            const dropRequest = document.getElementById('rule-drop-request').checked;
+            const dropStatusGroup = document.getElementById('rule-drop-status-group');
+            
+            if (dropRequest) {
+                dropStatusGroup.style.display = 'block';
+            } else {
+                dropStatusGroup.style.display = 'none';
+            }
+        }
+        
+        async function handleScopeChange() {
+            const scope = document.getElementById('rule-scope').value;
+            const sessionIdGroup = document.getElementById('rule-session-id-group');
+            const workspaceFolderGroup = document.getElementById('rule-workspace-folder-group');
+            
+            // Hide all scope-specific fields
+            sessionIdGroup.style.display = 'none';
+            workspaceFolderGroup.style.display = 'none';
+            
+            // Show fields based on selected scope
+            if (scope === 'session') {
+                sessionIdGroup.style.display = 'block';
+                // Load available sessions and wait for them to load
+                await loadSessionsForDropdown();
+            } else if (scope === 'workspace') {
+                workspaceFolderGroup.style.display = 'block';
+            }
+        }
+        
+        async function loadSessionsForDropdown() {
+            try {
+                const response = await fetch('/sessions');
+                const data = await response.json();
+                const sessionDropdown = document.getElementById('rule-session-id');
+                
+                // Clear existing options except first one
+                sessionDropdown.innerHTML = '<option value="">Select a session...</option>';
+                
+                // Add sessions
+                data.sessions.forEach(session => {
+                    const option = document.createElement('option');
+                    option.value = session.id;
+                    option.textContent = session.name;
+                    option.title = \`Session ID: \${session.id}\${session.workspacePath ? ' | Workspace: ' + session.workspacePath : ''}\`;
+                    sessionDropdown.appendChild(option);
+                });
+                
+                if (data.sessions.length === 0) {
+                    const option = document.createElement('option');
+                    option.value = '';
+                    option.textContent = 'No active sessions';
+                    option.disabled = true;
+                    sessionDropdown.appendChild(option);
+                }
+            } catch (error) {
+                console.error('Failed to load sessions:', error);
             }
         }
         
@@ -4348,6 +4826,11 @@ export class McpServer extends EventEmitter {
             document.getElementById('rule-jsonata').value = '';
             document.getElementById('rule-drop-request').checked = false;
             document.getElementById('rule-drop-status').value = '204';
+            document.getElementById('rule-scope').value = 'global';
+            document.getElementById('rule-session-id').value = '';
+            document.getElementById('rule-workspace-folder').value = '';
+            document.getElementById('rule-debug').checked = false;
+            handleScopeChange(); // Reset scope visibility
             document.querySelector('.add-rule-form .add-rule-button').textContent = 'Save Rule';
         }
         
@@ -4372,6 +4855,20 @@ export class McpServer extends EventEmitter {
                 document.getElementById('rule-jsonata').value = rule.jsonata || '';
                 document.getElementById('rule-drop-request').checked = rule.dropRequest || false;
                 document.getElementById('rule-drop-status').value = rule.dropStatusCode || 204;
+                document.getElementById('rule-scope').value = rule.scope || 'global';
+                document.getElementById('rule-workspace-folder').value = rule.workspaceFolder || '';
+                document.getElementById('rule-debug').checked = rule.debug || false;
+                
+                // Update drop status visibility
+                handleDropRequestChange();
+                
+                // Update scope visibility and reload sessions if needed
+                await handleScopeChange();
+                
+                // After sessions are loaded, set the selected session
+                if (rule.sessionId) {
+                    document.getElementById('rule-session-id').value = rule.sessionId;
+                }
                 
                 // Show form in edit mode
                 document.getElementById('add-rule-form').classList.add('active');
@@ -4461,6 +4958,12 @@ export class McpServer extends EventEmitter {
             const jsonata = document.getElementById('rule-jsonata').value.trim();
             const dropRequest = document.getElementById('rule-drop-request').checked;
             const dropStatusCode = parseInt(document.getElementById('rule-drop-status').value) || 204;
+            const scope = document.getElementById('rule-scope').value;
+            const sessionIdSelect = document.getElementById('rule-session-id');
+            const sessionId = sessionIdSelect.value.trim();
+            const sessionName = sessionIdSelect.selectedIndex > 0 ? sessionIdSelect.options[sessionIdSelect.selectedIndex].textContent : '';
+            const workspaceFolder = document.getElementById('rule-workspace-folder').value.trim();
+            const debug = document.getElementById('rule-debug').checked;
             
             if (!name) {
                 alert('Please provide a rule name');
@@ -4474,6 +4977,17 @@ export class McpServer extends EventEmitter {
             
             if (!dropRequest && !redirect && !jsonata) {
                 alert('Please provide either: drop request, redirect URL, or JSONata transformation');
+                return;
+            }
+            
+            // Validate scope-specific requirements
+            if (scope === 'session' && !sessionId) {
+                alert('Please provide a session ID for session-scoped rules');
+                return;
+            }
+            
+            if (scope === 'workspace' && !workspaceFolder) {
+                alert('Please provide a workspace folder path for workspace-scoped rules');
                 return;
             }
             
@@ -4493,7 +5007,12 @@ export class McpServer extends EventEmitter {
                     jsonata: jsonata || undefined,
                     dropRequest: dropRequest,
                     dropStatusCode: dropRequest ? dropStatusCode : undefined,
-                    enabled: true
+                    enabled: true,
+                    scope: scope,
+                    sessionId: scope === 'session' ? sessionId : undefined,
+                    sessionName: scope === 'session' && sessionName ? sessionName : undefined,
+                    workspaceFolder: scope === 'workspace' ? workspaceFolder : undefined,
+                    debug: debug
                 };
                 
                 let response;
@@ -4878,12 +5397,38 @@ export class McpServer extends EventEmitter {
       }
     } else if (workspacePath) {
       this.initializeSessionTools(sessionId, workspacePath);
+      
+      // Try to load message settings from workspace override file
+      try {
+        const overrideFilePath = path.join(workspacePath, '.vscode', 'HumanAgentOverride.json');
+        if (fs.existsSync(overrideFilePath)) {
+          const overrideContent = fs.readFileSync(overrideFilePath, 'utf8');
+          const overrideFileData = JSON.parse(overrideContent);
+          if (overrideFileData.messageSettings) {
+            this.sessionMessageSettings.set(sessionId, overrideFileData.messageSettings);
+            this.debugLogger.log('INFO', `Loaded message settings from override file for session ${sessionId}`);
+          }
+        }
+      } catch (error) {
+        this.debugLogger.log('ERROR', `Failed to load message settings from override file: ${error}`);
+      }
     }
     
     this.debugLogger.log('INFO', `Session registered: ${sessionId} (${this.activeSessions.size} total sessions)`);
     
+    // Get quick reply options for this session
+    const messageSettings = this.sessionMessageSettings.get(sessionId);
+    let quickReplyOptions = [
+      "Yes Please Proceed",
+      "Explain in more detail please"
+    ];
+    
+    if (messageSettings && messageSettings.quickReplies && messageSettings.quickReplies.options && Array.isArray(messageSettings.quickReplies.options)) {
+      quickReplyOptions = messageSettings.quickReplies.options;
+    }
+    
     // Send session registration to web interface only (for web UI tab creation)
-    this.sendToWebInterface('session-registered', { sessionId, totalSessions: this.activeSessions.size });
+    this.sendToWebInterface('session-registered', { sessionId, totalSessions: this.activeSessions.size, quickReplyOptions });
   }
 
 

@@ -737,8 +737,15 @@ async function registerSessionWithStandaloneServer(sessionId: string, forceRereg
 		}
 	}
 	
+	// Get VS Code's session ID for mapping
+	const vscodeSessionId = vscode.env.sessionId;
+	console.log(`HumanAgent MCP: VS Code Session ID: ${vscodeSessionId}`);
+	console.log(`HumanAgent MCP: Workspace Path: ${workspaceRoot || 'none'}`);
+	
 	const requestBody = { 
 		sessionId,
+		vscodeSessionId: vscodeSessionId,
+		workspacePath: workspaceRoot,
 		overrideData: overrideData,
 		forceReregister: forceReregister
 	};

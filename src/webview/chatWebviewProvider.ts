@@ -615,18 +615,43 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
   }
 
   private _getHtmlForWebview(webview: vscode.Webview) {
-    // Check if HumanAgentOverride.json exists in workspace
+    // Check if HumanAgentOverride.json exists in workspace and load quick replies
     let overrideFileExists = false;
+    let quickReplyOptions = [
+      "Yes Please Proceed",
+      "Explain in more detail please"
+    ];
+    let workspacePath = 'none';
+    
     if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
       const workspaceFolder = vscode.workspace.workspaceFolders[0];
-      const overrideFilePath = path.join(workspaceFolder.uri.fsPath, '.vscode', 'HumanAgentOverride.json');
+      workspacePath = workspaceFolder.uri.fsPath;
+      const overrideFilePath = path.join(workspacePath, '.vscode', 'HumanAgentOverride.json');
       overrideFileExists = fs.existsSync(overrideFilePath);
+      
+      // Load quick replies from override file if it exists
+      if (overrideFileExists) {
+        try {
+          const overrideContent = fs.readFileSync(overrideFilePath, 'utf8');
+          const overrideData = JSON.parse(overrideContent);
+          if (overrideData.quickReplies && overrideData.quickReplies.options && Array.isArray(overrideData.quickReplies.options)) {
+            quickReplyOptions = overrideData.quickReplies.options;
+          }
+        } catch (error) {
+          console.error('Failed to load quick replies from override file:', error);
+        }
+      }
     }
 
     // Messages will be loaded dynamically from server via JavaScript
     const messagesHtml = '<div id="messages-loading">Loading conversation history...</div>';
 
     const hasPendingResponse = this.currentRequestId ? 'waiting' : '';
+    
+    // Generate quick reply options HTML
+    const quickReplyOptionsHtml = quickReplyOptions.map(option => 
+      `<option value="${this._escapeHtml(option)}">${this._escapeHtml(option)}</option>`
+    ).join('\\n              ');
 
     return `
       <!DOCTYPE html>
@@ -901,8 +926,7 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
             <input type="text" class="message-input" id="messageInput" placeholder="Type your response...">
             <select class="quick-replies" id="quickReplies" onchange="selectQuickReply()" ${hasPendingResponse ? '' : 'disabled'}>
               <option value="">Quick Replies...</option>
-              <option value="Yes Please Proceed">Yes Please Proceed</option>
-              <option value="Explain in more detail please">Explain in more detail please</option>
+              ${quickReplyOptionsHtml}
             </select>
             <button class="send-button" id="sendButton" onclick="sendMessage()" ${hasPendingResponse ? '' : 'disabled'}>Send</button>
           </div>
@@ -1255,7 +1279,7 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
                 currentEventSource.close();
               }
               
-              console.log('Setting up SSE connection to MCP server for session:', sessionId);
+              console.log('Setting up SSE connection to MCP server for session:', sessionId, 'workspace:', '${workspacePath}');
               const eventSource = new EventSource(\`http://localhost:${this.port}/mcp?sessionId=\${sessionId}\`);
               currentEventSource = eventSource;
               
