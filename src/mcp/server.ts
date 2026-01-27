@@ -1001,15 +1001,27 @@ export class McpServer extends EventEmitter {
       let body = '';
       req.on('data', (chunk) => { body += chunk.toString(); });
       req.on('end', () => {
+        let parsed: any;
         try {
-          const { requestId, response, source } = JSON.parse(body);
-          
-          // Simple file write to test if endpoint is called
-          require('fs').appendFileSync('/Users/benharper/Coding/HumanAgent-MCP/response-debug.txt', 
-            `${new Date().toISOString()} - RESPONSE ENDPOINT CALLED - RequestID: ${requestId}\n`);
-          
+          parsed = JSON.parse(body);
+        } catch (error) {
+          res.statusCode = 400;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({ success: false, error: 'Invalid JSON body' }));
+          return;
+        }
+
+        const { requestId, response, source } = parsed || {};
+        if (!requestId || typeof requestId !== 'string' || typeof response !== 'string') {
+          res.statusCode = 400;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({ success: false, error: 'requestId (string) and response (string) are required' }));
+          return;
+        }
+
+        try {
           this.debugLogger.log('HTTP', '=== RESPONSE ENDPOINT CALLED ===');
-          this.debugLogger.log('HTTP', `Request ID: ${requestId}, Response: ${response}`);
+          this.debugLogger.log('HTTP', `Request ID: ${requestId}, Response length: ${response.length}`);
           
           // Get the pending request to extract session info - using ChatManager
           const pendingRequestInfo = this.chatManager.findPendingRequest(requestId);
@@ -1041,7 +1053,7 @@ export class McpServer extends EventEmitter {
             // Prepare AI content (original message + optional auto-append for AI)
             if (messageSettings?.autoAppendEnabled && messageSettings?.autoAppendText) {
               aiContent = response + '. ' + messageSettings.autoAppendText;
-              this.debugLogger.log('HTTP', `Auto-appended text for AI: "${messageSettings.autoAppendText}"`);
+              this.debugLogger.log('HTTP', `Auto-appended text for AI (len=${messageSettings.autoAppendText.length})`);
             }
             
             // Store the user message on server for synchronization (using display content)
@@ -1072,8 +1084,10 @@ export class McpServer extends EventEmitter {
           res.setHeader('Content-Type', 'application/json');
           res.end(JSON.stringify({ success, requestId }));
         } catch (error) {
-          res.statusCode = 400;
-          res.end(JSON.stringify({ success: false, error: 'Invalid request body' }));
+          this.debugLogger.log('ERROR', 'Unhandled error processing /response:', error);
+          res.statusCode = 500;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({ success: false, error: 'Internal error handling response' }));
         }
       });
     } else if (req.method === 'GET' && url.pathname === '/tools') {
