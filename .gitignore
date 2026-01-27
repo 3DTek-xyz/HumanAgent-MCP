@@ -34,5 +34,4 @@ test-*.js
 # Development files
 create-replacement.js
 replacement-string.txt
-jsonata-rule-builder.html
 Sample.json
