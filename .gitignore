@@ -23,10 +23,16 @@ Thumbs.db
 *.log
 response-debug.txt
 
-# macOS files
-.DS_Store
+# Test files
+test-*.js
 
 # Large media files
 *.mov
 *.mp4
 *.avi
+
+# Development files
+create-replacement.js
+replacement-string.txt
+jsonata-rule-builder.html
+Sample.json

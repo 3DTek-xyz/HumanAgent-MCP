@@ -67,6 +67,12 @@ Captures and displays HTTP/HTTPS traffic from VS Code for debugging extensions, 
 4. View captured requests in "Proxy Logs" section
 5. Click any log entry to expand and see full request/response details
 
+**Proxy Rules:**
+- Create rules to redirect, transform, or block requests
+- Use JSONata expressions for advanced transformations
+- Manage rules from Proxy Logs tab in web interface
+- See [Proxy-Rules.md](Proxy-Rules.md) for detailed documentation
+
 **Important:**
 - Certificate must be installed BEFORE enabling proxy
 - Only captures traffic when enabled (orange/green status)

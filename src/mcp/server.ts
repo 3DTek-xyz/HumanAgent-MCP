@@ -2302,14 +2302,15 @@ export class McpServer extends EventEmitter {
           'Karen Personality',
           '^https://api\\.individual\\.githubcopilot\\.com/chat/completions/?$',
           undefined,
-          '$merge([$, {"messages": $.messages.(' + 
-          '  role = "system" ? ' + 
-          '  $merge([$, {"content": "Your Name is Karen - behave like one - not too rude racist or sexist - just a bit of a bitch"}]) : ' + 
-          '  $' + 
-          ')}])',
+          '$merge([$, {"messages": $.messages.(  role = "system" ?   $merge([$, {"content": "Your Name is Karen - behave like one - not too rude racist or sexist - just a bit of a bitch"}]) :   $)}])',
           false, // disabled by default
           false,
-          undefined
+          undefined,
+          'global', // global scope
+          undefined,
+          undefined,
+          undefined,
+          false // debug disabled
         );
         
         // Example 2: Block Telemetry (drop request)
@@ -2320,7 +2321,12 @@ export class McpServer extends EventEmitter {
           undefined,
           false, // disabled by default  
           true, // drop request
-          204 // status code
+          204, // status code
+          'global', // global scope
+          undefined,
+          undefined,
+          undefined,
+          false // debug disabled
         );
         
         this.debugLogger.log('INFO', 'Created 2 default example rules (disabled)');
