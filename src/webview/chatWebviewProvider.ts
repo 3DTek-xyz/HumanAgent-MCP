@@ -176,6 +176,10 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
           // Handle session name update from SSE event
           await this.handleSessionNameUpdate(data.sessionId, data.name);
           break;
+        case 'triggerUpdate':
+          // Trigger extension update command
+          vscode.commands.executeCommand('humanagent-mcp.updateExtension');
+          break;
       }
     });
   }
@@ -244,6 +248,15 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
   private updateWebview() {
     if (this._view) {
       this._view.webview.html = this._getHtmlForWebview(this._view.webview);
+    }
+  }
+
+  public showUpdateNotification(version: string) {
+    if (this._view) {
+      this._view.webview.postMessage({
+        type: 'updateAvailable',
+        version: version
+      });
     }
   }
 
@@ -733,6 +746,24 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
             background-color: var(--vscode-button-hoverBackground);
           }
 
+          .update-button {
+            padding: 4px 12px;
+            font-size: 12px;
+            background-color: #f59e0b;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: 500;
+          }
+
+          .update-button:hover {
+            background-color: #d97706;
+          }
+
           .control-button {
             padding: 4px 8px;
             font-size: 11px;
@@ -812,6 +843,11 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
             border-radius: 3px;
             font-family: inherit;
             font-size: inherit;
+            resize: vertical;
+            min-height: 36px;
+            max-height: 200px;
+            overflow-y: auto;
+            line-height: 1.4;
           }
 
           .quick-replies {
@@ -911,6 +947,9 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
               <span id="proxy-status-text">Proxy</span>
             </div>
             <div class="control-buttons">
+              <button class="update-button" id="updateButton" style="display:none;" onclick="triggerUpdate()" title="Click to update extension">
+                <span>📥</span><span id="updateVersion">Update Available</span>
+              </button>
               <button class="cog-button" onclick="showConfigMenu()" title="Configure MCP">⚙️</button>
             </div>
           </div>
@@ -923,7 +962,7 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
 
         <div class="input-area">
           <div class="input-container">
-            <input type="text" class="message-input" id="messageInput" placeholder="Type your response...">
+            <textarea class="message-input" id="messageInput" placeholder="Type your response..." rows="1"></textarea>
             <select class="quick-replies" id="quickReplies" onchange="selectQuickReply()" ${hasPendingResponse ? '' : 'disabled'}>
               <option value="">Quick Replies...</option>
               ${quickReplyOptionsHtml}
@@ -951,6 +990,13 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
               console.error('Failed to request sound notification:', error);
             }
           }
+          
+          // Auto-grow textarea as user types
+          const textarea = document.getElementById('messageInput');
+          textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 200) + 'px';
+          });
           
           document.getElementById('messageInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
@@ -1061,6 +1107,13 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
             }
           });
 
+          function triggerUpdate() {
+            console.log('Update button clicked, sending message to extension...');
+            vscode.postMessage({
+              type: 'triggerUpdate'
+            });
+          }
+
           function sendMessage() {
             const input = document.getElementById('messageInput');
             const sendButton = document.getElementById('sendButton');
@@ -1166,7 +1219,16 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
           // Listen for messages from extension
           window.addEventListener('message', event => {
             const message = event.data;
-            if (message.type === 'serverStatus') {
+            if (message.type === 'updateAvailable') {
+              // Show update button in header
+              const updateButton = document.getElementById('updateButton');
+              const updateVersion = document.getElementById('updateVersion');
+              if (updateButton && updateVersion) {
+                updateVersion.textContent = 'v' + message.version;
+                updateButton.style.display = 'flex';
+                console.log('Update button shown for version ' + message.version);
+              }
+            } else if (message.type === 'serverStatus') {
               // Update global status variable
               currentServerStatus = message.data;
               

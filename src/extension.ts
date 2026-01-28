@@ -17,6 +17,8 @@ let workspaceSessionId: string;
 let serverManager: ServerManager;
 let SERVER_PORT: number; // Dynamic port: 3738 for dev, 3737 for production
 let telemetryService: TelemetryService;
+let updateStatusBarItem: vscode.StatusBarItem | undefined;
+let chatWebviewProvider: ChatWebviewProvider;
 
 // MCP Server Definition Provider for VS Code native MCP integration
 class HumanAgentMcpProvider implements vscode.McpServerDefinitionProvider {
@@ -112,6 +114,128 @@ async function restoreSessionName(context: vscode.ExtensionContext, sessionId: s
 		} catch (error) {
 			console.log(`Failed to restore session name: ${error}`);
 		}
+	}
+}
+
+/**
+ * Check for extension updates from VS Code Marketplace
+ * @returns Promise<string | null> - Latest version if available, null otherwise
+ */
+async function checkForUpdates(): Promise<string | null> {
+	try {
+		const currentVersion = vscode.extensions.getExtension('3DTek-xyz.humanagent-mcp')?.packageJSON.version;
+		if (!currentVersion) {
+			console.log('[UpdateCheck] Could not determine current extension version');
+			return null;
+		}
+
+		console.log(`[UpdateCheck] Current version: ${currentVersion}`);
+
+		// Query VS Code Marketplace API for latest version
+		const response = await fetch('https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery', {
+			method: 'POST',
+			headers: {
+				'Accept': 'application/json;api-version=3.0-preview.1',
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				filters: [{
+					criteria: [
+						{ filterType: 7, value: '3DTek-xyz.humanagent-mcp' }
+					]
+				}],
+				flags: 914
+			})
+		});
+
+		if (!response.ok) {
+			console.log(`[UpdateCheck] Marketplace API returned ${response.status}`);
+			return null;
+		}
+
+		const data: any = await response.json();
+		const extension = data.results?.[0]?.extensions?.[0];
+		if (!extension) {
+			console.log('[UpdateCheck] Extension not found in marketplace response');
+			return null;
+		}
+
+		const latestVersion = extension.versions?.[0]?.version;
+		if (!latestVersion) {
+			console.log('[UpdateCheck] Could not parse latest version from marketplace');
+			return null;
+		}
+
+		console.log(`[UpdateCheck] Latest marketplace version: ${latestVersion}`);
+
+		// Compare versions (simple string comparison works for semantic versioning)
+		if (latestVersion > currentVersion) {
+			console.log(`[UpdateCheck] ✅ Update available: ${currentVersion} → ${latestVersion}`);
+			return latestVersion;
+		}
+
+		console.log('[UpdateCheck] Extension is up to date');
+		return null;
+	} catch (error) {
+		console.log(`[UpdateCheck] Failed to check for updates: ${error}`);
+		return null;
+	}
+}
+
+/**
+ * Show update notification and handle user response
+ */
+async function notifyUpdate(latestVersion: string, context: vscode.ExtensionContext) {
+	// Create persistent status bar item FIRST (before dialog)
+	updateStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+	updateStatusBarItem.text = `$(cloud-download) v${latestVersion}`;
+	updateStatusBarItem.tooltip = `HumanAgent MCP update available - Click to update to version ${latestVersion}`;
+	updateStatusBarItem.command = 'humanagent-mcp.updateExtension';
+	updateStatusBarItem.backgroundColor = new vscode.ThemeColor('statusBarItem.warningBackground');
+	updateStatusBarItem.show();
+	
+	context.subscriptions.push(updateStatusBarItem);
+	
+	console.log(`[UpdateCheck] Status bar item created and shown for v${latestVersion}`);
+	
+	// Show notification without await so status bar is immediately visible
+	vscode.window.showInformationMessage(
+		`HumanAgent MCP v${latestVersion} is available! You're currently on an older version.`,
+		'Update Now',
+		'Later'
+	).then(selection => {
+		if (selection === 'Update Now') {
+			performUpdate(latestVersion);
+		}
+	});
+}
+
+/**
+ * Perform the extension update
+ */
+async function performUpdate(latestVersion: string) {
+	try {
+		// Trigger VS Code's built-in extension update
+		await vscode.commands.executeCommand('workbench.extensions.installExtension', '3DTek-xyz.humanagent-mcp', {
+			installPreReleaseVersion: false
+		});
+		
+		// Hide status bar item after update starts
+		if (updateStatusBarItem) {
+			updateStatusBarItem.dispose();
+			updateStatusBarItem = undefined;
+		}
+		
+		vscode.window.showInformationMessage(
+			'HumanAgent MCP is updating. You may need to reload VS Code after installation.',
+			'Reload Now'
+		).then(choice => {
+			if (choice === 'Reload Now') {
+				vscode.commands.executeCommand('workbench.action.reloadWindow');
+			}
+		});
+	} catch (error) {
+		vscode.window.showErrorMessage(`Failed to update extension: ${error}`);
 	}
 }
 
@@ -232,6 +356,20 @@ export async function activate(context: vscode.ExtensionContext) {
 	// Auto-start server and register session (no mcp.json dependency)
 	await ensureServerAndRegisterSession(workspaceSessionId);
 
+	// Check for extension updates on startup
+	checkForUpdates().then(latestVersion => {
+		if (latestVersion) {
+			notifyUpdate(latestVersion, context);
+			
+			// Also send to webview if it's active
+			if (chatWebviewProvider) {
+				chatWebviewProvider.showUpdateNotification(latestVersion);
+			}
+		}
+	}).catch(error => {
+		console.log(`[UpdateCheck] Update check failed: ${error}`);
+	});
+
 	// Show startup notification
 	const notificationConfig = vscode.workspace.getConfiguration('humanagent-mcp');
 	const showStartupNotification = notificationConfig.get<boolean>('notifications.showStartup', true);
@@ -296,7 +434,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push({ dispose: () => clearInterval(proxyStatusInterval) });
 
 	// Initialize Chat Webview Provider (no internal server dependency)
-	const chatWebviewProvider = new ChatWebviewProvider(context.extensionUri, null, mcpConfigManager, workspaceSessionId, context, mcpProvider, SERVER_PORT, telemetryService);
+	chatWebviewProvider = new ChatWebviewProvider(context.extensionUri, null, mcpConfigManager, workspaceSessionId, context, mcpProvider, SERVER_PORT, telemetryService);
 	context.subscriptions.push(
 		vscode.window.registerWebviewViewProvider(ChatWebviewProvider.viewType, chatWebviewProvider)
 	);
@@ -429,6 +567,14 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 
 	// Configure MCP command removed - functionality moved to webview context menu
+
+	// Register extension update command
+	const updateExtensionCommand = vscode.commands.registerCommand('humanagent-mcp.updateExtension', async () => {
+		const latestVersion = updateStatusBarItem?.text.match(/v([\d.]+)/)?.[1];
+		if (latestVersion) {
+			await performUpdate(latestVersion);
+		}
+	});
 
 	// Register report issue command
 	const reportIssueCommand = vscode.commands.registerCommand('humanagent-mcp.reportIssue', () => {
@@ -574,6 +720,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		startServerCommand,
 		stopServerCommand,
 		restartServerCommand,
+		updateExtensionCommand,
 		reportIssueCommand,
 		installProxyCertificateCommand,
 		uninstallProxyCertificateCommand,

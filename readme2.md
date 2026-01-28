@@ -33,9 +33,9 @@
 ## Basic Usage
 
 ### Workflow
-1. **Prompt Copilot** - "Use HumanAgent_Chat to discuss this with me"
+1. **Prompt Copilot as usual** in the standard copilot chat box with something like: "Use HumanAgent_Chat to discuss with me"
 2. **Chat Panel Opens** - Green dot = connected, message appears
-3. **Respond** - Type or use Quick Replies ("Yes Please Proceed", etc.)
+3. **Respond in the new Human Agent MCP Chat Box** - Type or use Quick Replies ("Yes Please Proceed", etc.)
 4. **Copilot Continues** - Receives your response and proceeds
 
 ### Why Use This?

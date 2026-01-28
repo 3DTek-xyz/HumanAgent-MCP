@@ -4,15 +4,17 @@ Forces GitHub Copilot to chat with you before acting. Stops runaway agents, redu
 
 ## Installation
 
-1. Install from VS Code Marketplace
+1. Install from VS Code Marketplace - see 
 2. Copilot automatically gets the `HumanAgent_Chat` tool
 3. Done - no configuration needed
+4. Recommend selecting the "Create Override File" option from cog menu.
+  This creates a "HumanAgentOverride.json" in a .vscode directory and adds some important customisations you will want to play with.   You can set some "reminder" text to be included with every ineraction - this alone is worth it.
 
 ## How to Use
 
 ### Basic Workflow
 
-1. **Ask Copilot to do something** - Copilot will use the HumanAgent_Chat tool
+1. **Ask Copilot to do something - SPECIFY YOU WOULD LIKE A REPLY THROUGH HUMAN AGENT CHAT** - Copilot will use the HumanAgent_Chat tool.
 2. **Chat panel opens** - Green dot = connected, shows Copilot's message
 3. **You respond** - Type your answer, click Send (or use Quick Replies)
 4. **Copilot continues** - Gets your response and proceeds with the task
@@ -63,9 +65,10 @@ Captures and displays HTTP/HTTPS traffic from VS Code for debugging extensions, 
 **Setup:**
 1. Cog menu → Install Proxy Certificate (follow system prompts)
 2. Cog menu → Enable Proxy
-3. Browse anywhere in VS Code
-4. View captured requests in "Proxy Logs" section
-5. Click any log entry to expand and see full request/response details
+3. View captured requests in "Proxy Logs" section of web interface
+4. Click any log entry to expand and see full request/response details
+5. Add proxy override riles in the "Proxy Rules Tab" or open a captured proxy request in "Proxy Logs" and Select create rule to open a dynamic rule builder
+NOTE: Enabling Proxy does so for all VSCode workspaces.
 
 **Proxy Rules:**
 - Create rules to redirect, transform, or block requests
@@ -79,11 +82,6 @@ Captures and displays HTTP/HTTPS traffic from VS Code for debugging extensions, 
 - To disable: Cog menu → Disable Proxy
 - To uninstall cert: Cog menu → Uninstall Proxy Certificate
 
-### Connection Status
-
-- Auto-reconnects with exponential backoff (1s → 2s → 4s → 8s → 16s → 30s max)
-- Manually starting server resets reconnection immediately
-- No timeout - will retry forever
 
 ## Troubleshooting
 

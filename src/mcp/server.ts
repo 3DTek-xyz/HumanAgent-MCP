@@ -5570,4 +5570,11 @@ export class McpServer extends EventEmitter {
       }
     }
   }
+
+  /**
+   * Get session friendly name
+   */
+  private getSessionName(sessionId: string): string | undefined {
+    return this.sessionNames.get(sessionId);
+  }
 }
