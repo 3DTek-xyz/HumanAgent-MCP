@@ -1837,6 +1837,7 @@ export class McpServer extends EventEmitter {
 
     <script>
         let currentJsonData = null;
+        let currentUrlPattern = 'https://api.individual.githubcopilot.com/chat/completions';
         
         // HTML escape function
         function escapeHtml(text) {
@@ -1931,8 +1932,8 @@ export class McpServer extends EventEmitter {
             
             // Create rule object
             const rule = {
-                name: ruleName.trim(),
-                pattern: 'https://api.individual.githubcopilot.com/chat/completions',
+              name: ruleName.trim(),
+              pattern: currentUrlPattern,
                 type: 'jsonata',
                 expression: transformationQuery,
                 description: 'Rule created from JSONata Query Tester'
@@ -1969,6 +1970,9 @@ export class McpServer extends EventEmitter {
                 
                 // Store the JSON data
                 currentJsonData = jsonData;
+                if (url) {
+                  currentUrlPattern = url;
+                }
                 
                 // Display the formatted JSON in the left pane
                 document.getElementById('json-data').value = JSON.stringify(jsonData, null, 2);
@@ -2297,10 +2301,10 @@ export class McpServer extends EventEmitter {
       if (existingRules.length === 0) {
         this.debugLogger.log('INFO', 'Creating default example rules...');
         
-        // Example 1: Karen Personality (JSONata transformation)
+        // Example 1: Karen Personality /completions (JSONata transformation)
         await this.addProxyRule(
-          'Karen Personality',
-          '^https://api\\.individual\\.githubcopilot\\.com/chat/completions/?$',
+          'Karen Personality /completions',
+          'https://api.individual.githubcopilot.com/chat/completions',
           undefined,
           '$merge([$, {"messages": $.messages.(  role = "system" ?   $merge([$, {"content": "Your Name is Karen - behave like one - not too rude racist or sexist - just a bit of a bitch"}]) :   $)}])',
           false, // disabled by default
@@ -2312,8 +2316,24 @@ export class McpServer extends EventEmitter {
           undefined,
           false // debug disabled
         );
+
+        // Example 2: Karen Personality /responses (JSONata transformation)
+        await this.addProxyRule(
+          'Karen Personality /responses',
+          'https://api.individual.githubcopilot.com/responses',
+          undefined,
+          '$merge([$, {\n  "input": $.input.(\n    role="system" ? $merge([$, {\n      "content": [\n        {"type":"input_text","text":"Your Name is Karen - behave like one - not too rude racist or sexist - just a bit of a bitch."}\n      ]\n    }]) : $\n  )\n}])',
+          false, // disabled by default
+          false,
+          undefined,
+          'global', // global scope
+          undefined,
+          undefined,
+          undefined,
+          false // debug disabled
+        );
         
-        // Example 2: Block Telemetry (drop request)
+        // Example 3: Block Telemetry (drop request)
         await this.addProxyRule(
           'Block GitHub Copilot Telemetry',
           '^https://telemetry\\.individual\\.githubcopilot\\.com/.*$',
@@ -2329,7 +2349,7 @@ export class McpServer extends EventEmitter {
           false // debug disabled
         );
         
-        this.debugLogger.log('INFO', 'Created 2 default example rules (disabled)');
+        this.debugLogger.log('INFO', 'Created 3 default example rules (disabled)');
       }
     } catch (error) {
       this.debugLogger.log('ERROR', 'Failed to initialize default rules:', error);
@@ -3748,10 +3768,10 @@ export class McpServer extends EventEmitter {
             
             // Format body for display with before/after comparison for rule-modified requests
             const formatBeforeAfterBody = (logEntry) => {
-                const currentBody = logEntry.requestBody;
+              const currentBody = logEntry.requestBodyModified ?? logEntry.requestBody;
                 
                 // Try to reconstruct original body from rule modifications
-                let originalBody = currentBody;
+                let originalBody = logEntry.requestBodyOriginal ?? logEntry.requestBody;
                 if (logEntry.ruleApplied && logEntry.ruleApplied.modifications) {
                     const modifications = logEntry.ruleApplied.modifications;
                     
@@ -3856,8 +3876,8 @@ export class McpServer extends EventEmitter {
                         \${formatHeaders(logEntry.requestHeaders)}
                     </div>
                     <div class="proxy-log-section">
-                        <h4>Request Body</h4>
-                        \${logEntry.ruleApplied ? formatBeforeAfterBody(logEntry) : formatBody(logEntry.requestBody)}
+                      <h4>Request Body</h4>
+                      \${logEntry.ruleApplied ? formatBeforeAfterBody(logEntry) : formatBody(logEntry.requestBodyModified ?? logEntry.requestBody)}
                     </div>
                     <div class="proxy-log-section">
                         <h4>Response Headers</h4>
@@ -3986,10 +4006,10 @@ export class McpServer extends EventEmitter {
                 
                 // Format body for display with before/after comparison for rule-modified requests
                 const formatBeforeAfterBody = (logEntry) => {
-                    const currentBody = logEntry.requestBody;
+                  const currentBody = logEntry.requestBodyModified ?? logEntry.requestBody;
                     
                     // Try to reconstruct original body from rule modifications
-                    let originalBody = currentBody;
+                    let originalBody = logEntry.requestBodyOriginal ?? logEntry.requestBody;
                     if (logEntry.ruleApplied && logEntry.ruleApplied.modifications) {
                         const modifications = logEntry.ruleApplied.modifications;
                         
@@ -4070,8 +4090,8 @@ export class McpServer extends EventEmitter {
                         \${formatHeaders(logEntry.requestHeaders)}
                     </div>
                     <div class="proxy-log-section">
-                        <h4>Request Body</h4>
-                        \${logEntry.ruleApplied ? formatBeforeAfterBody(logEntry) : formatBody(logEntry.requestBody)}
+                      <h4>Request Body</h4>
+                      \${logEntry.ruleApplied ? formatBeforeAfterBody(logEntry) : formatBody(logEntry.requestBodyModified ?? logEntry.requestBody)}
                     </div>
                     <div class="proxy-log-section">
                         <h4>Response Headers</h4>
@@ -4416,10 +4436,10 @@ export class McpServer extends EventEmitter {
                 return;
             }
             
-            openRuleBuilder(logId, jsonData);
+            openRuleBuilder(logId, jsonData, logEntry.url);
         }
-        
-        function openRuleBuilder(logId, jsonData) {
+
+          function openRuleBuilder(logId, jsonData, requestUrl) {
             if (!jsonData || typeof jsonData !== 'object') {
                 alert('❌ No valid JSON data available for this request');
                 return;
@@ -4435,10 +4455,10 @@ export class McpServer extends EventEmitter {
                 try {
                     // Pass the JSON data to the builder
                     builderWindow.postMessage({
-                        type: 'POPULATE_BUILDER',
-                        logId: logId,
-                        jsonData: jsonData,
-                        url: 'https://api.individual.githubcopilot.com/chat/completions'
+                      type: 'POPULATE_BUILDER',
+                      logId: logId,
+                      jsonData: jsonData,
+                      url: requestUrl
                     }, '*');
                 } catch (e) {
                     console.error('Error populating builder:', e);

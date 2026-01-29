@@ -39,6 +39,8 @@ export interface ProxyLogEntry {
     url: string;
     requestHeaders: Record<string, string | string[]>;
     requestBody?: string;
+    requestBodyOriginal?: string;
+    requestBodyModified?: string;
     responseStatus?: number;
     responseHeaders?: Record<string, string | string[]>;
     responseBody?: string;
@@ -475,13 +477,15 @@ export class ProxyServer extends EventEmitter {
                                     
                                     // Log the dropped request
                                     const protocol = req.url.startsWith('https://') ? 'https' : 'http';
+                                    const originalBodyText = req.body?.buffer ? req.body.buffer.toString('utf8') : undefined;
                                     const logEntry: ProxyLogEntry = {
                                         id: this.generateLogId(),
                                         timestamp: Date.now(),
                                         method: req.method,
                                         url: req.url,
                                         requestHeaders: { ...req.headers } as Record<string, string | string[]>,
-                                        requestBody: req.body?.buffer ? req.body.buffer.toString('utf8') : undefined,
+                                        requestBody: originalBodyText,
+                                        requestBodyOriginal: originalBodyText,
                                         responseStatus: dropStatusCode,
                                         responseHeaders: {},
                                         responseBody: `Request dropped by proxy rule (status ${dropStatusCode})`,
@@ -519,13 +523,15 @@ export class ProxyServer extends EventEmitter {
                     
                     // Log request (no rule applied)
                     const protocol = req.url.startsWith('https://') ? 'https' : 'http';
+                    const originalBodyText = req.body?.buffer ? req.body.buffer.toString('utf8') : undefined;
                     const logEntry: ProxyLogEntry = {
                         id: this.generateLogId(),
                         timestamp: Date.now(),
                         method: req.method,
                         url: req.url,
                         requestHeaders: { ...req.headers } as Record<string, string | string[]>,
-                        requestBody: req.body?.buffer ? req.body.buffer.toString('utf8') : undefined,
+                        requestBody: originalBodyText,
+                        requestBodyOriginal: originalBodyText,
                         protocol: protocol
                     };
 
@@ -567,6 +573,7 @@ export class ProxyServer extends EventEmitter {
         const modifications: string[] = [];
         let modifiedUrl = req.url;
         let modifiedBody: any = undefined;
+        const originalBodyText = req.body?.buffer ? req.body.buffer.toString('utf8') : undefined;
         
         this.addDebugLog(`   🔧 Applying modifications...`);
         
@@ -635,7 +642,9 @@ export class ProxyServer extends EventEmitter {
             method: req.method,
             url: req.url,
             requestHeaders: { ...req.headers } as Record<string, string | string[]>,
-            requestBody: req.body?.buffer ? req.body.buffer.toString('utf8') : undefined,
+            requestBody: originalBodyText,
+            requestBodyOriginal: originalBodyText,
+            requestBodyModified: modifiedBody !== undefined ? JSON.stringify(modifiedBody) : undefined,
             protocol: protocol,
             ruleApplied: modifications.length > 0 ? {
                 ruleId: rule.id,

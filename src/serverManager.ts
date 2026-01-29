@@ -176,10 +176,23 @@ export class ServerManager {
      */
     private async startServer(): Promise<boolean> {
         try {
+            let stdio: any = 'ignore';
+            let logFd: number | undefined;
+
+            if (this.logFile) {
+                try {
+                    logFd = fs.openSync(this.logFile, 'a');
+                    stdio = ['ignore', logFd, logFd];
+                    this.log('Server stdout/stderr will be appended to log file');
+                } catch (error) {
+                    this.log(`Failed to open log file for server output: ${error}`);
+                }
+            }
+
             // Spawn the server as a completely detached process
             const serverProcess = spawn('node', [this.options.serverPath], {
                 detached: true,
-                stdio: 'ignore', // Completely disconnect stdio to make it independent
+                stdio: stdio, // Disconnect stdio unless logging is enabled
                 cwd: path.dirname(this.options.serverPath),
                 env: {
                     ...process.env,
@@ -200,6 +213,14 @@ export class ServerManager {
             } else {
                 this.log('Failed to get server process PID');
                 return false;
+            }
+
+            if (logFd !== undefined) {
+                try {
+                    fs.closeSync(logFd);
+                } catch (error) {
+                    this.log(`Failed to close log file descriptor: ${error}`);
+                }
             }
 
             // Immediately detach and unreference the process for complete independence

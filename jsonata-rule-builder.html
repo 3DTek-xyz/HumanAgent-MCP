@@ -252,6 +252,8 @@
         document.getElementById('search-value').value = '<userRequest>.*?</userRequest>';
         document.getElementById('replace-value').value = '<userRequest>Tell Me A Joke</userRequest>';
 
+        let currentUrlPattern = 'https://api.individual.githubcopilot.com/chat/completions';
+
         function updatePreview() {
             const targetField = document.getElementById('target-field').value;
             const conditionField = document.getElementById('condition-field').value;
@@ -307,7 +309,7 @@
             document.getElementById('jsonata-expression').textContent = expression || '// Configure options above to generate JSONata expression';
             
             // Update proxy config
-            document.getElementById('proxy-config').textContent = `URL Pattern: https://api.individual.githubcopilot.com/chat/completions
+                document.getElementById('proxy-config').textContent = `URL Pattern: ${currentUrlPattern}
 Rule Type: JSONata Transform  
 Expression: ${expression ? 'See above' : 'Not configured'}`;
         }
@@ -348,7 +350,7 @@ Expression: ${expression ? 'See above' : 'Not configured'}`;
             
             // Create rule object
             const rule = {
-                pattern: 'https://api.individual.githubcopilot.com/chat/completions',
+                pattern: currentUrlPattern,
                 type: 'jsonata',
                 expression: expression,
                 description: 'Rule created from visual builder'
@@ -373,6 +375,10 @@ Expression: ${expression ? 'See above' : 'Not configured'}`;
         window.addEventListener('message', function(event) {
             if (event.data && event.data.type === 'POPULATE_BUILDER') {
                 const { logId, jsonData, url } = event.data;
+
+                if (url) {
+                    currentUrlPattern = url;
+                }
                 
                 // Auto-fill the test JSON area with the captured data
                 document.getElementById('test-json').value = JSON.stringify(jsonData, null, 2);

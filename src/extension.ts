@@ -86,7 +86,7 @@ function getWorkspaceSessionId(context: vscode.ExtensionContext): string {
 }
 
 // Restore and send persisted session name to server
-async function restoreSessionName(context: vscode.ExtensionContext, sessionId: string) {
+async function restoreSessionName(context: vscode.ExtensionContext, sessionId: string, port: number) {
 	const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
 	const workspaceKey = workspaceRoot ? `workspace-${crypto.createHash('md5').update(workspaceRoot).digest('hex')}` : 'no-workspace';
 	
@@ -95,7 +95,7 @@ async function restoreSessionName(context: vscode.ExtensionContext, sessionId: s
 	if (savedName) {
 		try {
 			// Send the saved name to the server
-			const response = await fetch('http://localhost:3737/sessions/name', {
+			const response = await fetch(`http://localhost:${port}/sessions/name`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -403,7 +403,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	// Restore the persisted session name after server is running (with retry)
 	setTimeout(async () => {
 		try {
-			await restoreSessionName(context, workspaceSessionId);
+			await restoreSessionName(context, workspaceSessionId, SERVER_PORT);
 		} catch (error) {
 			console.log('HumanAgent MCP: Could not restore session name on startup (server may not be ready yet):', error);
 		}
