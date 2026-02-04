@@ -3,6 +3,8 @@
 'use strict';
 
 const path = require('path');
+const webpack = require('webpack');
+const packageJson = require('./package.json');
 
 //@ts-check
 /** @typedef {import('webpack').Configuration} WebpackConfig **/
@@ -75,6 +77,11 @@ const mcpServerConfig = {
       }
     ]
   },
+  plugins: [
+    new webpack.DefinePlugin({
+      '__PACKAGE_VERSION__': JSON.stringify(packageJson.version)
+    })
+  ],
   devtool: 'nosources-source-map',
   infrastructureLogging: {
     level: "log",

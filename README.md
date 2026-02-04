@@ -4,15 +4,17 @@ Forces GitHub Copilot to chat with you before acting. Stops runaway agents, redu
 
 ## Installation
 
-1. Install from VS Code Marketplace
+1. Install from VS Code Marketplace - see 
 2. Copilot automatically gets the `HumanAgent_Chat` tool
 3. Done - no configuration needed
+4. Recommend selecting the "Create Override File" option from cog menu.
+  This creates a "HumanAgentOverride.json" in a .vscode directory and adds some important customisations you will want to play with.   You can set some "reminder" text to be included with every ineraction - this alone is worth it.
 
 ## How to Use
 
 ### Basic Workflow
 
-1. **Ask Copilot to do something** - Copilot will use the HumanAgent_Chat tool
+1. **Ask Copilot to do something - SPECIFY YOU WOULD LIKE A REPLY THROUGH HUMAN AGENT CHAT** - Copilot will use the HumanAgent_Chat tool.
 2. **Chat panel opens** - Green dot = connected, shows Copilot's message
 3. **You respond** - Type your answer, click Send (or use Quick Replies)
 4. **Copilot continues** - Gets your response and proceeds with the task
@@ -25,11 +27,26 @@ Forces GitHub Copilot to chat with you before acting. Stops runaway agents, redu
 - Quick Replies = common responses like "Yes Please Proceed"
 - Text input = always enabled, send button only active when Copilot is waiting
 
+**Status Indicators:**
+- **Server Status**
+  - 🟢 Green = Running and connected
+  - 🟠 Orange = Starting up
+  - 🔴 Red = Stopped or disconnected
+- **Proxy Status** (appears when proxy server is running)
+  - 🟢 "Proxy (Enabled)" = Running AND enabled in VS Code
+  - 🟠 "Proxy (Disabled)" = Running but NOT enabled
+  - 🔴 "Proxy (Stopped)" = Not running
+
 **Cog Menu** (⚙️):
 - Show Status - check server state
+- Start/Stop/Restart Server - manage server state
+- Enable/Disable Proxy - toggle proxy mode (see Proxy Mode below)
+- Install Proxy Certificate - install HTTPS cert (required for proxy)
+- Uninstall Proxy Certificate - remove cert and disable proxy
+- Create Override File - custom prompt override
 - Name This Chat - set session name
 - Open Web View - manage all workspaces in browser
-- Configure MCP - start/stop/restart server
+- Help & Documentation - view this guide
 - Report Issue / Request Feature - GitHub links
 
 ### Web Interface
@@ -41,25 +58,55 @@ Access all workspace chats in one browser tab at `http://localhost:3737/HumanAge
 - Switch between workspaces
 - Append reminders to your responses
 
-### Connection Status
+### Proxy Mode (Advanced)
 
-- Auto-reconnects with exponential backoff (1s → 2s → 4s → 8s → 16s → 30s max)
-- Manually starting server resets reconnection immediately
-- No timeout - will retry forever
+Captures and displays HTTP/HTTPS traffic from VS Code for debugging extensions, marketplace requests, or other connections.
+
+**Setup:**
+1. Cog menu → Install Proxy Certificate (follow system prompts)
+2. Cog menu → Enable Proxy
+3. View captured requests in "Proxy Logs" section of web interface
+4. Click any log entry to expand and see full request/response details
+5. Add proxy override riles in the "Proxy Rules Tab" or open a captured proxy request in "Proxy Logs" and Select create rule to open a dynamic rule builder
+NOTE: Enabling Proxy does so for all VSCode workspaces.
+
+**Proxy Rules:**
+- Create rules to redirect, transform, or block requests
+- Use JSONata expressions for advanced transformations
+- Manage rules from Proxy Logs tab in web interface
+- See [Proxy-Rules.md](Proxy-Rules.md) for detailed documentation
+
+**Important:**
+- Certificate must be installed BEFORE enabling proxy
+- Only captures traffic when enabled (orange/green status)
+- To disable: Cog menu → Disable Proxy
+- To uninstall cert: Cog menu → Uninstall Proxy Certificate
+
 
 ## Troubleshooting
 
 **Red dot / disconnected:**
-- Cog menu → Configure MCP → Start Server
+- Cog menu → Start Server
 - Check VS Code Output panel for errors
+- Restart VS Code
 
 **Server won't start:**
 - Check port 3737 not in use: `lsof -i :3737`
-- Restart VS Code
+- Try manually restarting from cog menu
 
 **Copilot not using the tool:**
 - Tool registers automatically on startup
 - Try: "Use HumanAgent_Chat to discuss this with me"
+
+**Proxy not working:**
+- Must install certificate first (cog menu → Install Proxy Certificate)
+- Then enable proxy (cog menu → Enable Proxy)
+- Check status shows "Proxy (Enabled)" with green dot
+- Certificate must be trusted in system keychain (macOS: System Keychain)
+
+**Proxy shows "Disabled" (orange dot):**
+- Proxy server running but not enabled in VS Code settings
+- Use cog menu → Enable Proxy (don't manually edit settings)
 
 ## Development
 

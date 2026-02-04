@@ -2,7 +2,7 @@
   "name": "humanagent-mcp",
   "displayName": "HumanAgent MCP",
   "description": "MCP server for chatting with a human agent",
-  "version": "0.0.17",
+  "version": "0.0.21",
   "publisher": "3DTek-xyz",
   "icon": "HumanAgent_Icon_Square.png",
   "repository": {
@@ -41,11 +41,6 @@
       {
         "command": "humanagent-mcp.openChat",
         "title": "Open Chat Session"
-      },
-      {
-        "command": "humanagent-mcp.configureMcp",
-        "title": "Configure MCP Server",
-        "icon": "$(settings-gear)"
       },
       {
         "command": "humanagent-mcp.startServer",
@@ -115,11 +110,6 @@
           "group": "navigation"
         },
         {
-          "command": "humanagent-mcp.configureMcp",
-          "when": "view == humanagent-mcp.chatSessions",
-          "group": "navigation"
-        },
-        {
           "command": "humanagent-mcp.reportIssue",
           "when": "view == humanagent-mcp.chatSessions",
           "group": "navigation"
@@ -142,7 +132,12 @@
         },
         "humanagent-mcp.logging.level": {
           "type": "string",
-          "enum": ["ERROR", "WARN", "INFO", "DEBUG"],
+          "enum": [
+            "ERROR",
+            "WARN",
+            "INFO",
+            "DEBUG"
+          ],
           "default": "INFO",
           "description": "Set the logging level for HumanAgent MCP server"
         },
@@ -152,7 +147,7 @@
           "description": "Enable audio notifications when AI agents send messages"
         },
         "humanagent-mcp.notifications.enableFlashing": {
-          "type": "boolean", 
+          "type": "boolean",
           "default": true,
           "description": "Enable visual flashing notifications when AI agents send messages"
         },
@@ -160,6 +155,21 @@
           "type": "boolean",
           "default": true,
           "description": "HumanAgent MCP extension is new - I would appreciate any issues or suggestions logged @"
+        },
+        "humanagent-mcp.telegram.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable Telegram notifications for AI agent messages. Requires bot token and chat ID."
+        },
+        "humanagent-mcp.telegram.botToken": {
+          "type": "string",
+          "default": "",
+          "description": "Telegram bot token from @BotFather. Required for Telegram integration."
+        },
+        "humanagent-mcp.telegram.chatId": {
+          "type": "string",
+          "default": "",
+          "description": "Telegram chat ID where messages will be sent. Get this by messaging your bot and checking /getUpdates."
         }
       }
     }
@@ -178,6 +188,7 @@
   "devDependencies": {
     "@types/mocha": "^10.0.10",
     "@types/node": "22.x",
+    "@types/node-telegram-bot-api": "^0.64.13",
     "@types/vscode": "^1.105.0",
     "@typescript-eslint/eslint-plugin": "^8.45.0",
     "@typescript-eslint/parser": "^8.45.0",
@@ -190,6 +201,10 @@
     "webpack-cli": "^6.0.1"
   },
   "dependencies": {
+    "jsonata": "^2.1.0",
+    "jsonpath-plus": "^10.3.0",
+    "mockttp": "^4.2.1",
+    "node-telegram-bot-api": "^0.67.0",
     "node-wav-player": "^1.0.0"
   }
 }

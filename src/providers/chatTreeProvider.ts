@@ -5,6 +5,7 @@ export class ChatTreeProvider implements vscode.TreeDataProvider<ChatTreeItem> {
   readonly onDidChangeTreeData: vscode.Event<ChatTreeItem | undefined | null | void> = this._onDidChangeTreeData.event;
 
   private hasActiveChat: boolean = false;
+  private proxyStatus: { running: boolean; port: number } | undefined;
 
   constructor() {}
 
@@ -17,13 +18,20 @@ export class ChatTreeProvider implements vscode.TreeDataProvider<ChatTreeItem> {
     this.refresh();
   }
 
+  updateProxyStatus(status: { running: boolean; port: number } | undefined): void {
+    this.proxyStatus = status;
+    this.refresh();
+  }
+
   getTreeItem(element: ChatTreeItem): vscode.TreeItem {
     return element;
   }
 
   getChildren(element?: ChatTreeItem): Thenable<ChatTreeItem[]> {
     if (!element) {
-      // Root level - return chat status
+      // Root level - return chat status and proxy status
+      const items: ChatTreeItem[] = [];
+      
       const chatItem = new ChatTreeItem(
         this.hasActiveChat ? 'HumanAgent Chat (Active)' : 'HumanAgent Chat',
         'chat',
@@ -35,7 +43,24 @@ export class ChatTreeProvider implements vscode.TreeDataProvider<ChatTreeItem> {
           arguments: []
         }
       );
-      return Promise.resolve([chatItem]);
+      items.push(chatItem);
+      
+      // Add proxy status item
+      if (this.proxyStatus) {
+        const proxyLabel = this.proxyStatus.running 
+          ? `Proxy (Port ${this.proxyStatus.port})` 
+          : 'Proxy (Stopped)';
+        const proxyItem = new ChatTreeItem(
+          proxyLabel,
+          'proxy',
+          vscode.TreeItemCollapsibleState.None,
+          'proxy',
+          undefined
+        );
+        items.push(proxyItem);
+      }
+      
+      return Promise.resolve(items);
     }
     return Promise.resolve([]);
   }
