@@ -768,7 +768,8 @@ async function ensureServerAndRegisterSession(sessionId: string): Promise<void> 
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({
-						vscodeSessionId: sessionId,
+						vscodeSessionId: vscode.env.sessionId,
+						//vscodeSessionId: sessionId,
 						workspacePath: workspacePath
 					}),
 					signal: AbortSignal.timeout(5000)

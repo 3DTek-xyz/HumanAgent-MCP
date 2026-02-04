@@ -1140,7 +1140,7 @@ export class McpServer extends EventEmitter {
       // Register a new session
       let body = '';
       req.on('data', (chunk) => { body += chunk.toString(); });
-      req.on('end', () => {
+      req.on('end', async () => {
         try {
           const { sessionId, vscodeSessionId, workspacePath, overrideData, forceReregister } = JSON.parse(body);
           
@@ -1161,7 +1161,7 @@ export class McpServer extends EventEmitter {
           // Persist session mappings to globalStorage
           if (this.globalStorage) {
             try {
-              this.globalStorage.update('sessionMappings', {
+              await this.globalStorage.update('sessionMappings', {
                 vscodeSessionMapping: Object.fromEntries(this.vscodeSessionMapping),
                 activeSessions: Array.from(this.activeSessions),
                 sessionWorkspacePaths: Object.fromEntries(this.sessionWorkspacePaths)
@@ -1286,7 +1286,7 @@ export class McpServer extends EventEmitter {
       // Handle human response to pending request
       let body = '';
       req.on('data', (chunk) => { body += chunk.toString(); });
-      req.on('end', () => {
+      req.on('end', async () => {
         let parsed: any;
         try {
           parsed = JSON.parse(body);
@@ -1456,7 +1456,7 @@ export class McpServer extends EventEmitter {
           // Persist updated mappings
           if (this.globalStorage) {
             try {
-              this.globalStorage.update('sessionMappings', {
+              await this.globalStorage.update('sessionMappings', {
                 vscodeSessionMapping: Object.fromEntries(this.vscodeSessionMapping),
                 activeSessions: Array.from(this.activeSessions),
                 sessionWorkspacePaths: Object.fromEntries(this.sessionWorkspacePaths)
