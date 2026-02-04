@@ -20,14 +20,12 @@ Forces GitHub Copilot to chat with you before acting. Stops runaway agents, redu
 ### VS Code Interface
 
 **Chat Panel** (left sidebar):
-
 - Green dot = connected to server
 - Red dot = disconnected (auto-reconnects)
 - Quick Replies = common responses like "Yes Please Proceed"
 - Text input = always enabled, send button only active when Copilot is waiting
 
 **Cog Menu** (⚙️):
-
 - Show Status - check server state
 - Name This Chat - set session name
 - Open Web View - manage all workspaces in browser
@@ -39,7 +37,6 @@ Forces GitHub Copilot to chat with you before acting. Stops runaway agents, redu
 Open from cog menu → **Open Web View**
 
 Access all workspace chats in one browser tab at `http://localhost:3737/HumanAgent`
-
 - See all conversations
 - Switch between workspaces
 - Append reminders to your responses
@@ -50,27 +47,17 @@ Access all workspace chats in one browser tab at `http://localhost:3737/HumanAge
 - Manually starting server resets reconnection immediately
 - No timeout - will retry forever
 
-### Server Lifecycle
-
-- Server stops automatically when VS Code closes (prevents port 3737/3738 being left occupied)
-- Server restarts automatically when you reload the VS Code window
-
 ## Troubleshooting
 
 **Red dot / disconnected:**
-
 - Cog menu → Configure MCP → Start Server
 - Check VS Code Output panel for errors
 
 **Server won't start:**
-
-- Check port 3737 not in use:
-  - macOS/Linux: `lsof -i :3737`
-  - Windows (PowerShell): `netstat -ano | findstr :3737`
+- Check port 3737 not in use: `lsof -i :3737`
 - Restart VS Code
 
 **Copilot not using the tool:**
-
 - Tool registers automatically on startup
 - Try: "Use HumanAgent_Chat to discuss this with me"
 
@@ -83,7 +70,6 @@ Press F5 to debug - dev mode uses port 3738, production uses 3737. No conflicts.
 This extension collects **anonymous usage data** to help improve the product:
 
 **What we track:**
-
 - Extension activation/deactivation
 - Feature usage (chat opened, messages sent/received)
 - Error diagnostics (error types, not content)
@@ -92,21 +78,18 @@ This extension collects **anonymous usage data** to help improve the product:
 - Days since installation
 
 **What we DON'T track:**
-
 - ❌ Your message content
 - ❌ Your name, email, or any personal data
 - ❌ Workspace paths or file names
 - ❌ Any identifiable information
 
 **Your privacy:**
-
 - Respects VS Code's telemetry setting
 - To disable: Settings → Telemetry → Level → Off
 - Fully GDPR compliant
 - Uses Google Analytics 4 for anonymous metrics
 
 **Why telemetry?**
-
 - Helps us understand which features are used
 - Identifies bugs and errors to fix
 - Measures engagement and retention
@@ -122,8 +105,8 @@ See [README-Additional.md](README-Additional.md) for technical details
 
 ![HumanAgent MCP Extension Demo](high-res-demo.gif)
 
-_Complete demonstration of the HumanAgent MCP extension in action - showing real-time human-AI collaboration_
+*Complete demonstration of the HumanAgent MCP extension in action - showing real-time human-AI collaboration*
 
 ## Medium Article
-
 https://medium.com/@harperbenwilliam/stop-the-ai-chaos-why-human-in-the-loop-beats-fully-autonomous-coding-agents-eeb0ae17fde9
+
