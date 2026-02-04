@@ -231,7 +231,7 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
         }
         
         this.currentRequestId = undefined;
-        this.updateWebview(); // Force UI update to clear "waiting" state
+        // updateWebview() removed - SSE handleRequestStateChange() handles all UI state
       } else {
         console.warn('ChatWebviewProvider: No pending request to respond to');
       }
@@ -998,7 +998,7 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
             this.style.height = Math.min(this.scrollHeight, 200) + 'px';
           });
           
-          document.getElementById('messageInput').addEventListener('keypress', function(e) {
+          document.getElementById('messageInput').addEventListener('keydown', function(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
               e.preventDefault();
               sendMessage();
@@ -1302,6 +1302,49 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
           const MAX_RECONNECT_DELAY = 30000; // 30 seconds max
           const BASE_RECONNECT_DELAY = 1000; // Start at 1 second
           
+          // Synchronize UI state with server state after reconnection
+          async function syncSessionState() {
+            try {
+              const response = await fetch(\`http://localhost:${this.port}/sessions/\${sessionId}/state\`);
+              const state = await response.json();
+              
+              if (state.latestPendingRequest) {
+                // There's a pending request - ensure UI is ready to respond
+                const sendButton = document.getElementById('sendButton');
+                const quickReplies = document.getElementById('quickReplies');
+                
+                if (sendButton) sendButton.disabled = false;
+                if (quickReplies) quickReplies.disabled = false;
+                
+                // Add waiting indicator if not already present
+                if (!document.querySelector('.waiting-indicator')) {
+                  const indicator = document.createElement('div');
+                  indicator.className = 'waiting-indicator';
+                  indicator.textContent = 'Waiting for response...';
+                  indicator.style.cssText = 'padding: 10px; background: #fff3cd; color: #856404; border: 1px solid #ffc107; border-radius: 4px; margin: 10px; text-align: center;';
+                  document.body.appendChild(indicator);
+                }
+                
+                console.log('✅ Session state synced - pending request found, UI ready for response');
+              } else {
+                // No pending requests - UI is idle
+                const sendButton = document.getElementById('sendButton');
+                const quickReplies = document.getElementById('quickReplies');
+                
+                if (sendButton) sendButton.disabled = true;
+                if (quickReplies) quickReplies.disabled = true;
+                
+                // Remove any waiting indicator
+                const indicator = document.querySelector('.waiting-indicator');
+                if (indicator) indicator.remove();
+                
+                console.log('✅ Session state synced - no pending requests, UI idle');
+              }
+            } catch (error) {
+              console.error('Failed to sync session state:', error);
+            }
+          }
+          
           function updateConnectionStatus(connected, error = false) {
             const statusElement = document.getElementById('server-status-text');
             const statusDot = document.querySelector('.status-dot');
@@ -1386,6 +1429,7 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
                 reconnectAttempts = 0; // Reset backoff on successful connection
                 updateConnectionStatus(true);
                 resetHeartbeatTimeout();
+                syncSessionState(); // Sync UI state with server after reconnect
               };
               
               eventSource.onmessage = function(event) {

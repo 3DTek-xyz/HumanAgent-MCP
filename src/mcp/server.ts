@@ -301,6 +301,20 @@ export class McpServer extends EventEmitter {
   setGlobalStorage(storage: Memento): void {
     this.globalStorage = storage;
     this.debugLogger.log('INFO', 'GlobalStorage configured for McpServer');
+    
+    // Restore session mappings from storage
+    try {
+      const savedMappings = this.globalStorage.get<any>('sessionMappings');
+      if (savedMappings) {
+        this.vscodeSessionMapping = new Map(Object.entries(savedMappings.vscodeSessionMapping || {}));
+        this.activeSessions = new Set(savedMappings.activeSessions || []);
+        this.sessionWorkspacePaths = new Map(Object.entries(savedMappings.sessionWorkspacePaths || {}));
+        this.debugLogger.log('INFO', `Restored ${this.vscodeSessionMapping.size} session mappings from globalStorage`);
+      }
+    } catch (error) {
+      this.debugLogger.log('WARN', `Failed to restore session mappings: ${error}`);
+      // Continue - no saved state or error reading is not fatal
+    }
   }
 
   private setupEventForwarding(): void {
@@ -650,14 +664,25 @@ export class McpServer extends EventEmitter {
       const proxyPort = await this.proxyServer.start(httpsOptions);
       
       // Restore session context for active sessions
-      const activeSessions = this.getActiveSessions();
-      if (activeSessions.length > 0) {
-        // Set context to the first active session (primary session)
-        const primarySessionId = activeSessions[0];
-        const primaryWorkspace = this.sessionWorkspacePaths.get(primarySessionId);
-        this.proxyServer.setSessionContext(primarySessionId);
-        this.proxyServer.setWorkspaceContext(primaryWorkspace);
-        this.debugLogger.log('INFO', `Restored proxy context - Session: ${primarySessionId}, Workspace: ${primaryWorkspace || 'none'}`);
+      if (this.vscodeSessionMapping.size > 0) {
+        // Set context to the first VS Code session mapping (primary session)
+        const primaryVscodeSessionId = Array.from(this.vscodeSessionMapping.keys())[0];
+        const mapping = this.vscodeSessionMapping.get(primaryVscodeSessionId);
+        if (mapping) {
+          this.proxyServer.setSessionContext(mapping.sessionId);
+          this.proxyServer.setWorkspaceContext(mapping.workspacePath);
+          this.debugLogger.log('INFO', `Restored proxy context from storage - Session: ${mapping.sessionId}, Workspace: ${mapping.workspacePath || 'none'}`);
+        }
+      } else {
+        // Fallback to activeSessions if no mappings restored
+        const activeSessions = this.getActiveSessions();
+        if (activeSessions.length > 0) {
+          const primarySessionId = activeSessions[0];
+          const primaryWorkspace = this.sessionWorkspacePaths.get(primarySessionId);
+          this.proxyServer.setSessionContext(primarySessionId);
+          this.proxyServer.setWorkspaceContext(primaryWorkspace);
+          this.debugLogger.log('INFO', `Restored proxy context - Session: ${primarySessionId}, Workspace: ${primaryWorkspace || 'none'}`);
+        }
       }
       
       // Trust CA for all spawned processes
@@ -1115,7 +1140,7 @@ export class McpServer extends EventEmitter {
       // Register a new session
       let body = '';
       req.on('data', (chunk) => { body += chunk.toString(); });
-      req.on('end', () => {
+      req.on('end', async () => {
         try {
           const { sessionId, vscodeSessionId, workspacePath, overrideData, forceReregister } = JSON.parse(body);
           
@@ -1131,6 +1156,20 @@ export class McpServer extends EventEmitter {
           if (workspacePath) {
             this.sessionWorkspacePaths.set(sessionId, workspacePath);
             this.debugLogger.log('INFO', `Stored workspace path for session ${sessionId}: ${workspacePath}`);
+          }
+          
+          // Persist session mappings to globalStorage
+          if (this.globalStorage) {
+            try {
+              await this.globalStorage.update('sessionMappings', {
+                vscodeSessionMapping: Object.fromEntries(this.vscodeSessionMapping),
+                activeSessions: Array.from(this.activeSessions),
+                sessionWorkspacePaths: Object.fromEntries(this.sessionWorkspacePaths)
+              });
+              this.debugLogger.log('INFO', 'Session mappings persisted to globalStorage');
+            } catch (error) {
+              this.debugLogger.log('WARN', `Failed to persist session mappings: ${error}`);
+            }
           }
           
           // If session exists and forceReregister is true, unregister first
@@ -1247,7 +1286,7 @@ export class McpServer extends EventEmitter {
       // Handle human response to pending request
       let body = '';
       req.on('data', (chunk) => { body += chunk.toString(); });
-      req.on('end', () => {
+      req.on('end', async () => {
         let parsed: any;
         try {
           parsed = JSON.parse(body);
@@ -1366,6 +1405,77 @@ export class McpServer extends EventEmitter {
         const finalTools = Array.from(toolMap.values());
         res.end(JSON.stringify({ tools: finalTools, merged: true }));
       }
+    } else if (req.method === 'POST' && url.pathname === '/validate-session') {
+      // Handle session validation from VS Code extension
+      let body = '';
+      req.on('data', (chunk) => { body += chunk.toString(); });
+      req.on('end', () => {
+        let parsed: any;
+        try {
+          parsed = JSON.parse(body);
+        } catch (error) {
+          res.statusCode = 400;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({ error: 'Invalid JSON body' }));
+          return;
+        }
+
+        try {
+          const { vscodeSessionId, workspacePath } = parsed || {};
+          
+          if (!vscodeSessionId) {
+            res.statusCode = 400;
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify({ error: 'vscodeSessionId required' }));
+            return;
+          }
+          
+          // Check if mapping exists
+          let mapping = this.vscodeSessionMapping.get(vscodeSessionId);
+          let wasRestored = false;
+          
+          if (!mapping) {
+            // Create new mapping if doesn't exist
+            const sessionId = `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+            mapping = { sessionId, workspacePath };
+            this.vscodeSessionMapping.set(vscodeSessionId, mapping);
+            this.activeSessions.add(sessionId);
+            if (workspacePath) {
+              this.sessionWorkspacePaths.set(sessionId, workspacePath);
+            }
+            this.debugLogger.log('INFO', `Session validation: Created new mapping ${vscodeSessionId} → ${sessionId}`);
+          } else {
+            wasRestored = true;
+            this.debugLogger.log('INFO', `Session validation: Using existing mapping ${vscodeSessionId} → ${mapping.sessionId}`);
+          }
+          
+          // Update proxy context
+          this.proxyServer.setSessionContext(mapping.sessionId);
+          this.proxyServer.setWorkspaceContext(mapping.workspacePath);
+          
+          // Persist updated mappings
+          if (this.globalStorage) {
+            try {
+              await this.globalStorage.update('sessionMappings', {
+                vscodeSessionMapping: Object.fromEntries(this.vscodeSessionMapping),
+                activeSessions: Array.from(this.activeSessions),
+                sessionWorkspacePaths: Object.fromEntries(this.sessionWorkspacePaths)
+              });
+            } catch (error) {
+              this.debugLogger.log('WARN', `Failed to persist session mappings during validation: ${error}`);
+            }
+          }
+          
+          res.statusCode = 200;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({ sessionId: mapping.sessionId, restored: wasRestored }));
+        } catch (error) {
+          this.debugLogger.log('ERROR', `Session validation failed: ${error}`);
+          res.statusCode = 500;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({ error: 'Session validation failed' }));
+        }
+      });
     } else if (req.method === 'GET' && url.pathname.startsWith('/debug/tools')) {
       // Debug endpoint to inspect tools for a specific session
       res.statusCode = 200;
@@ -4277,6 +4387,12 @@ export class McpServer extends EventEmitter {
             }
         }
 
+        // Web interface SSE reconnection state
+        let webReconnectAttempts = 0;
+        const WEB_MAX_BACKOFF = 30000; // 30 seconds
+        const WEB_BASE_BACKOFF = 1000; // 1 second
+        let webReconnectTimeout = null;
+
         // WebSocket connection for real-time updates
         function setupRealtimeUpdates() {
             console.log('Setting up SSE connection to /mcp...');
@@ -4284,6 +4400,7 @@ export class McpServer extends EventEmitter {
             
             eventSource.onopen = function(event) {
                 console.log('SSE connection opened successfully:', event);
+                webReconnectAttempts = 0; // Reset backoff on successful connection
                 // Load conversation history for all sessions
                 loadConversationHistory();
             };
@@ -4377,9 +4494,28 @@ export class McpServer extends EventEmitter {
             };
             
             eventSource.onerror = function(error) {
-                console.error('SSE connection error:', error);
+                console.error('❌ SSE connection error:', error);
                 console.error('EventSource readyState:', eventSource.readyState);
                 console.error('EventSource url:', eventSource.url);
+                
+                // Close the connection to stop automatic browser reconnection
+                eventSource.close();
+                
+                // Calculate exponential backoff delay
+                const delay = Math.min(WEB_BASE_BACKOFF * Math.pow(2, webReconnectAttempts), WEB_MAX_BACKOFF);
+                webReconnectAttempts++;
+                
+                console.log(\`🔄 Web interface reconnecting in \${delay/1000}s (attempt #\${webReconnectAttempts})...\`);
+                
+                // Clear any existing reconnect timeout
+                if (webReconnectTimeout) {
+                    clearTimeout(webReconnectTimeout);
+                }
+                
+                // Schedule reconnection
+                webReconnectTimeout = setTimeout(() => {
+                    setupRealtimeUpdates();
+                }, delay);
             };
         }
         

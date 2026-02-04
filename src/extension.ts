@@ -760,6 +760,33 @@ async function ensureServerAndRegisterSession(sessionId: string): Promise<void> 
 		}
 		console.log(`HumanAgent MCP: Session registration complete for ${sessionId}`);
 		
+		// Validate session context with server (restores persisted session state)
+		const workspacePath = vscode.workspace.workspaceFolders?.[0]?.uri?.fsPath;
+		if (workspacePath) {
+			try {
+				const validateResponse = await fetch(`http://127.0.0.1:${SERVER_PORT}/validate-session`, {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({
+						vscodeSessionId: vscode.env.sessionId,
+						//vscodeSessionId: sessionId,
+						workspacePath: workspacePath
+					}),
+					signal: AbortSignal.timeout(5000)
+				});
+				
+				if (validateResponse.ok) {
+					const result: any = await validateResponse.json();
+					console.log(`HumanAgent MCP: Session context validated - restored: ${result.restored}`);
+				} else {
+					console.warn(`HumanAgent MCP: Session validation returned status ${validateResponse.status}`);
+				}
+			} catch (error) {
+				console.warn('HumanAgent MCP: Session context validation failed (non-fatal):', error);
+				// Non-fatal - server will get context on first request if validation fails
+			}
+		}
+		
 	} catch (error) {
 		console.error('HumanAgent MCP: Failed to start server or register session:', error);
 		vscode.window.showWarningMessage('HumanAgent MCP Server could not be initialized. Please check the server status and try reloading the workspace.');
