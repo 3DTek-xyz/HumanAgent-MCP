@@ -1191,7 +1191,7 @@ export class McpServer extends EventEmitter {
       // Unregister a session
       let body = '';
       req.on('data', (chunk) => { body += chunk.toString(); });
-      req.on('end', () => {
+      req.on('end', async () => {
         try {
           const { sessionId } = JSON.parse(body);
           this.unregisterSession(sessionId);
