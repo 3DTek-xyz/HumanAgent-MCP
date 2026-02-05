@@ -1409,7 +1409,7 @@ export class McpServer extends EventEmitter {
       // Handle session validation from VS Code extension
       let body = '';
       req.on('data', (chunk) => { body += chunk.toString(); });
-      req.on('end', () => {
+      req.on('end', async () => {
         let parsed: any;
         try {
           parsed = JSON.parse(body);
